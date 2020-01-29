@@ -1,0 +1,104 @@
+<section class="section-shipping-calculator {% if block.settings.shipping_calculator_section_padding %}section-content{% endif %}" style="background-color: {{ block.settings.shipping_calculator_section_bg_color }}; color: {{ block.settings.shipping_calculator_section_txt_color }}" {{ block.shopify_attributes }} >
+  <div class="{% if block.settings.shipping_calculator_fluid_layout %}container-fluid{%else%}container{% endif %}">
+    <div class="row">
+      <div class="col">
+
+        {% if block.settings.shipping_calculator_heading_txt != '' %}
+          <h2 class="section-title text-center mb-4">{{ block.settings.shipping_calculator_heading_txt }}</h2>
+        {% endif %}
+
+        <div data-shipping-calculator class="row">
+          <div class="col-md-4">
+            <label class="mt-4">{{"cart.shipping_calculator.country" | t}}</label>
+            <select class="form-control"
+              name="country"
+              aria-label="country"
+              v-model="selectedCountry"
+              :disabled="!countries"
+              data-value="{% if shop.customer_accounts_enabled and customer %} {{ customer.default_address.country }} {% endif %}">
+              <option v-for="(country, key) in countries" v-bind:value="key" v-text="key"></option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label class="mt-4">{{"cart.shipping_calculator.province" | t}}</label>
+            <select class="form-control"
+              name="province"
+              aria-label="province"
+              v-model="selectedProvince"
+              :disabled="!provinces"
+              data-value="{% if shop.customer_accounts_enabled and customer and customer.default_address.province != '' %} {{ customer.default_address.province }} {% endif %}">
+              <option v-for="(province, key) in provinces" v-bind:value="key" v-text="key"></option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label class="mt-4">{{"cart.shipping_calculator.zip" | t}}</label>
+            <input class="form-control"
+              type="text"
+              name="zip"
+              aria-label="zip"
+              v-model="selectedZip"
+              :disabled="!zipRequired"
+              data-value="{% if shop.customer_accounts_enabled and customer %} {{ customer.default_address.zip }} {% endif %}" />
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-4 mx-auto text-center">
+            <button type="submit" class="btn btn-outline-primary btn-block" :disabled="zipRequired && !selectedZip" @click="_getCartShippingRates">
+              <template v-if="isLoading">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {{ block.settings.shipping_calculator_submit_button_label_busy }}
+              </template>
+              <template v-else>
+                {{ block.settings.shipping_calculator_submit_button_label }}
+              </template>
+            </button>
+          </div>
+        </div>
+
+        <transition name="fade">
+          <div v-if="shippingRates" class="row mt-4">
+            <div class="col-md-6 col-lg-4 mx-auto">
+              <div class="alert alert-primary">
+                <table class="table table-borderless table-sm">
+                  <thead>
+                    <tr>
+                      <th scope="col">Shipping</th>
+                      <th scope="col">Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="rate in shippingRates">
+                      <td v-text="rate.name"></td>
+                      <td v-html="_formatMoney(rate.price)"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="shippingRatesErrors" class="row mt-4">
+            <div class="col-md-6 col-lg-5 mx-auto">
+              <ul class="list-unstyled alert alert-warning">
+                <template v-for="(error, key) in shippingRatesErrors">
+                  <li v-if="key == 'country'" class="font-italic">
+                    <i class="icon ion-md-alert text-danger mr-2"></i> {{"cart.general.shipping_error_destination" | t}}
+                  </li>
+                  <li v-else-if="key == 'province'" class="font-italic">
+                    <i class="icon ion-md-alert text-danger mr-2"></i> {{"cart.general.shipping_error_province" | t}}
+                  </li>
+                  <li v-else class="font-italic">
+                    <i class="icon ion-md-alert text-danger mr-2"></i> <span v-text="key + ' ' + error[0]" ></span>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </div>
+        </transition>
+
+      </div>
+    </div>
+  </div>
+</section>

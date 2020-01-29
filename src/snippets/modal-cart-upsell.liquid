@@ -1,0 +1,58 @@
+<div data-modal-cart class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg shadow" role="document">
+    <div class="modal-content d-block">
+      <div class="modal-header text-dark">
+        <h5 class="modal-title"><i class="icon ion-md-checkmark-circle-outline text-success"></i> {{ 'cart.general.upsell_modal_title' | t }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="icon ion-md-close"></i></span>
+        </button>
+      </div>
+      <div class="modal-body text-dark">
+        <div class="row">
+          <div class="col-8">
+            {% comment %} Show the most recent item that was added to cart {% endcomment %}
+            <div v-if="recentCartItem" class="card card-product text-left">
+              <div class="row no-gutters">
+                <div class="col-3 d-flex align-items-center">
+                  <a :href="recentCartItem.url">
+                    <img :src="_getSizedImageUrl(recentCartItem.image, '600x')" class="img-fluid" :alt="recentCartItem.handle">
+                  </a>
+                </div>
+                <div class="col d-flex flex-column align-items-stretch justify-content-around p-3 bg-gray-100">
+                  <div class="row">
+                    <div class="col-12 d-flex align-items-stretch justify-content-between">
+                      <span>
+                        <a :href="recentCartItem.url" v-text="recentCartItem.product_title" class="h6 text-primary mr-4"></a>
+                        <ul v-if="recentCartItem.product_options" class="list-unstyled">
+                          <li v-for="option in recentCartItem.product_options" v-if="option.value !== 'Default Title'">
+                            <span class="text-muted small text-capitalize">${ option.name }:</span>
+                            <span class="text-muted small text-capitalize">${ option.value }</span>
+                          </li>
+                        </ul>
+                      </span>
+                      <span class="text-right" v-html="_formatMoney(recentCartItem.price)"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-4 d-flex flex-column align-items-stretch justify-content-center">
+            <a href="#" class="btn btn-link btn-block" data-dismiss="modal">{{ 'cart.general.continue_browsing' | t }}</a>
+            <a href="/checkout" class="btn btn-primary btn-block">{{ 'cart.general.checkout' | t }} <i class="icon ion-md-arrow-forward"></i></a>
+          </div>
+        </div>
+        {% comment %} Upsell products {% endcomment %}
+        <transition name="fade">
+          <template v-if="storeUtilities.ready && storeUtilities.cartUpsells.settings.enabled && storeUtilities.cartUpsells.settings.showOnCartPage && storeUtilities.cartUpsells.products.length > 0">
+            {% assign target = 'modal' %}
+            {% include 'app-utilities-cart-upsell' with target %}
+          </template>
+        </transition>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'general.close' | t }}</button>
+      </div>
+    </div>
+  </div>
+</div>

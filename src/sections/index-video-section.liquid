@@ -1,0 +1,50 @@
+<section data-section-id="{{ section.id }}">
+  <div class="container-fluid p-0 m-0">
+    <div class="row no-gutters">
+      <div class="col-12">
+        <video id="video-section-player" class="video-js vjs-default-skin vjs-big-play-centered vjs-fluid vjs-16-9"
+               controls
+               loop
+               preload="none"
+               poster="{{ section.settings.poster_image | img_url: '1280x720'}}"
+               data-setup='{
+                 "techOrder": ["youtube"],
+                 "sources": [
+                    { "type": "video/youtube", "src": "https://www.youtube.com/watch?v={{ section.settings.video_id }}"}
+                  ]
+               }'>
+        </video>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Video Section",
+    "settings": [
+      {
+        "type": "text",
+        "id": "video_id",
+        "label": "YouTube Video Id"
+      },
+      {
+        "type": "image_picker",
+        "id": "poster_image",
+        "label": "Video Poster Image"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Video Section",
+        "category": "Content"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

@@ -1,0 +1,195 @@
+{% assign search_type = section.settings.search_type %}
+
+<div v-cloak data-search-layer data-search-type="{{ search_type }}" data-section-id="{{ section.id }}">
+
+  {% if search_type == 'full_screen' %}
+    <div class="search-full-screen d-flex flex-column justify-content-center align-items-center text-center" :class="{'opened': isSearchLayerOpen}">
+      <a href="#" class="btn btn-link btn-close" @click.prevent="_toggleSearch" rel="nofollow" aria-label="Close">
+        <i class="icon ion-md-close"></i>
+      </a>
+
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <form id="searchForm" action="/search" method="get" role="search">
+              <input id="searchInput" class="form-control" name="q" type="search" aria-label="{{ 'general.search.placeholder' | t }}" placeholder="{{ 'general.search.placeholder' | t }}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+              <p class="text-right mt-2 text-muted font-italic d-none d-md-block">{{ 'general.search.info' | t }}</p>
+            </form>
+          </div>
+        </div>
+
+        <div class="row search-related mt-5">
+
+          {% for block in section.blocks %}
+
+            {% if block.settings.enable_suggestion_box %}
+              <div class="col-md-4 search-suggestion mb-3" {{ block.shopify_attributes }}>
+                <h4>{{ block.settings.suggestion_box_title }}</h4>
+                <div>{{ block.settings.suggestion_text }}</div>
+              </div>
+            {% endif %}
+
+            {% if block.settings.enable_collection_tags_box %}
+              <div class="col-md-4 search-suggestion mb-3" {{ block.shopify_attributes }}>
+                <h4>{{ block.settings.collection_tags_box_title }}</h4>
+                {% assign selected_collection = block.settings.collection_selection %}
+                {% for tag in collections[selected_collection].all_tags limit:6 %}
+                  <a href='/collections/{{ selected_collection }}/{{ tag }}'>#{{ tag }}</a>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {% if block.settings.enable_blog_tags_box %}
+              <div class="col-md-4 search-suggestion mb-3" {{ block.shopify_attributes }}>
+                <h4>{{ block.settings.blog_tags_box_title }}</h4>
+                {% assign selected_blog = block.settings.blog_selection %}
+                {% for tag in blogs[selected_blog].all_tags limit:6 %}
+                  <a href='/blogs/{{ selected_blog }}/tagged/{{ tag }}'>#{{ tag }}</a>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+  {% else %}
+
+    <div class="search-reveal py-3" :class="{'opened shadow': isSearchLayerOpen}">
+      <div class="{% if section.settings.fluid_header %}container-fluid{% else %}container{% endif %}">
+        <div class="row">
+          <div class="col d-flex align-items-center justify-content-between">
+            <form id="searchForm" action="/search" method="get" role="search">
+              <input id="searchInput" class="form-control" name="q" type="search" placeholder="{{ 'general.search.placeholder' | t }}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+              <p class="small text-left text-muted font-italic ml-2 mb-0">{{ 'general.search.info' | t }}</p>
+            </form>
+            <a href="#" class="btn btn-link btn-close p-0" @click.prevent="_toggleSearch" rel="nofollow" aria-label="Close">
+              <i class="icon ion-md-close"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  {% endif %}
+
+</div>
+
+
+{% schema %}
+  {
+    "name": "Search Layer",
+    "max_blocks": 3,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "checkbox",
+        "id": "fluid_header",
+        "label": "Full Width?",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "search_type",
+        "label": "Select Search Type",
+        "options": [{
+            "value": "reveal",
+            "label": "Reveal on Header"
+          },
+          {
+            "value": "full_screen",
+            "label": "Full Screen Layer"
+          }
+        ],
+        "default": "reveal"
+      },
+      {
+        "type": "header",
+        "content": "Full Screen Layer Settings"
+      },
+      {
+        "type": "paragraph",
+        "content": "The following settings are applied only if search type is set to 'Full Screen Layer'"
+      },
+      {
+        "type": "paragraph",
+        "content": "Use the section below to add suggestion blocks in order to enrich the search layer."
+      }
+    ],
+    "blocks": [
+      {
+        "type": "search-suggestion",
+        "name": "Suggestion Block",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "enable_suggestion_box",
+            "label": "Enabled?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "suggestion_box_title",
+            "label": "Title",
+            "default": "May We Suggest?"
+          },
+          {
+          "type": "richtext",
+          "id": "suggestion_text",
+          "label": "Suggestion Custom Text or Links"
+          }
+        ]
+      },
+      {
+        "type": "collection-tags",
+        "name": "Collection Tags",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "enable_collection_tags_box",
+            "label": "Enabled?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "collection_tags_box_title",
+            "label": "Title",
+            "default": "Is It This?"
+          },
+          {
+            "type": "collection",
+            "id": "collection_selection",
+            "label": "Select Collection"
+          }
+        ]
+      },
+      {
+        "type": "blog-tags",
+        "name": "Blog Tags",
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "enable_blog_tags_box",
+            "label": "Enabled?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "blog_tags_box_title",
+            "label": "Title",
+            "default": "From the Blog"
+          },
+          {
+            "type": "blog",
+            "id": "blog_selection",
+            "label": "Select Blog"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

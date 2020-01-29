@@ -1,0 +1,140 @@
+<section data-section-id="{{ section.id }}" class="section-instagram-feed {% if section.settings.section_padding %}section-content{% endif %}" style="background-color: {{ section.settings.section_bgcolor }}; color: {{ section.settings.section_color }}">
+  <div class="{% if section.settings.fluid_layout %}container-fluid{% else %}container{% endif %}">
+
+    {% if section.settings.instagram_heading_txt != '' %}
+    <div class="row">
+      <div class="col text-center">
+        <h2 class="section-title mb-4">{{ section.settings.instagram_heading_txt }}</h2>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if section.settings.instagram_token != '' %}
+      <vue-instagram token="{{ section.settings.instagram_token }}" :count="{{ section.settings.instagram_view  }}" class="row justify-content-center {% if section.settings.section_no_gutters %}no-gutters{% endif %}">
+        <template slot="feeds" slot-scope="props">
+            <div class="instagram-item d-flex align-items-stretch justify-content-around col-4 col-md-3">
+              <a :href="props.feed.link" target="_blank" rel="noopener noreferrer" :title="props.feed.user.full_name" rel="noreferrer">
+                <div class="overlay d-flex align-items-center justify-content-center">
+                  <i class="icon ion-logo-instagram"></i>
+                </div>
+                <img :src="props.feed.images.standard_resolution.url"/>
+              </a>
+            </div>
+        </template>
+        <template slot="error" slot-scope="props" v-if="props.error">
+          <div class="alert alert-warning" role="alert"> ${ props.error.error_message } </div>
+        </template>
+      </vue-instagram>
+    {% else %}
+      <div class="row">
+        {% comment %} dummy content {% endcomment %}
+        {% for i in (1..6) %}
+          {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+            <div class="col-4 col-lg-2"><a>{{'collection-' | append: current | placeholder_svg_tag: 'placeholder-svg'}}</a></div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if section.settings.show_profile_link %}
+    <div class="row {% unless section.settings.section_padding %}pb-4{% endunless %}">
+      <div class="col text-center">
+        <p class="lead mt-4 {% if section.settings.section_padding %}mb-0{% else %}mb-4{% endif %}">Follow <a href="https://www.instagram.com/{{section.settings.instagram_username}}" target="_blank" rel="noopener noreferrer" style="color: {{ section.settings.section_color }}">@{{section.settings.instagram_username}}</a> on Instagram</p>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+
+
+
+{% schema %}
+  {
+    "name": "Instagram Feed",
+    "class": "index-instagram-feed",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "checkbox",
+        "id": "fluid_layout",
+        "label": "Full Width Layout?",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "section_padding",
+        "label": "Section Padding?",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "section_no_gutters",
+        "label": "No Gutters?",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_profile_link",
+        "label": "Show Profile Link?",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "instagram_view",
+        "label": "Total Items to Show",
+        "min": 0,
+        "max": 48,
+        "step": 1,
+        "default": 12
+      },
+      {
+        "type": "header",
+        "content": "Content"
+      },
+      {
+        "type": "text",
+        "id": "instagram_heading_txt",
+        "label": "Heading Text"
+      },
+      {
+        "type": "header",
+        "content": "Styling"
+      },
+      {
+        "type": "color",
+        "id": "section_bgcolor",
+        "label": "Background Color"
+      },
+      {
+        "type": "color",
+        "id": "section_color",
+        "label": "Text Color"
+      },
+      {
+        "type": "header",
+        "content": "Account Info"
+      },
+      {
+        "type": "text",
+        "id": "instagram_username",
+        "label": "Username",
+        "info": "Instagram username without the '@' symbol."
+      },
+      {
+        "type": "text",
+        "id": "instagram_token",
+        "label": "Access Token [( ? )](\/\/goo.gl\/OypFlG)"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Instagram Feed",
+        "category": "Content"
+      }
+    ]
+  }
+{% endschema %}

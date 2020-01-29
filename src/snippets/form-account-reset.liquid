@@ -1,0 +1,30 @@
+<div id="customerRecoverForm" data-recover-form class="collapse">
+  {% form 'recover_customer_password' %}
+
+  {% comment %}
+  <h3 class="text-center">{{ 'customer.recover_password.title' | t }}</h3>
+  {% endcomment %}
+
+  <p class="text-center">{{ 'customer.recover_password.subtext' | t }}</p>
+
+  {% if form.errors %}
+  <div class="alert alert-warning">
+    {{ form.errors | default_errors }}
+  </div>
+  {% endif %}
+
+  {% if form.posted_successfully? %} {% assign resetPassword = true %} {% endif %}
+
+  <div class="form-group input-group">
+    <div class="input-group-prepend">
+      <label class="input-group-text" for="resetCustomerEmail"><i class="icon ion-md-mail"></i></label>
+    </div>
+    <input type="email" value="" id="resetCustomerEmail" name="email" aria-label="email" class="form-control" placeholder="{{ 'customer.recover_password.email' | t }}" required>
+  </div>
+
+  <input type="submit" class="btn btn-primary btn-block" value="{{ 'customer.recover_password.submit' | t }}">
+
+  <p class="text-right mt-2 font-italic"><a href="#" data-cancel-recover-link rel="nofollow" aria-label="Cancel" title="Cancel">Cancel</a></p>
+
+  {% endform %}
+</div>

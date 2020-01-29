@@ -1,0 +1,6 @@
+<template v-if="storeUtilities.cartUpsells.settings.displayStyle === 'carousel'">
+  {% include 'app-utilities-cart-upsell-carousel' with target %}
+</template>
+<template v-else>
+  {% include 'app-utilities-cart-upsell-grid' with target %}
+</template>

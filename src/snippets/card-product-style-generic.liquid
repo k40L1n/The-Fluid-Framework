@@ -1,0 +1,83 @@
+{% assign current_variant = product.selected_or_first_available_variant %}
+{% assign product_cart_limit = null %}
+{% for tag in product.tags %}
+    {% if tag contains 'cart-limit-' %}
+        {% assign product_cart_limit = tag | replace: 'cart-limit-', '' %}
+    {% endif %}
+{% endfor %}
+
+<div class="card card-product card-product-style-1 text-left" v-match-heights="{el: ['.card-title']}">
+    <span class="badges">
+        {% if current_variant.compare_at_price > current_variant.price %}
+            <span class="badge badge-right badge-warning">
+                {{ 'products.product.on_sale' | t | escape }}
+            </span>
+        {% endif %}
+    </span>
+    <div class="card-img text-center {% if product.featured_image.size == 0 %}bg-gray-300{% endif %}">
+        {% capture current %}
+            {% cycle 1, 2, 3, 4, 5, 6 %}
+        {% endcapture %}
+        {% if product.featured_image.size > 0 %}
+            <a href="{{ product.url | within: collection }}">
+                <img data-sizes="auto" src="{{ product.featured_image | img_url: 'pico' }}" data-srcset="
+                                  {{ product.featured_image | img_url: 'large' }} 576w,
+                                  {{ product.featured_image | img_url: '400x' }} 768w,
+                                  {{ product.featured_image | img_url: '400x' }} 992w,
+                                  {{ product.featured_image | img_url: '400x' }} 1200w
+                                  " class="lazyload" alt="{{ product.featured_image.alt | escape }}"/>
+            </a>
+        {% else %}
+            {{ 'product-' | append: current | placeholder_svg_tag: 'img-fluid' }}
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <div class="row">   
+            <div class="col-md-8">
+                <h6 class="card-title m-0">
+                    <a href="{{ product.url | within: collection }}">{{ product.title }}</a>
+                </h6>
+            </div>
+            <div class="col-md-4 text-left text-md-right">
+                {% if current_variant.compare_at_price > product.price %}
+                    <s class="price small m-0 p-0">{{ product.compare_at_price | money }}</s>
+                {% endif %}
+                <span class="price m-0 p-0">{{ product.price | money }}</span>
+            </div>
+        </div>
+        <div class="row no-gutters mt-3">
+            <div class="col-12">
+                <form data-product-form data-product-id="{{ product.id }}" action="/cart/add" method="post" enctype="multipart/form-data" class="d-flex justify-content-between">
+
+                    {% for option in product.options_with_values %}
+                        <input type="hidden" name="product_options_{{ current_variant.id }}[]" value='{{ option | json }}'/>
+                    {% endfor %}
+
+                    <button class="btn btn-primary btn-sm flex-grow-1" type="submit" name="add" aria-label="{{ 'products.product.add_to_cart' | t | escape }}" {% unless product.available %} disabled {% endunless %} data-cart-limit="{{ product_cart_limit }}" @click.prevent="_addToCart({{ current_variant.id }}, $event)">
+                        <i class="icon ion-md-cart"></i>
+                        {{ 'products.product.add_to_cart' | t }}
+                    </button>
+
+                    {% if settings.enable_quickshop %}
+                        <a href="#" rel="nofollow" @click.prevent="_viewQuickShop('{{ product.handle }}', undefined, $event)" class="btn btn-outline-primary btn-sm ml-1 d-flex align-items-center" title="{{ 'products.product.quickshop' | t | escape }}" aria-label="{{ 'products.product.quickshop' | t | escape }}" data-toggle="tooltip" data-trigger="hover" data-placement="top">
+                            <i class="icon ion-md-eye"></i>
+                        </a>
+                    {% endif %}
+
+                    {% if settings.enable_wishlist %}
+                        <template v-if="!_checkWishlist({{ current_variant.id }})">
+                            <a href="#" rel="nofollow" @click.prevent="_addVariantToWishlist('{{ product.handle }}', {{ current_variant.id }}, $event)" class="btn btn-outline-primary btn-sm ml-1 d-flex align-items-center" title="{{ 'general.wishlist.add_to_wishlist' | t }}" aria-label="{{ 'general.wishlist.add_to_wishlist' | t }}" data-toggle="tooltip" data-trigger="hover" data-placement="top">
+                                <i class="icon ion-md-star-outline"></i>
+                            </a>
+                        </template>
+                        <template v-else>
+                            <a class="btn btn-outline-primary btn-sm ml-1 d-flex align-items-center" rel="nofollow" title="{{ 'general.wishlist.added_to_wishlist' | t }}" rel="nofollow" aria-label="{{ 'general.wishlist.added_to_wishlist' | t }}" data-toggle="modal" data-target="[data-modal-wishlist]" tabindex="-1">
+                                <i class="icon ion-md-star"></i>
+                            </a>
+                        </template>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,21 @@
+<script>
+  // IE11 => recognize the remove() method
+  Element.prototype.remove = function() {
+    this.parentElement.removeChild(this);
+  }
+  NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
+    for(var i = this.length - 1; i >= 0; i--) {
+      if(this[i] && this[i].parentElement) {
+        this[i].parentElement.removeChild(this[i]);
+      }
+    }
+  }
+
+  // IE11 => responsive images
+  function loadJS(u){var r = document.getElementsByTagName("script")[0], s = document.createElement("script");s.src = u;r.parentNode.insertBefore(s, r);}
+
+  if(!window.HTMLPictureElement){
+    document.createElement('picture');
+    loadJS("//cdn.jsdelivr.net/g/respimage(respimage.min.js+plugins/mutation/ri.mutation.min.js+plugins/intrinsic-dimension/ri.intrinsic.min.js+plugins/typesupport/ri.type.min.js)");
+  }
+</script>

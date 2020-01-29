@@ -1,0 +1,70 @@
+<div class="card card-product card-product-style-1 text-left" v-match-heights="{el: ['.card-title']}">
+  <span class="badges">
+    <span v-if="product.compare_at_price > product.price" class="badge badge-right badge-warning">{{ 'products.product.on_sale' | t | escape }}</span>
+  </span>
+  <div class="card-img text-center" :class="{'bg-gray-300': !product.featured_image}">
+    <a v-if="product.featured_image" :href="'/products/' + product.handle">
+      <img
+          :src="_getSizedImageUrl(product.featured_image, 'pico')"
+          :data-src="_getSizedImageUrl(product.featured_image, '400x')"
+          class="img-fluid lazyload"
+          :alt="product.title"/>
+    </a>
+    <span v-else>
+      {{ 'product-1' | placeholder_svg_tag: 'img-fluid' }}
+    </span>
+  </div>
+  <div class="card-body">
+    <div class="row no-gutters">
+      <div class="col-md-7">
+        <div class="card-title">
+          <h6 class="m-0"><a :href="'/products/' + product.handle" v-text="product.title"></a></h6>
+          <div data-item-reviews :data-product-id="product.id" class="d-block pt-1"></div>
+        </div>
+      </div>
+      <div class="col-md-5 text-left text-md-right">
+        <s v-if="product.compare_at_price > product.price" v-html="_formatMoney(product.compare_at_price)" class="price small m-0 p-0"></s>
+        <span v-html="_formatMoney(product.price)" class="price m-0 p-0"></span>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-12">
+        <form data-product-form :data-product-id="product.id" action="/cart/add" method="post" enctype="multipart/form-data" class="d-flex justify-content-between">
+
+          <template v-for="(option, index) in product.options_with_values" v-if="option.name != 'Title'">
+            <input type="hidden" :name="'product_options_'+ product.current_variant.id +'[]'" v-model="JSON.stringify(option)" />
+          </template>
+
+          <button class="btn btn-primary btn-sm flex-grow-1"
+            type="submit"
+            name="add"
+            aria-label="{{ 'products.product.add_to_cart' | t | escape }}"
+            :disabled="!product.available"
+            :data-cart-limit="product.cart_limit"
+            @click.prevent="_addToCart(product.variants[0].id, $event)">
+              <i class="icon ion-md-cart"></i> {{ 'products.product.add_to_cart' | t }}
+          </button>
+
+          {% if settings.enable_quickshop %}
+            <a href="#" @click.prevent="_viewQuickShop(product.handle, product.current_variant.options, $event)" class="btn btn-outline-primary btn-sm ml-1 d-flex align-items-center" title="{{ 'products.product.quickshop' | t | escape }}" rel="nofollow" aria-label="{{ 'products.product.quickshop' | t | escape }}" data-toggle="tooltip" data-trigger="hover" data-placement="top">
+              <i class="icon ion-md-eye"></i>
+          </a>
+          {% endif %}
+
+          {% if settings.enable_wishlist %}
+            <template v-if="!_checkWishlist(product.variants[0].id)" >
+              <a href="#" @click.prevent="_addVariantToWishlist(product.handle, product.variants[0].id, $event)" class="btn btn-outline-primary btn-sm ml-1 d-flex align-items-center" title="{{ 'general.wishlist.add_to_wishlist' | t }}" rel="nofollow" aria-label="{{ 'general.wishlist.add_to_wishlist' | t }}" data-toggle="tooltip" data-trigger="hover" data-placement="top">
+                <i class="icon ion-md-star-outline"></i>
+              </a>
+            </template>
+            <template v-else>
+              <a class="btn btn-outline-primary btn-sm ml-1 d-flex align-items-center" rel="nofollow" title="{{ 'general.wishlist.added_to_wishlist' | t }}" rel="nofollow" aria-label="{{ 'general.wishlist.added_to_wishlist' | t }}" data-toggle="modal" data-target="[data-modal-wishlist]" tabindex="-1">
+                <i class="icon ion-md-star"></i>
+              </a>
+            </template>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,106 @@
+<div class="collapse navbar-collapse">
+  <ul class="navbar-nav ml-auto mr-auto align-items-center">
+    {% assign main_nav_links = linklists[section.settings.main_linklist].links %}
+    {% assign half_links = main_nav_links.size | plus: 2 | divided_by: 2 | floor %}
+
+    {% for link in main_nav_links %}
+
+      {% if forloop.index == half_links %}
+      <li class="nav-item mx-4">
+        <a v-cloak href="/" class="navbar-brand logo-link mx-0" name="{{ shop.name | escape }}" title="{{ shop.name | escape }}" aria-label="{{ shop.name | escape }}">
+          {% if logo contains 'no-image' %}
+            <span class="h5 text-primary"><i class="ion-pound text-warning"></i> {{ shop.name | escape }}</span>
+          {% else %}
+            <img v-if="isLogoLight" src="{{ logo_light }}" alt="{{ shop.name | escape }}" class="img-fluid"  style="width: {{ logo_width }}px">
+            <img v-else src="{{ logo }}" alt="{{ shop.name | escape }}" class="img-fluid"  style="width: {{ logo_width }}px">
+          {% endif %}
+        </a>
+      </li>
+      {% endif %}
+
+      {% assign child_list_handle = link.title | handleize %}
+      {% if menus[child_list_handle].links != blank %}
+        <li class="nav-item dropdown {% if link.active %} active{% endif %}">
+          <a data-href="{{ link.url }}" class="nav-link d-flex align-items-center justify-content-between {{ link.handle }}" href="#" role="button" data-toggle="dropdown" aria-expanded="false" name="{{ link.title }}" title="{{ link.title }}" aria-label="{{ link.title }}">
+            <span>{{ link.title }}</span> <i class="icon ion-md-arrow-dropdown ml-1"></i>
+          </a>
+          <ul class="dropdown-menu">
+            {% for childlink in menus[child_list_handle].links %}
+              <li>
+                <a class="dropdown-item {% if childlink.active %} active{% endif %} {{ childlink.handle }}" href="{{ childlink.url }}" name="{{ childlink.title }}" title="{{ childlink.title }}" aria-label="{{ childlink.title }}">
+                  {{ childlink.title }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% else %}
+        <li class="nav-item {% if link.active %} active{% endif %}">
+          <a class="nav-link {{ link.handle }}" href="{{ link.url }}" name="{{ link.title }}" title="{{ link.title }}" aria-label="{{ link.title }}">
+            {{ link.title }}
+          </a>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+
+  <ul class="navbar-nav navbar-icon-links align-items-center">
+
+    {% if shop.customer_accounts_enabled %}
+    <li class="nav-item">
+      <a class="nav-link" href="/account" name="account" title="account" rel="nofollow" aria-label="Account">
+        <i class="icon ion-md-contact"></i>
+      </a>
+    </li>
+    {% endif %}
+
+
+    <li class="nav-item">
+      <a class="nav-link" href="#" @click.prevent="_toggleSearch" name="search" title="search" rel="nofollow" aria-label="Search">
+        <i class="icon ion-md-search"></i>
+      </a>
+    </li>
+    <li class="nav-item">
+      {% include 'header-cart-link' %}
+    </li>
+
+
+    {% if settings.enable_currency_selector %}
+      <li class="nav-item text-right">
+      {% form 'currency', id: 'currencyForm', data-currency-selector: "" %}
+        <select name="currency" aria-label="currency-selector" class="form-control form-control-sm" @change="_changeCurrency()">
+          {% for currency in shop.enabled_currencies %}
+            {% if currency == cart.currency %}
+              <option selected="true">{{currency.iso_code}}</option>
+              {% else %}
+              <option>{{currency.iso_code}}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      {% endform %}
+      </li>
+    {% endif %}
+
+  </ul>
+</div>
+
+<ul class="nav nav-fill w-100 d-flex align-items-center d-lg-none">
+  <li class="nav-item text-left">
+    <a class="nav-link" href="#" @click.prevent="_toggleMobileNavDrawer" name="menu" title="menu" rel="nofollow" aria-label="Menu">
+      <i class="icon ion-md-menu"></i>
+    </a>
+  </li>
+  <li class="nav-item text-center">
+    <a v-cloak href="/" class="nav-link" name="{{ shop.name | escape }}" title="{{ shop.name | escape }}" aria-label="{{ shop.name | escape }}">
+    {% if logo contains 'no-image' %}
+      <span class="h5 text-primary"><i class="icon ion-pound text-primary"></i> {{ shop.name | escape }}</span>
+    {% else %}
+      <img v-if="isLogoLight" src="{{ logo_light }}" alt="{{ shop.name | escape }}" class="img-fluid"  style="width: {{ logo_width }}px">
+      <img v-else src="{{ logo }}" alt="{{ shop.name | escape }}" class="img-fluid"  style="width: {{ logo_width }}px">
+    {% endif %}
+    </a>
+  </li>
+  <li class="nav-item text-right">
+    {% include 'header-cart-link' %}
+  </li>
+</ul>

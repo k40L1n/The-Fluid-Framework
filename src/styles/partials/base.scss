@@ -1,0 +1,613 @@
+html {
+  padding-bottom: 0 !important; // removes padding from 3rd party apps
+
+  // better font-rendering
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// hide Shopify's reCaptcha floating logo
+// at the bottom of the page
+.grecaptcha-badge{
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------------- */
+
+/*  Utilities - Custom Extra Helper Classes
+/*--------------------------------------------------------------------------------- */
+
+[disabled] {
+  cursor: default !important;
+}
+
+.img-fluid {
+  width: 100%;
+}
+
+.table-borderless{
+  th, td{
+    border: 0 !important;
+  }
+}
+
+.bg-img {
+  overflow: hidden;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+
+  &.bg-contain{
+    background-size: contain !important;
+  }
+}
+
+.mt-gutter {
+  margin-top: $grid-gutter-width;
+}
+
+.mb-gutter {
+  margin-bottom: $grid-gutter-width;
+}
+
+.ml-gutter {
+  margin-left: $grid-gutter-width;
+}
+
+.mr-gutter {
+  margin-right: $grid-gutter-width;
+}
+
+.rte {
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  table{
+    width: 100% !important;
+  }
+}
+
+.filter-blur {
+  -webkit-filter: blur(25px);
+  -moz-filter: blur(25px);
+  -ms-filter: blur(25px);
+  -o-filter: blur(25px);
+  filter: blur(25px);
+}
+
+/* styles for lazy load images */
+img[data-sizes="auto"] {
+  display: block;
+  width: 100%;
+}
+
+.lazyload {
+  -webkit-filter: blur(20px);
+  filter: blur(20px);
+  transition: $transition-base;
+
+  &.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+}
+
+.lazyloading {
+  -webkit-filter: blur(20px);
+  filter: blur(20px);
+  transition: $transition-base;
+}
+
+.lazyloaded {
+  -webkit-filter: blur(0);
+  filter: blur(0);
+  transition: $transition-base;
+}
+
+/* --------------------------------------------------------------------------------- */
+
+/*  Vue.js related
+/*--------------------------------------------------------------------------------- */
+
+ /* Vue.js helper directive => hides elements */
+[v-cloak] {
+  display: none !important;
+}
+
+/* Transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: $transition-fade;
+}
+
+/* .fade-leave-active below version 2.1.8 */
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.collection-tween-enter-active,
+.collection-tween-leave-active {
+  transition: $transition-fade;
+
+  .card-product {
+    transition: all 0.3s ease-out;
+  }
+}
+
+.collection-tween-enter,
+.collection-tween-leave-to {
+  opacity: 0;
+
+  .card-product {
+    transform: translate3d(0, 5px, 0);
+  }
+}
+
+/* --------------------------------------------------------------------------------- */
+
+/*  Layout related stuff & Elements
+/*--------------------------------------------------------------------------------- */
+#app.loading * {
+  cursor: wait !important;
+}
+
+.overlay {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: $transition-fade;
+  background: transparentize($gray-900, 0.4);
+
+  &.site-overlay {
+    position: fixed;
+    z-index: $zindex-modal-backdrop;
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  &.show {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+// helper class to be used inside a .row class
+// removes the Bootstrap's default left right padding in the container
+// it is useful for container-fluid to make it 100% real screen width
+
+.row-full-width [class*="col-"] {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.no-gutters .carousel-cell {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.shopify-challenge__container {
+  padding: $spacer*6 0;
+}
+
+.shopify-challenge__button {
+  background: $primary;
+  color: #ffffff;
+}
+
+
+// Shopify additional checkout buttons
+.additional-checkout-buttons{
+  .additional-checkout-button{
+    width: 100% !important;
+
+    +.additional-checkout-button {
+      margin: 0.8rem 0;
+    }
+
+  }
+}
+
+/* Quantity - Numeric Stepper => Turn Off Number Input Spinners */
+.quantity-wrapper {
+  width: 94px;
+  min-width: 94px;
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+  }
+
+  input.quantity:focus,
+  input.quantity:hover {
+    box-shadow: none !important;
+  }
+}
+
+/* input checkbox or radio as Color swatch */
+.color-swatch {
+  label {
+    line-height: 0;
+    border: $border-width solid $gray-300;
+    border-radius: $border-radius;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
+  input {
+    width: 29px;
+    height: 29px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+    border-style: none;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 70%;
+    transition: $transition-base;
+    opacity: 0;
+
+    &:checked {
+      background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABrSURBVEhL7Y9hCsAgCEY7xeiOHXi30fmBwpCSrflvPghR+17UiuIxzNyJaGibi8pPqZz+iJOjdl1956dyCYwokCFfBjHbloNIEO1eMRPNZnp9Dy9MlRsQmRikyg0Ibz/IlRsiP3C0LQpPaxc2+CJ4/uaJEgAAAABJRU5ErkJggg==");
+      opacity: 1;
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+/* input checkbox or radio as Size swatch */
+.size-swatch {
+  label {
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
+  input {
+    min-width: 31px;
+    height: 31px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+    text-align: center;
+    border: $border-width solid $gray-300;
+    border-radius: $border-radius;
+    transition: $transition-base;
+
+    &::after {
+      content: attr(value);
+      font-size: 0.7rem;
+      line-height: 30px;
+      letter-spacing: 1px;
+      padding: 0 0.4rem;
+    }
+
+    &:hover {
+      border: $border-width solid $gray-500;
+    }
+
+    &:checked {
+      border: $border-width solid $primary;
+      background-color: #ffffff;
+    }
+  }
+}
+
+/* Cart Dropdown */
+.cart-dropdown .popover {
+  min-width: 350px;
+  max-width: 350px;
+  margin-top: 0;
+
+  .popover-header {
+    text-transform: uppercase;
+    font-size: 0.9rem;
+  }
+
+  .popover-body {
+    .inner {
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      max-height: 270px;
+      margin: (-0.6em) (-$popover-body-padding-x) $popover-body-padding-y;
+      padding: 0 $popover-body-padding-y;
+
+      .cart-item {
+        position: relative;
+        display: block;
+        padding: 0.8em 1.2em;
+        border-bottom: 1px solid $gray-200;
+        transition: $transition-fade;
+
+        &.updating{
+          opacity: 0.5;
+        }
+      }
+
+      .badge {
+        position: absolute;
+        top: 2rem;
+        left: 1.3rem;
+      }
+    }
+
+    .item-price {
+      font-size: 0.8rem;
+    }
+
+    .btn-remove {
+      font-size: 1.4rem;
+    }
+  }
+}
+
+/* Cart Drawer */
+.cart-drawer {
+  position: fixed;
+  z-index: $zindex-modal;
+  top: 0;
+  right: 0;
+  left: auto;
+  display: block;
+  overflow: hidden;
+  width: 440px;
+  height: 100%;
+
+  /* easeOutExpo */
+  transition: all 650ms cubic-bezier(0.190, 1.000, 0.220, 1.000);
+  transition-timing-function: cubic-bezier(0.190, 1.000, 0.220, 1.000);
+  transform: translate3d(100%, 0, 0);
+  background: #ffffff;
+
+  &.opened {
+    transform: translate3d(0, 0, 0);
+
+    .cart-item{
+      @for $i from 1 through 10 {
+        &:nth-child(#{$i}) {
+          -webkit-animation: slideUp 650ms #{$i*0.08}s cubic-bezier(0.190, 1.000, 0.220, 1.000) forwards;
+          -moz-animation: slideUp 650ms #{$i*0.08}s cubic-bezier(0.190, 1.000, 0.220, 1.000) forwards;
+         animation: slideUp 650ms #{$i*0.08}s cubic-bezier(0.190, 1.000, 0.220, 1.000) forwards;
+         animation-timing-function: cubic-bezier(0.190, 1.000, 0.220, 1.000);
+        }
+      }
+    }
+  }
+
+  @include media-breakpoint-down(sm) {
+    width: 100%;
+  }
+
+  .drawer-header {
+    .btn-close {
+      line-height: 0;
+      font-size: 1.8rem;
+    }
+  }
+
+  .drawer-body {
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    .icon i {
+      color: $gray-200;
+      font-size: 6rem;
+    }
+  }
+
+  .cart-item {
+    position: relative;
+    opacity: 0;
+    transform: translateY(10%);
+    border-bottom: 1px solid $gray-100;
+
+    &.updating{
+      opacity: 0.5 !important;
+      transform: translateY(0) !important;
+      animation: none !important;
+      transition: $transition-fade !important;
+    }
+
+    .badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+    }
+
+    .item-image {
+      width: 80px;
+      min-width: 80px;
+    }
+
+    .item-price {
+      font-size: 1rem;
+    }
+
+    .btn-remove {
+      font-size: 1.4rem;
+    }
+  }
+}
+
+@-webkit-keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@-moz-keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Product Mobile Toolbar (product form - options) */
+.product-toolbar-mobile{
+  /* easeOutExpo */
+  transition: all 650ms cubic-bezier(0.190, 1.000, 0.220, 1.000);
+  transition-timing-function: cubic-bezier(0.190, 1.000, 0.220, 1.000);
+  transform: translateY(100%);
+  visibility: hidden;
+
+  form{
+    transition: $transition-base;
+    opacity: 0;
+  }
+
+  .toolbar-mobile{
+    min-height: 50px;
+  }
+
+  .btn-close {
+    line-height: 0;
+    font-size: 1.8rem;
+  }
+
+  &.semi-opened{
+    visibility: visible;
+    transform: translateY(62%);
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.08);
+  }
+
+  &.fully-opened{
+    visibility: visible;
+    transform: translateY(0);
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.08);
+
+    form{
+      opacity: 1;
+    }
+  }
+}
+
+/* Quick Shop */
+.modal-quickshop{
+  .modal-body{
+    position: relative;
+    opacity: 0;
+    transform: translateY(3%);
+    transition: all 650ms cubic-bezier(0.190, 1.000, 0.220, 1.000);
+    transition-timing-function: cubic-bezier(0.190, 1.000, 0.220, 1.000);
+
+    &.opened{
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .carousel{
+      width: 100%;
+      height: 100%;
+
+      .carousel-cell{
+        width: 100%;
+      }
+
+      .img-fluid{
+        transition: $transition-fade;
+        opacity: 0;
+
+        &.flickity-lazyloaded,
+        &.flickity-lazyerror {
+          opacity: 1;
+        }
+      }
+
+      .flickity-prev-next-button {
+        width: 40px;
+        height: 40px;
+        border-radius: $border-radius;
+        background: rgba(255,255,255,0.8);
+        transition: $transition-base;
+
+        .arrow {
+          fill: $primary;
+        }
+
+        &:hover {
+          background: rgba(255,255,255,1);
+        }
+
+        &.previous {
+          left: 0.5rem;
+        }
+
+        &.next {
+          right: 0.5rem;
+        }
+      }
+
+      .flickity-page-dots {
+        bottom: 1.4rem;
+      }
+    }
+  }
+}
+
+/* extra custom ribbon badge */
+.ribbon {
+  width: 70px;
+  height: 50px;
+  overflow: hidden;
+
+  .ribbon-left {
+    position: absolute;
+    top: -25px;
+    left: -35px;
+    width: 100%;
+    height: 100%;
+    background-color: $warning;
+    box-shadow: $box-shadow-sm; 
+    transform: rotate(-45deg);
+
+    span {
+      position: absolute;
+      top: 54%;
+      left: 40%;
+      color: #ffffff;
+      font-size: 1.1rem;
+      transform: rotate(45deg);
+    }
+  }
+}

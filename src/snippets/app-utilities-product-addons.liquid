@@ -1,0 +1,6 @@
+<template v-if="storeUtilities.productAddons.settings.displayStyle === 'carousel'">
+  {% include 'app-utilities-product-addons-carousel' %}
+</template>
+<template v-else>
+  {% include 'app-utilities-product-addons-grid' %}
+</template>

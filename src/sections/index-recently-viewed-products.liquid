@@ -1,0 +1,197 @@
+{% assign total_items = section.settings.recently_viewed_products_view %}
+
+<section v-if="recentlyViewed.length > 0" data-section-id="{{ section.id }}" class="section-recently-viewed-products {% if section.settings.recently_viewed_products_section_padding %}section-content{% endif %}" style="background-color: {{ section.settings.recently_viewed_products_section_bg_color }}; color: {{ section.settings.recently_viewed_products_section_txt_color }}">
+  <div class="{% if section.settings.recently_viewed_products_fluid_layout %}container-fluid{%else%}container{% endif %}">
+    <div class="row {% if section.settings.recently_viewed_products_section_no_gutters %}no-gutters{% endif %}">
+      <div class="col text-center">
+
+        {% if section.settings.recently_viewed_products_heading_txt != '' %}
+          <h2 class="section-title mb-4">{{ section.settings.recently_viewed_products_heading_txt }}</h2>
+        {% endif %}
+
+        <div v-if="recentlyViewed.length > 0" class="carousel" role="tree"
+          data-flickity-recently-viewed='{
+            "adaptiveHeight": true,
+            "contain": true,
+            "wrapAround": false,
+            "freeScroll": false,
+            "groupCells": "100%",
+            "accessibility": true,
+            "setGallerySize": true,
+            "dragThreshold": 20,
+            "lazyLoad": true,
+            "prevNextButtons": {{section.settings.recently_viewed_products_nav_arrows}},
+            "pageDots": {{section.settings.recently_viewed_products_nav_dots}},
+            {% if section.settings.recently_viewed_products_auto_play > 0 %}"autoPlay": {{section.settings.recently_viewed_products_auto_play}}000,{% endif %}
+            "arrowShape": {"x0": 10, "x1": 60, "y1": 50, "x2": 60, "y2": 45, "x3": 15}
+           }'>
+
+           <div v-for="product in recentlyViewed.slice(0, {{ total_items }})" class="carousel-cell d-flex equal-height
+           {% if section.settings.recently_viewed_products_fluid_layout %} col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 {% else %} col-12 col-sm-6 col-lg-4 col-xl-3 {% endif %}" role="treeitem">
+
+            <div class="card card-product text-left" v-match-heights="{el: ['.card-title']}">
+             <span class="badges">
+               <span v-if="product.compare_at_price > product.price" class="badge badge-warning">{{ 'products.product.on_sale' | t | escape }}</span>
+             </span>
+             <div class="card-img text-center" :class="{'bg-gray-300': !product.featured_image}">
+               <a v-if="product.featured_image" :href="_getvariantUrl(product.product_handle, product.id)">
+                 <img
+                     :data-flickity-lazyload-src="_getSizedImageUrl(product.featured_image, 'pico')"
+                     :data-flickity-lazyload-srcset="_getSizedImageUrl(product.featured_image, '600x')"
+                     :alt="product.name" class="img-fluid"/>
+               </a>
+               <span v-else>
+                 {{ 'product-1' | placeholder_svg_tag: 'img-fluid' }}
+               </span>
+             </div>
+             <div class="card-body">
+               <div class="row">
+                 <div class="col-md-8">
+                   <h6 class="card-title m-0">
+                     <a :href="_getvariantUrl(product.product_handle, product.id)" v-text="product.name"></a>
+                   </h6>
+                 </div>
+                 <div class="col-md-4 text-left text-md-right">
+                   <s v-if="product.compare_at_price > product.price" v-html="_formatMoney(product.compare_at_price)" class="price small m-0 p-0"></s>
+                   <span v-html="_formatMoney(product.price)" class="price m-0 p-0"></span>
+                 </div>
+              </div>
+              <div class="row no-gutters mt-3">
+                <div class="col-12 d-flex justify-content-between">
+
+                  <template v-for="(option, index) in product.options_with_values" v-if="option.name != 'Title'" class="selector-wrapper">
+                    <input type="hidden" :name="'product_options_'+ product.id +'[]'" v-model="JSON.stringify(option)" />
+                  </template>
+
+                  <a href="#" @click.prevent="_addToCart(product.id, $event)" class="btn btn-primary btn-sm flex-grow-1" :class="{'disabled': !product.available}" title="{{ 'products.product.add_to_cart' | t | escape }}" rel="nofollow" aria-label="{{ 'products.product.add_to_cart' | t | escape }}">
+                   <i class="icon ion-md-cart"></i> {{ 'products.product.add_to_cart' | t }}
+                  </a>
+
+                  {% if settings.enable_quickshop %}
+                   <a href="#" @click.prevent="_viewQuickShop(product.product_handle, product.options, $event)" class="btn btn-outline-primary btn-sm ml-1 d-flex align-items-center" title="{{ 'products.product.quickshop' | t | escape }}" rel="nofollow" aria-label="{{ 'products.product.quickshop' | t | escape }}" data-toggle="tooltip" data-trigger="hover" data-placement="top">
+                     <i class="icon ion-md-eye"></i>
+                  </a>
+                  {% endif %}
+
+                  {% if settings.enable_wishlist %}
+                   <template v-if="!_checkWishlist(product.id)" >
+                     <a href="#" @click.prevent="_addVariantToWishlist(product.product_handle, product.id, $event)" class="btn btn-outline-primary btn-sm ml-1 d-flex align-items-center" title="{{ 'general.wishlist.add_to_wishlist' | t }}" rel="nofollow" aria-label="{{ 'general.wishlist.add_to_wishlist' | t }}" data-toggle="tooltip" data-trigger="hover" data-placement="top">
+                       <i class="icon ion-md-star-outline"></i>
+                     </a>
+                   </template>
+                   <template v-else>
+                     <a class="btn btn-outline-primary btn-sm ml-1 d-flex align-items-center" rel="nofollow" title="{{ 'general.wishlist.added_to_wishlist' | t }}" rel="nofollow" aria-label="{{ 'general.wishlist.added_to_wishlist' | t }}" data-toggle="modal" data-target="[data-modal-wishlist]" tabindex="-1">
+                       <i class="icon ion-md-star"></i>
+                     </a>
+                   </template>
+                  {% endif %}
+                </div>
+              </div>
+             </div>
+           </div>
+         </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{% schema %}
+  {
+    "name": "Recently Viewed Products",
+    "class": "section-recently-viewed-products",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_recently_viewed_products",
+        "label": "Enabled?"
+      },
+      {
+        "type": "checkbox",
+        "id": "recently_viewed_products_fluid_layout",
+        "label": "Full Width Layout?",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "recently_viewed_products_section_padding",
+        "label": "Section Padding?",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "recently_viewed_products_section_no_gutters",
+        "label": "No Gutters?",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "recently_viewed_products_nav_arrows",
+        "label": "Arrows Navigation",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "recently_viewed_products_nav_dots",
+        "label": "Dots Navigation",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "recently_viewed_products_view",
+        "label": "Total Items to Show",
+        "min": 0,
+        "max": 16,
+        "step": 1,
+        "default": 9
+      },
+      {
+        "type": "range",
+        "id": "recently_viewed_products_auto_play",
+        "label": "Autoplay",
+        "info": "Duration of animation between slides (in seconds). Set to zero if you don't want the slider to autoplay.",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "default": 0
+      },
+      {
+        "type": "header",
+        "content": "Content"
+      },
+      {
+        "type": "text",
+        "id": "recently_viewed_products_heading_txt",
+        "label": "Heading Text",
+        "default": "Recently Viewed"
+      },
+      {
+        "type": "header",
+        "content": "Styling"
+      },
+      {
+        "type": "color",
+        "id": "recently_viewed_products_section_bg_color",
+        "label": "Background Color",
+        "default": "#F8F9FA"
+      },
+      {
+        "type": "color",
+        "id": "recently_viewed_products_section_color",
+        "label": "Text Color",
+        "default": "#343a40"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Recently Viewed Products",
+        "category": "Products"
+      }
+    ]
+  }
+{% endschema %}

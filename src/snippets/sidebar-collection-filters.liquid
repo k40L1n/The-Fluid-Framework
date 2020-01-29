@@ -1,0 +1,104 @@
+<aside class="collection-filters {% if sidebar_is_sticky %}sticky-top{% endif %}">
+
+  <div class="card mt-3">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-6 col-sm-6 col-md-6 col-lg-12 mx-auto">
+          {% include 'form-collection-sorting' %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% for block in section.blocks %}
+
+      {% comment %} collections filter {% endcomment %}
+      {% if block.settings.enable_collections_filter %}
+        {% assign collection_link_list = block.settings.collection_link_list %}
+        <div class="card mt-3" {{ block.shopify_attributes }}>
+          <div class="card-header">{{ block.settings.collections_filter_title }}</div>
+          {% if linklists[collection_link_list].links.size > 0 %}
+            <ul class="list-group list-group-flush">
+              {% for link in linklists[collection_link_list].links %}
+                <li class="list-group-item">
+                  <a href="{{ link.url }}" @click.prevent="_parseFilters($event)" rel="nofollow" data-filter data-filter-type="collection" data-handle="{{ link.handle }}"><span>{{ link.title }}</span></a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% comment %} colors filter {% endcomment %}
+      {% if block.settings.enable_colors_filter %}
+        <div class="card mt-3" {{ block.shopify_attributes }}>
+          <div class="card-header">{{ block.settings.colors_filter_title }}</div>
+          <div class="card-body">
+          	<ul class="list-unstyled list-inline my-0 py-0 colors-list">
+              {% assign colors_list = block.settings.colors_list | newline_to_br | split:'<br />' %}
+              {% for color in colors_list %}
+                <li class="list-inline-item">
+                  <div class="color-swatch">
+                    <label
+                        data-toggle="tooltip"
+                        data-trigger="hover"
+                        :title="_unhandleize('{{ color | handle }}')"
+                        :style="_getSwatchStyle('{{ color | handle }}')">
+                        <input type="{% if settings.filters_logic == 'or_logic' %}radio{% else %}checkbox{% endif %}"
+                        name="colors[]" aria-label="{{ block.settings.colors_filter_title }}" value="{{ color | handle }}" @change="_parseFilters($event)" data-filter data-filter-type="tag" v-model="collection.activeFilters">
+                    </label>
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      {% endif %}
+
+      {% comment %} prices filter {% endcomment %}
+      {% if block.settings.enable_prices_filter %}
+        <div class="card mt-3" {{ block.shopify_attributes }}>
+          <div class="card-header">{{ block.settings.prices_filter_title }}</div>
+          <div class="card-body">
+          	<ul class="list-unstyled prices-list my-0 py-0">
+              {% assign prices_list = block.settings.prices_list | newline_to_br | split:'<br />' %}
+              {% for price in prices_list %}
+                {% assign filter_price = price | strip_newlines | remove: " " %}
+                <li class="list-inline-item d-block">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input type="checkbox" name="prices[]" aria-label="{{ block.settings.prices_filter_title }}" value="{{ filter_price }}" class="form-check-input" @change="_parseFilters($event)" data-filter data-filter-type="tag" v-model="collection.activeFilters">{{ filter_price }}
+                    </label>
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      {% endif %}
+
+      {% comment %} tags based filter - is repeated block {% endcomment %}
+      {% if block.settings.enable_tags_filter %}
+        <div class="card mt-3" {{ block.shopify_attributes }}>
+          <div class="card-header">{{ block.settings.tags_filter_title }}</div>
+          <div class="card-body">
+          	<ul class="list-unstyled tags-list my-0 py-0">
+              {% assign tags_list = block.settings.tags_list | newline_to_br | split:'<br />' %}
+              {% for tag in tags_list %}
+                {% assign filter_tag = tag | strip_newlines | remove: " " %}
+                <li class="list-inline-item d-block">
+                  <div class="form-check">
+                    <label class="form-check-label text-capitalize">
+                      <input type="checkbox" name="tags[]" aria-label="{{ block.settings.tags_filter_title }}" value="{{ filter_tag }}" class="form-check-input" @change="_parseFilters($event)" data-filter data-filter-type="tag" v-model="collection.activeFilters">{{ filter_tag | replace: "-", " " }}
+                    </label>
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      {% endif %}
+
+  {% endfor %}
+
+</aside>

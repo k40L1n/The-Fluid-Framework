@@ -1,0 +1,95 @@
+<div class="cart-drawer d-flex flex-column" :class="{'opened shadow-lg': isCartDrawerOpen}" v-touch:swipe.right="_toggleCartDrawer">
+
+  <div class="drawer-header d-flex justify-content-between align-items-center px-4 py-4 bg-gray-100 text-gray-900">
+    <h6 class="text-uppercase my-0">{{ 'cart.general.title' | t }}</h6>
+    <a href="#" class="btn-close float-right" @click.prevent="_toggleCartDrawer" rel="nofollow" aria-label="Close" title="Close"><i class="icon ion-md-close text-gray-900"></i></a>
+  </div>
+
+  <div class="drawer-body px-4 py-3" data-touch-moveable>
+    <template v-if="cart.item_count > 0">
+      <div v-for="(item, index, key) in cart.items" v-if="!item.properties['promo_product']"
+           data-cart-item
+           :key="item.id" class="row cart-item py-3"
+           :data-variant-id="item.variant_id"
+           :data-cart-limit="item.properties['cart_limit']"
+           :class="{'border-bottom-0': index === (cart.item_count - 1)}">
+
+        <div class="col-3 d-flex align-items-center">
+          <div class="item-image">
+            <a v-if="item.image != null" :href="item.url">
+              <!-- <span class="badge badge-secondary" v-text="item.quantity"></span> -->
+              <img :src="_getSizedImageUrl(item.image, 'large')" class="img-fluid" :alt="item.product_title" />
+            </a>
+            <a v-else :href="item.url">{{ 'product-1' | placeholder_svg_tag: 'img-fluid bg-gray-100' }}</a>
+          </div>
+        </div>
+
+        <div class="col-9">
+          <div class="d-flex justify-content-between align-items-center">
+            <a :href="item.url" v-text="item.product_title" :title="item.product_title" class="item-title text-capitalize pr-3"></a>
+            <a href="#" @click.prevent="_removeFromCart(index+1, $event)" class="btn-remove text-danger" rel="nofollow" aria-label="{{ 'cart.general.remove' | t }}" title="{{ 'cart.general.remove' | t }}" data-toggle="tooltip" data-trigger="hover" data-placement="left"><i class="icon ion-md-remove-circle-outline"></i></a>
+          </div>
+
+          <ul v-if="item.product_options" class="list-unstyled">
+            <li v-for="option in item.product_options" v-if="option.value !== 'Default Title'">
+              <span class="text-muted small text-capitalize">${ option.name }:</span>
+              <span class="text-muted small text-capitalize">${ option.value }</span>
+            </li>
+          </ul>
+
+          {% comment %}ReCharge frequency{% endcomment %}
+          <div v-if="item.properties['subscription_id']">
+            <p class="small text-muted">
+              Recurring Delivery every ${ item.properties['shipping_interval_frequency'] } ${ item.properties['shipping_interval_unit_type'] }.<br/>
+              Change or cancel anytime.
+            </p>
+          </div>
+
+          <div class="row align-items-center">
+            <div class="col-6">
+              <div class="quantity-wrapper" data-qty-container>
+                <div class="input-group input-group-sm">
+                  <div class="input-group-prepend">
+                    <a href="#" class="input-group-text" rel="nofollow" aria-label="Decrease" title="Decrease" data-qty-decrease @click.prevent="_updateCart(index+1, $event)">
+                      <span class="btn-decrease"><i class="icon ion-md-remove"></i></span>
+                    </a>
+                  </div>
+                  <input type="number" name="quantity" aria-label="quantity" :value="item.quantity" step="1" min="1" inputmode="numeric" data-qty-input class="quantity form-control text-center" readonly>
+                  <div class="input-group-append">
+                    <a href="#" class="input-group-text" rel="nofollow" aria-label="Increase" title="Increase" data-qty-increase @click.prevent="_updateCart(index+1, $event)">
+                      <span class="btn-increase"><i class="icon ion-md-add"></i></span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col text-right">
+              <span v-html="_formatMoney(item.line_price)" class="item-price"></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </template>
+
+    <div v-else class="text-center mt-5">
+      <div class="icon"><i class="icon ion-md-cart"></i></div>
+      <p class="mb-3 text-muted">{{ 'cart.general.empty' | t }}</p>
+      <button class="btn btn-primary btn-sm" @click.prevent="_toggleCartDrawer">{{ 'cart.general.continue_browsing' | t }}</button>
+    </div>
+
+  </div>
+
+  <div v-if="cart.item_count > 0" class="drawer-footer px-4 py-3 bg-gray-200 text-center mt-auto">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <span class="h6 d-inline-block">{{ 'cart.general.subtotal' | t }}</span>
+      <span v-html="_formatMoney(cart.total_price)" class="h6"></span>
+    </div>
+    <p class="font-italic mb-2"><small>{{ 'cart.general.shipping_at_checkout' | t }}</small></p>
+    <div class="btn-group btn-group-sm btn-group-justified" role="group">
+      <a href="/cart" class="btn btn-outline-primary">{{ 'cart.general.viewcart' | t }}</a>
+      <a href="/checkout" class="btn btn-primary">{{ 'cart.general.checkout' | t }} <i class="icon ion-md-arrow-forward"></i></a>
+    </div>
+  </div>
+
+</div>

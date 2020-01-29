@@ -1,0 +1,244 @@
+header{
+  z-index: $zindex-fixed;
+  transition: $transition-base;
+}
+
+/* Top Bar */
+.topbar{
+  div, p, a{
+    font-size: inherit !important;
+    color: inherit !important;
+  }
+
+  p{
+    margin: 0;
+  }
+}
+
+
+/* Main Navbar */
+.navbar-main {
+  width: 100%;
+  transition: $transition-base;
+  background: $navbar-dark-color;
+
+  &.fixed-top {
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+  }
+
+  &.bg-transparent{
+    background: transparent;
+
+    .nav-item{
+      &.active .nav-link{
+        color: $navbar-dark-active-color !important;
+      }
+    }
+
+    .nav-link,
+    .navbar-brand {
+      color: $navbar-dark-color !important;
+
+      &:hover{
+        color: $navbar-dark-hover-color !important;
+      }
+    }
+  }
+
+  .navbar-brand img {
+    @include media-breakpoint-down(md) {
+      height: 35px;
+      width: auto;
+    }
+  }
+
+  .nav-item {
+    padding: 0.6rem 0.8rem;
+
+    &.active .nav-link{
+      color: $primary;
+      transition: $transition-base;
+    }
+
+    @include media-breakpoint-down(md) {
+      padding: 0;
+    }
+
+    &:first-child .nav-link,
+    &:last-child .nav-link {
+      padding-right: 0 !important;
+    }
+
+    .nav-link {
+      padding: 0;
+      color: $navbar-light-active-color;
+
+      &:hover{
+        color: $primary;
+      }
+    }
+
+    i {
+      font-size: 1.6rem;
+
+      @include media-breakpoint-down(md) {
+        font-size: 1.8rem;
+      }
+    }
+  }
+
+  .badge {
+    display: inline-block;
+    margin: -34px 0 0 -8px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 10px;
+    border: 1px solid #ffffff;
+  }
+
+  .dropdown-menu {
+    overflow: hidden;
+    display: inline-block;
+    opacity: 0;
+    visibility: hidden;
+    transition: $transition-base;
+    transform: translate3d(0, -2%, 0);
+
+    &.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translate3d(0, -2%, 0);
+    }
+
+    .dropdown-item {
+      padding: 0.6em 1em;
+    }
+  }
+}
+
+// Sticky styles for navbar
+body {
+  &.is-scrolled-down {
+    header.fixed-top {
+      transform: translate3d(0, -100%, 0);
+      box-shadow: none;
+    }
+  }
+
+  &.is-scrolled-up {
+    header.fixed-top {
+      background: rgba(255,255,255,0.95);
+      box-shadow: $box-shadow-sm;
+
+      .nav-link,
+      .navbar-brand {
+        color: $navbar-light-color !important;
+      }
+    }
+  }
+
+  &.is-scrolled-top.template-index .header-transparent {
+    header.fixed-top {
+      background: transparent;
+
+      .nav-link,
+      .navbar-brand {
+        color: $navbar-dark-color;
+      }
+
+      &:hover {
+        background: rgba(255,255,255,0.2);
+      }
+    }
+  }
+}
+
+/* Navbar with centered logo - Additional styles */
+.navbar-centered-logo {
+  .navbar-icon-links {
+    position: absolute;
+    right: $navbar-padding-x;
+  }
+
+  .navbar-logo-mobile {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* Mobile Navbar => left drawer */
+.navbar-mobile {
+
+  .nav-item{
+    padding: 0;
+  }
+  .nav-link {
+    padding: 0.3rem 1.2rem;
+    text-transform: uppercase;
+    color: $navbar-light-color;
+    font-size: 1.1rem;
+  }
+
+  .submenu{
+    background: $gray-100;
+    .nav-link {
+      font-size: 0.9rem;
+
+      &:first-child{
+        padding-top: 1rem;
+      }
+      &:last-child{
+        padding-bottom: 1rem;
+      }
+    }
+  }
+
+  .icon-toggle {
+    font-size: 1.6rem;
+    font-style: normal;
+
+    &::before {
+      font-family: "Ionicons";
+    }
+  }
+
+  a[aria-expanded="false"] {
+    background: transparent;
+
+    .icon-toggle::before {
+      content: "\f3d0";
+    }
+  }
+
+  a[aria-expanded="true"] {
+    background: $gray-200;
+
+    .icon-toggle::before {
+      content: "\f3d8";
+    }
+  }
+}
+
+.navbar-mobile-secondary {
+  border-top: 1px solid $gray-200;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+
+  .nav-link {
+    font-size: 1rem;
+  }
+
+  .icon-toggle {
+    font-size: 1.4rem;
+  }
+}
+
+// Megamenu classes
+.megamenu {
+  position: static !important;
+
+  .dropdown-menu{
+    width: 100%;
+  }
+}

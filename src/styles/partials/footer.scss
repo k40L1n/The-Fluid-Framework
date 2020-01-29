@@ -1,0 +1,53 @@
+.site-footer {
+  .footer-top {
+    .logo {
+      max-height: 26px;
+    }
+
+    ul.articles-list {
+      padding-left: 10px;
+
+      li {
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid transparentize($gray-500, 0.9);
+
+        &:last-child {
+          margin-bottom: 0;
+          padding-bottom: 0;
+          border-style: none;
+        }
+
+        &::before {
+          font-family: "Ionicons";
+          content: "\f287";
+          font-size: 0.6rem;
+          float: left;
+          margin-top: 0.4rem;
+          margin-left: -0.6rem;
+        }
+      }
+    }
+
+    ul.social-links {
+      a {
+        display: inline-block;
+        text-align: center;
+        width: 30px;
+        height: 30px;
+        border-width: 1px;
+        border-style: solid;
+        border-radius: 50%;
+        font-size: 1rem;
+        line-height: 1.8em;
+      }
+    }
+  }
+
+  .footer-bottom {
+    a {
+      transition: $transition-base;
+      opacity: 0.5;
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{% assign article_image = article.image.src | img_url %}
+
+<div class="card bg-white text-left">
+
+  {% unless article_image contains 'no-image' %}
+    <div class="card-img">
+      <img
+          data-sizes="auto"
+          src="{{ article.image.src | img_url: 'pico'}}"
+          data-srcset="
+            {{ article.image.src | img_url: '800x500', crop: 'center' }} 576w,
+            {{ article.image.src | img_url: '800x500', crop: 'center' }} 768w,
+            {{ article.image.src | img_url: '800x500', crop: 'center' }} 992w,
+            {{ article.image.src | img_url: '800x500', crop: 'center' }} 1200w
+            "
+          class="lazyload"
+          alt="{{ article.image.alt | escape }}"/>
+    </div>
+  {% endunless %}
+
+  <div class="card-body">
+    <div class="text-uppercase small text-muted">{{ blog.title}}</div>
+    <h5 class="mt-4"><a href="{{ article.url }}">{{ article.title }}</a></h5>
+    <div class="small text-muted">
+      <i class="icon ion-md-time text-warning"></i>
+      <time datetime="formatDate(article.node.publishedAt)"> {{ article.published_at | date: "%a, %b %d, %Y" }}</time>
+    </div>
+  </div>
+  <div class="card-footer bg-white text-muted small">
+    <span class="font-italic font-secondary">by</span> <span class="text-uppercase">{{ article.author }}</span>
+  </div>
+</div>

@@ -1,0 +1,162 @@
+<div data-template="account" class="section-content">
+  <div class="container">
+
+    <div class="row">
+      <div class="col-lg-3 d-flex align-items-end">
+        <a href="/account" class="btn btn-outline-primary btn-sm mb-4">
+          <i class="icon ion-md-arrow-back mr-2"></i> {{ 'customer.account.return' | t }}
+        </a>
+      </div>
+
+      <div class="col-lg-9 text-center">
+          <h3>{{ 'customer.order.title' | t: name: order.name }}</h3>
+          <p><i class="icon ion-md-calendar mr-2"></i> {{ 'customer.order.date' | t: date: order.created_at | date: "%B %d, %Y %I:%M%p" }}</p>
+      </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-3">
+          {% include 'sidebar-account' %}
+        </div>
+
+        <div class="col-lg-9">
+
+            <div class="row">
+                <div class="col text-center">
+
+
+                    {% if order.cancelled %}
+                    <div class="alert alert-warning">
+                        {% assign cancelled_at = order.cancelled_at | date: "%B %d, %Y %I:%M%p" %}
+                        <h5>{{ 'customer.order.cancelled' | t: date: cancelled_at }}</h5>
+                        <p class="my-0">{{ 'customer.order.cancelled_reason' | t: reason: order.cancel_reason }}</p>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="bg-gray-300">
+                        <tr>
+                            <th class="text-uppercase small">{{ 'customer.order.billing_address' | t }}</th>
+                            <th class="text-uppercase small">{{ 'customer.order.shipping_address' | t }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+                        <tr>
+                            <td>
+                                <h5>{{ order.billing_address.name }}</h5>
+                                <p>
+                                    {% if order.billing_address.company != '' %} {{ order.billing_address.company }}
+                                    <br> {% endif %} {{ order.billing_address.street }}
+                                    <br> {{ order.billing_address.city }}
+                                    <br> {% if order.billing_address.province != '' %} {{ order.billing_address.province }}
+                                    <br> {% endif %} {{ order.billing_address.zip | upcase }}
+                                    <br> {{ order.billing_address.country }}
+                                    <br> {{ order.billing_address.phone }}
+                                </p>
+                            </td>
+                            <td>
+                                <h5>{{ order.shipping_address.name }}</h5>
+                                <p>
+                                    {% if order.shipping_address.company != '' %} {{ order.shipping_address.company }}
+                                    <br> {% endif %} {{ order.shipping_address.street }}
+                                    <br> {{ order.shipping_address.city }}
+                                    <br> {% if order.shipping_address.province != '' %} {{ order.shipping_address.province }}
+                                    <br> {% endif %} {{ order.shipping_address.zip | upcase }}
+                                    <br> {{ order.shipping_address.country }}
+                                    <br> {{ order.shipping_address.phone }}
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="bg-gray-300">
+                        <tr>
+                            <th class="text-uppercase small">{{ 'customer.order.product' | t }}</th>
+                            <th class="text-uppercase small">{{ 'customer.order.price' | t }}</th>
+                            <th class="text-uppercase text-center small">{{ 'customer.order.quantity' | t }}</th>
+                            <th class="text-uppercase text-right small">{{ 'customer.order.total' | t }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+                        {% for line_item in order.line_items %}
+                        <tr id="{{ line_item.id }}">
+                            <td>
+                              <div class="d-flex" style="min-width: 270px">
+                                <div>
+                                  <img src="{{ line_item | img_url: 'small' }}" alt="{{ line_item.title | escape }}" class="mr-3">
+                                </div>
+                                <div>
+                                  {{ line_item.title | link_to: line_item.product.url }}
+                                  {% if line_item.sku != '' %}<p class="small">SKU: {{ line_item.sku }}</p>{% endif %}
+                                  {% if line_item.fulfillment %}
+                                  <div class="note">
+                                    {% assign created_at = line_item.fulfillment.created_at | date: format: 'month_day_year' %} {{ 'customer.order.fulfilled_at' | t: date: created_at }} {% if line_item.fulfillment.tracking_number %}
+                                    <a href="{{ line_item.fulfillment.tracking_url }}">{{ line_item.fulfillment.tracking_company }} #{{ line_item.fulfillment.tracking_number}}</a> {% endif %}
+                                  </div>
+                                  {% endif %}
+
+                                  <div class="w-100 mt-2">
+                                    <div class="btn-group btn-group-sm" role="group" aria-label="actions">
+                                      <a href="/cart/{{ line_item.id }}:{{ line_item.quantity }}" class="btn btn-info" title="reorder item"><i class="icon ion-md-refresh"></i> {{ 'customer.order.reorder' | t }}</a>
+                                      <a href="{{line_item.product.url}}?showReviewForm=true" class="btn btn-info" title="review item"><i class="icon ion-md-star"></i> {{ 'customer.order.review' | t }}</a>
+                                    </div>
+                                  </div>
+                                </div>
+
+                              </div>
+                            </td>
+                            <td>{{ line_item.price | money }}</td>
+                            <td class="text-center">{{ line_item.quantity }}</td>
+                            <td class="text-right">{{ line_item.quantity | times: line_item.price | money }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                    <tfoot class="bg-white">
+                        <tr>
+                          <td colspan="3" class="text-uppercase small">{{ 'customer.order.subtotal' | t }}</td>
+                          <td class="text-right">{{ order.subtotal_price | money }}</td>
+                        </tr>
+
+                        {% for discount in order.discounts %}
+                        <tr class="order_summary discount">
+                          <td colspan="3" class="text-uppercase small">{{ discount.code }} {{ 'customer.order.discount' | t }}</td>
+                          <td class="text-right">{{ discount.savings | money }}</td>
+                        </tr>
+                        {% endfor %}
+
+                        {% for shipping_method in order.shipping_methods %}
+                        <tr>
+                          <td colspan="3" class="text-uppercase small">{{ 'customer.order.shipping' | t }} ({{ shipping_method.title }})</td>
+                          <td class="text-right">{{ shipping_method.price | money }}</td>
+                        </tr>
+                        {% endfor %}
+
+                        {% for tax_line in order.tax_lines %}
+                        <tr>
+                          <td colspan="3" class="text-uppercase small">{{ 'customer.order.tax' | t }} ({{ tax_line.title }} {{ tax_line.rate | times: 100 }}%)</td>
+                          <td class="text-right">{{ tax_line.price | money }}</td>
+                        </tr>
+                        {% endfor %}
+
+                        <tr>
+                          <td colspan="3" class="text-uppercase small"><h6>{{ 'customer.order.total' | t }}</h6></td>
+                          <td class="text-right"><h6>{{ order.total_price | money }} {{ order.currency }}</h6></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+        </div>
+    </div>
+  </div>
+</div>

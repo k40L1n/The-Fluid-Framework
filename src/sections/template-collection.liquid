@@ -1,0 +1,297 @@
+{% assign enable_color_swatches = settings.enable_color_swatches %}
+{% assign enable_size_swatches = settings.enable_size_swatches %}
+{% assign items_per_page = section.settings.items_per_page %}
+{% assign filters_enabled = section.settings.enable_filters %}
+{% assign filters_type = section.settings.filters_type %}
+{% assign sidebar_is_sticky = section.settings.sidebar_is_sticky %}
+{% assign collection_ajaxed = section.settings.collection_ajaxed %}
+{% assign product_card_type = section.settings.product_card_type %}
+{% assign promo_card_enabled = section.settings.enable_promo_card %}
+{% assign promo_card_type = section.settings.promo_card_type %}
+{% assign promo_card_index = section.settings.promo_card_index %}
+{% assign pagination_type = section.settings.pagination_type %}
+
+
+<div
+     data-section-id="{{ section.id }}"
+     data-template="collection"
+     data-collection-ajaxed="{% if collection_ajaxed %}true{% else %}false{% endif %}"
+     data-product-card-type="{{ product_card_type }}"
+     data-pagination-limit="{{ section.settings.items_per_page }}">
+
+  {% if  section.settings.template_type == "grid" %}
+    {% include "template-collection-grid" %}
+  {% elsif section.settings.template_type == "list" %}
+    {% include "template-collection-list" %}
+  {% endif %}
+
+  {% paginate collection.products by items_per_page %}
+    {% for product in collection.products %}
+      {% assign productExcludeTag = settings.product_exclude_tag_text %}
+      {% unless product.tags contains productExcludeTag %}
+        <script type="application/json" data-product-json>
+        {
+          "product": {{ product | json }},
+          "options_with_values": {{ product.options_with_values | json }}
+        }
+        </script>
+      {% endunless %}
+    {% endfor %}
+  {% endpaginate %}
+</div>
+
+{% schema %}
+  {
+    "name": "Collection Template",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Template"
+      },
+      {
+        "type": "select",
+        "id": "template_type",
+        "label": "Template Type",
+        "options": [
+          {
+            "value": "grid",
+            "label": "Grid"
+          }
+        ],
+        "default": "grid"
+      },
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "checkbox",
+        "id": "fluid_layout",
+        "label": "Full Width Layout?",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "collection_ajaxed",
+        "label": "Ajaxed Collection?",
+        "default": false
+      },
+      {
+        "type": "range",
+        "id": "items_per_page",
+        "label": "Products Per Page",
+        "min": 1,
+        "max": 50,
+        "step":1,
+        "default": 12,
+        "info": "Only for the non-ajaxed collection."
+      },
+      {
+        "type": "select",
+        "id": "pagination_type",
+        "label": "Pagination Type",
+        "info": "Only for the ajaxed collection.",
+        "options": [
+          {
+            "value": "page_numbers",
+            "label": "Page Numbers"
+          },
+          {
+            "value": "load_more",
+            "label": "Load More"
+          }
+        ],
+        "default": "page_numbers"
+      },
+      {
+        "type": "header",
+        "content": "Product card"
+      },
+      {
+        "type": "select",
+        "id": "product_card_type",
+        "label": "Card Type",
+        "options": [
+          {
+            "value": "type_1",
+            "label": "Type 1 (simple)"
+          },
+          {
+            "value": "type_2",
+            "label": "Type 2 (with color swatches)"
+          },
+          {
+            "value": "type_3",
+            "label": "Type 3 (with full options)"
+          }
+        ],
+        "default": "type_1"
+      },
+      {
+        "type": "header",
+        "content": "Promo Card"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_promo_card",
+        "label": "Enable Promo Card?",
+        "info": "By enabling this the default Shopify pagination will not work properly. The recommended settings for this feature are to enable the ajaxed collection feature with combination of the load more pagination type. This way the pagination will not rely on page numbers.",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "promo_card_type",
+        "label": "Card Type",
+        "options": [
+          {
+            "value": "type_1",
+            "label": "Type 1"
+          }
+        ],
+        "default": "type_1"
+      },
+      {
+        "type": "range",
+        "id": "promo_card_index",
+        "label": "Position Index",
+        "info": "The position of the card inside the grid.",
+        "min": 1,
+        "max": 40,
+        "step": 1,
+        "default": 1
+      },
+      {
+        "type": "header",
+        "content": "Filter Settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_filters",
+        "label": "Enable Filters?",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "filters_type",
+        "label": "Filters Layout",
+        "options": [{
+            "value": "sidebar",
+            "label": "Sidebar"
+          }
+        ],
+        "default": "sidebar"
+      },
+      {
+        "type": "checkbox",
+        "id": "sidebar_is_sticky",
+        "label": "Sticky Sidebar?",
+        "default": false
+      },
+      {
+        "type": "paragraph",
+        "content": "Use the CONTENT section below to add and customize the filters."
+      }
+    ],
+    "blocks": [
+      {
+        "type": "collections-filter",
+        "name": "Collections Filter",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "enable_collections_filter",
+            "label": "Enable Filter?",
+            "default": false
+          },
+          {
+            "type": "text",
+            "id": "collections_filter_title",
+            "label": "Title",
+            "default": "Collections"
+          },
+          {
+            "type": "link_list",
+            "id": "collection_link_list",
+            "label": "Select Collection Menu"
+          }
+        ]
+      },
+      {
+        "type": "colors-filter",
+        "name": "Colors Filter",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "enable_colors_filter",
+            "label": "Enable Filter?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "colors_filter_title",
+            "label": "Title",
+            "default": "Colors"
+          },
+          {
+          "type": "textarea",
+          "id": "colors_list",
+          "label": "List of Colors",
+          "info": "List of color names (e.g. red). Each entry must be on a new line. Color values can be edited at the 'swatches-colorlist.liquid' file."
+          }
+        ]
+      },
+      {
+        "type": "prices-filter",
+        "name": "Prices Filter",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "enable_prices_filter",
+            "label": "Enable Filter?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "prices_filter_title",
+            "label": "Title",
+            "default": "Price Range"
+          },
+          {
+          "type": "textarea",
+          "id": "prices_list",
+          "label": "List of Price Ranges",
+          "info": "List of price ranges (e.g. 0-100). Each entry must be on a new line."
+          }
+        ]
+      },
+      {
+        "type": "tags-filter",
+        "name": "Tags Filter",
+        "limit": 5,
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "enable_tags_filter",
+            "label": "Enable Filter?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "tags_filter_title",
+            "label": "Title",
+            "default": "Tags"
+          },
+          {
+          "type": "textarea",
+          "id": "tags_list",
+          "label": "List of Tags",
+          "info": "List of tags. Each entry must be on a new line."
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

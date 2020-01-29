@@ -1,0 +1,93 @@
+{% assign items_per_page = section.settings.items_per_page %}
+
+{% paginate search.results by items_per_page %}
+
+<section data-section-id="{{ section.id }}" class="template-search section-content">
+  <div class="{% if section.settings.fluid_layout %}container-fluid{% else %}container{% endif %}">
+
+    <div class="row">
+      <div class="col-12 text-center">
+        <h3>
+          {% if search.performed %}
+            {% if search.results_count == 0 %}
+              {{ 'general.search.no_results_html' | t: terms: search.terms }}
+            {% else %}
+              {{ 'general.search.results_for_html' | t: terms: search.terms }}
+            {% endif %}
+          {% else %}
+            {{ 'general.search.title' | t }}
+          {% endif %}
+        </h3>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-lg-5 ml-auto mr-auto text-center">
+        <form action="/search" method="get" role="search">
+          <div class="input-group mb-5">
+            <input type="search" name="q" id="Search" aria-label="search" value="{{ search.terms | escape }}" placeholder="{{ 'general.search.placeholder' | t }}" class="form-control">
+            <div class="input-group-append">
+               <button type="submit" class="btn btn-primary">{{ 'general.search.submit' | t }}</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="row mt-5">
+      <div class="col-12">
+        {% if search.performed %}
+          <div class="card-columns">
+            {% for item in search.results %}
+              {% assign productExcludeTag = settings.product_exclude_tag_text %}
+              {% unless item.tags contains productExcludeTag %}
+                <!-- <div class="col-sm-6 col-lg-4 my-3 d-flex align-items-stretch justify-content-around"> -->
+                  {% include 'card-search-item' %}
+                <!-- </div> -->
+              {% endunless %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if paginate.pages > 1 %}
+    <div class="row mt-5">
+      <div class="col-12">
+        {% include 'pagination' %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endpaginate %}
+
+
+{% schema %}
+  {
+    "name": "Search Template",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "checkbox",
+        "id": "fluid_layout",
+        "label": "Full Width Layout?",
+        "default": false
+      },
+      {
+        "type": "range",
+        "id": "items_per_page",
+        "label": "Products Per Page",
+        "min": 1,
+        "max": 50,
+        "step":1,
+        "default": 12
+      }
+    ]
+  }
+{% endschema %}

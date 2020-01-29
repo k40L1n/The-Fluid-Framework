@@ -1,0 +1,30 @@
+@charset 'UTF-8';
+
+/**
+ * Insert your styles with Liquid below.
+ */
+
+ // Vue.js helper directive => hides elements
+[v-cloak] {
+  display: none !important;
+}
+
+// helper classes to hide fonts while loading and avoid FOUC
+.wf-loading,
+.wf-inactive{
+  h1, .h1,
+  h2, .h2,
+  h3, .h3,
+  h4, .h4,
+  h5, .h5,
+  h6, .h6,
+  p{
+    display: none !important;
+    transition: none !important;
+  }
+}
+
+// Password strength meter background image
+.pass-colorbar {
+  background-image: url('{{ "passwordstrength.jpg" | asset_url }}');
+}

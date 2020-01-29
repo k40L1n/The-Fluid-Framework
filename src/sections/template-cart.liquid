@@ -1,0 +1,186 @@
+{% assign cart_ajaxed = section.settings.cart_ajaxed %}
+{% assign template_type = section.settings.template_type %}
+
+<section
+    data-section-id="{{ section.id }}"
+    data-template="cart"
+    data-cart-ajaxed="{% if cart_ajaxed %}true{% else %}false{% endif %}">
+  <div class="section-content">
+    <div class="{% if section.settings.fluid_layout %}container-fluid{% else %}container{% endif %}">
+      <div class="row">
+        <div class="col-12 text-center">
+          <h1 class="page-title text-uppercase ls2">{{ 'cart.general.title' | t }}</h1>
+        </div>
+      </div>
+      <template v-if="cart.item_count > 0">
+        {% include 'app-utilities-cart-promos' %}
+
+        {% case template_type %}
+          {% when 'modern' %}
+            {% if cart_ajaxed %}
+              {% include 'template-cart-ajaxed-modern' %}
+            {% else %}
+              {% include 'template-cart-modern' %}
+            {% endif %}
+          {% else %}
+            {% if cart_ajaxed %}
+              {% include 'template-cart-ajaxed-classic' %}
+            {% else %}
+              {% include 'template-cart-classic' %}
+            {% endif %}
+        {% endcase %}
+
+        <transition name="fade">
+          <template v-if="storeUtilities.ready && storeUtilities.cartUpsells.settings.enabled && storeUtilities.cartUpsells.settings.showOnCartPage && storeUtilities.cartUpsells.products.length > 0">
+            {% assign target = 'cart' %}
+            {% include 'app-utilities-cart-upsell' with target %}
+          </template>
+        </transition>
+      </template>
+
+      <div v-if="cart.item_count == 0" class="row">
+        <div class="col-12 text-center">
+          <p class="lead">{{ 'cart.general.empty' | t }}</p>
+          <a href="/collections" class="btn btn-primary text-uppercase">{{ 'cart.general.continue_browsing' | t }} <i class="icon ion-md-arrow-forward"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <template v-if="cart.item_count > 0">
+    {% for block in section.blocks %}
+      <div {{ block.shopify_attributes }}></div>
+      {% case block.type %}
+
+      {% when 'shipping-calculator' %}
+        {% if block.settings.enable_shipping_calculator and cart.item_count > 0 %}
+          {% include 'block-shipping-calculator' %}
+        {% endif %}
+      {% endcase %}
+    {% endfor %}
+  </template>
+
+</section>
+
+{% schema %}
+  {
+    "name": "Cart Template",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Template"
+      },
+      {
+        "type": "select",
+        "id": "template_type",
+        "label": "Template Type",
+        "options": [{
+            "value": "classic",
+            "label": "Classic: Table view"
+          },
+          {
+            "value": "modern",
+            "label": "Modern: Product cards"
+          }
+        ],
+        "default": "classic"
+      },
+      {
+        "type": "checkbox",
+        "id": "fluid_layout",
+        "label": "Full Width Layout?",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_ajaxed",
+        "label": "Ajaxed Cart?",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_back_btn",
+        "label": "Show Back to Shop Button?"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_cart_notes",
+        "label": "Show Cart Notes?"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_delivery_date_selection",
+        "label": "Show Delivery Date Selection?"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "shipping-calculator",
+        "name": "Shipping Calculator",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "header",
+            "content": "Layout"
+          },
+          {
+            "type": "checkbox",
+            "id": "enable_shipping_calculator",
+            "label": "Enabled?",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "shipping_calculator_fluid_layout",
+            "label": "Full Width Layout?",
+            "default": false
+          },
+          {
+            "type": "checkbox",
+            "id": "shipping_calculator_section_padding",
+            "label": "Section Padding?",
+            "default": true
+          },
+          {
+            "type": "header",
+            "content": "Content"
+          },
+          {
+            "type": "text",
+            "id": "shipping_calculator_heading_txt",
+            "label": "Heading text",
+            "default": "Get shipping estimates"
+          },
+          {
+            "type": "text",
+            "id": "shipping_calculator_submit_button_label",
+            "label": "Submit button label",
+            "default": "Calculate shipping"
+          },
+          {
+            "type": "text",
+            "id": "shipping_calculator_submit_button_label_busy",
+            "label": "Submit button label when calculating",
+            "default": "Calculating..."
+          },
+          {
+            "type": "header",
+            "content": "Styling"
+          },
+          {
+            "type": "color",
+            "id": "shipping_calculator_section_bg_color",
+            "label": "Background Color",
+            "default": "#FFFFFF"
+          },
+          {
+            "type": "color",
+            "id": "shipping_calculator_section_txt_color",
+            "label": "Text Color",
+            "default": "#343a40"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

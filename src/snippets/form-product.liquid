@@ -1,0 +1,174 @@
+{% form 'product', product, class: "mt-5", data-product-form: "", data-product-id: product.id, data-productid: product.id %}
+
+  <template v-for="(option, index) in product.options_with_values" v-if="option.name != 'Title'">
+    <input type="hidden" :name="'product_options_'+ currentVariant.id +'[]'" v-model="JSON.stringify(option)" />
+  </template>
+
+  <div class="row">
+    <div class="col-12 mb-2 d-flex justify-content-between">
+      {% unless product.has_only_default_variant %}
+        {% for option in product.options_with_values %}
+          {% assign option_name = option.name | downcase %}
+          <div class="selector-wrapper">
+            <label for="SingleOptionSelector-{{ forloop.index0 }}">
+              {{ option.name }}
+            </label>
+            {% if enable_color_swatches and option_name == 'color' %}
+              {% comment %} Color swatches {% endcomment %}
+              <ul class="list-unstyled list-inline my-0 py-0">
+                {% for value in option.values %}
+                  <li class="list-inline-item">
+                    <div class="color-swatch">
+                      <label
+                          data-toggle="tooltip"
+                          data-trigger="hover"
+                          title="{{ value | escape | replace: '-', ' ' }}"
+                          :style="_getSwatchStyle('{{ value }}')">
+                          <input
+                            type="radio"
+                            name="color"
+                            aria-label="color"
+                            value="{{ value | escape }}"
+                            data-single-option-selector
+                            data-index="option{{ option.position }}"
+                            @change="_getVariant($event)"
+                            {% if option.selected_value == value %}checked="checked"{% endif %} >
+                      </label>
+                    </div>
+                  </li>
+                {% endfor %}
+              </ul>
+
+            {% elsif enable_size_swatches and option_name == 'size' %}
+              {% comment %} Size swatches {% endcomment %}
+              <ul class="list-unstyled list-inline my-0 py-0">
+                {% for value in option.values %}
+                  <li class="list-inline-item">
+                    <div class="size-swatch">
+                      <label>
+                          <input
+                            data-single-option-selector
+                            type="radio"
+                            name='size'
+                            aria-label="size"
+                            value="{{ value | escape }}"
+                            data-index="option{{ option.position }}"
+                            @change="_getVariant($event)"
+                            {% if option.selected_value == value %}checked="checked"{% endif %} >
+                      </label>
+                    </div>
+                  </li>
+                {% endfor %}
+              </ul>
+
+            {% else %}
+              {% comment %} Normal select {% endcomment %}
+              <select
+                class="form-control form-control-sm"
+                data-single-option-selector
+                data-index="option{{ option.position }}"
+                @change="_getVariant($event)">
+                {% for value in option.values %}
+                  <option
+                    value="{{ value | escape }}"
+                    {% if option.selected_value == value %}selected="selected"{% endif %}>
+                      {{ value }}
+                  </option>
+                {% endfor %}
+              </select>
+            {% endif %}
+          </div>
+        {% endfor %}
+
+      {% endunless %}
+
+      <div class="quantity-wrapper" data-qty-container>
+        <label for="Quantity">{{ 'products.product.quantity' | t }}</label>
+        <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <a href="#" class="input-group-text" rel="nofollow" aria-label="Decrease" title="Decrease" data-qty-decrease @click.prevent="_updateQty($event)">
+              <span class="btn-decrease"><i class="icon ion-md-remove"></i></span>
+            </a>
+          </div>
+          <input type="number" name="quantity" aria-label="quantity" value="1" step="1" min="1" inputmode="numeric" data-qty-input class="quantity form-control text-center" readonly>
+          <div class="input-group-append">
+            <a href="#" class="input-group-text" rel="nofollow" aria-label="Increase" title="Increase" data-qty-increase @click.prevent="_updateQty($event)">
+              <span class="btn-increase"><i class="icon ion-md-add"></i></span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  {% comment %} DEFAULT HIDDEN OPTIONS SELECT {% endcomment %}
+  {% comment %} DO NOT REMOVE THIS {% endcomment %}
+  <div class="row" style="display: none !important;">
+    <div class="col">
+        <select name="id" data-productid="{{ product.id }}">
+          {% for variant in product.variants %}
+              <option
+                data-sku="{{ variant.sku }}"
+                value="{{ variant.id }}"
+                data-product-id="{{ product.id }}"
+                data-variant-id="{{ variant.id }}"
+                data-discount-variant-id="{{ variant.metafields.subscriptions.discount_variant_id }}">
+                {{ variant.title }} - {{ variant.price | money_with_currency }}
+              </option>
+          {% endfor %}
+        </select>
+    </div>
+  </div>
+
+  {% comment %} Recharge Subscription Widget {% endcomment %}
+  {% if settings.enable_recharge and product.available and product.metafields.subscriptions.subscription_id %}
+    <div data-recharge-subscription-widget="{{ product.id }}" class="row my-3" style="display:none !important;">
+      <div class="col-12">
+        <h6 class="my-2">Subscription:</h6>
+        <div class="inner"></div>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="row">
+    <div class="col-12 mb-3">
+      <button class="btn btn-primary btn-block"
+        type="submit"
+        name="add"
+        :disabled="!currentVariant.available"
+        :data-cart-limit="product.cart_limit"
+        data-default-variant-id="{{ current_variant.id }}"
+        @click.prevent="_addToCart(currentVariant.id, $event)">
+          <template v-if="isLoading && loadingEvent == 'cartAdding'">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {{ 'general.wait' | t }}
+          </template>
+          <template v-else>
+            <span v-if="currentVariant.available"><i class="icon ion-md-cart"></i> {{ 'products.product.add_to_cart' | t }}</span>
+            <span v-else>{{ 'products.product.unavailable' | t }}</span>
+          </template>
+      </button>
+
+      {% comment %} Dynamic Checkout Button {% endcomment %}
+      {% unless product.metafields.subscriptions.subscription_id %}
+        <div class="mt-2">{{ form | payment_button }}</div>
+      {% endunless %}
+
+      {% if settings.enable_wishlist %}
+        <div class="text-right mt-2">
+          <div v-if="!_checkWishlist(currentVariant.id)">
+            <a href="#" @click.prevent="_addVariantToWishlist(product.handle, currentVariant.id, $event)" rel="nofollow">
+              <i class="icon ion-md-star-outline"></i> {{ 'general.wishlist.add_to_wishlist' | t }}
+            </a>
+          </div>
+          <div v-else>
+            <span><i class="icon ion-md-star"></i> Added to <a href="#" data-toggle="modal" data-target="[data-modal-wishlist]" tabindex="-1">Wishlist</a>
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+{% endform %}

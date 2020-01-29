@@ -1,0 +1,137 @@
+{% assign collection_grid_type = section.settings.collection_grid_type %}
+
+<section class="section-content" data-section-id="{{ section.id }}" data-grid-type="{{ collection_grid_type }}" style="background-color: {{ section.settings.section_bg_color }}; color: {{ section.settings.section_txt_color }}">
+    <div class="{% if section.settings.fluid_layout %}container-fluid{% else %}container{% endif %}">
+
+      <div class="row">
+          <div class="col-12 text-center">
+
+              {% if section.settings.heading_txt != '' %}
+                <h2 class="section-title mb-4">{{ section.settings.heading_txt | escape }}</h2>
+              {% endif %}
+
+              {% if section.settings.lead_txt != '' %}
+                <p class="lead px-lg-6">
+                    {{ section.settings.lead_txt }}
+                </p>
+              {% endif %}
+
+          </div>
+      </div>
+
+      {% comment %}
+        Loop through products in your Frontpage collection.
+        This collection is created by default, but you must add products to it.
+      {% endcomment %}
+
+      {% if section.settings.home_featured_collection == blank or collections[section.settings.home_featured_collection] == empty or collections[section.settings.home_featured_collection].products_count == 0 %}
+
+      {% comment %}
+        For onboarding new users to your theme, we add some sample products to populate the store
+      {% endcomment %}
+      {% unless emptyState %}
+        {% assign emptyState = true %}
+      {% endunless %}
+        {% include 'onboarding-featured-products' %}
+      {% else %}
+
+        {% if collection_grid_type == 'collage' %}
+
+          <div class="row justify-content-center">
+            {% for product in collections[section.settings.home_featured_collection].products limit: 7 %}
+              <div class="{% if forloop.index <= 3 %}col-lg-4{% endif %} {% if forloop.index > 3 %}col-lg-3{% endif %} col-sm-6 my-3 d-flex align-items-stretch justify-content-around">
+                {% include 'card-product-style-generic' %}
+              </div>
+            {% endfor %}
+          </div>
+
+        {% else %}
+
+          <div class="row justify-content-center">
+            {% for product in collections[section.settings.home_featured_collection].products limit: 8 %}
+              <div class="col-sm-6 col-lg-3 my-3 d-flex align-items-stretch justify-content-around">
+                {% include 'card-product-style-generic' %}
+              </div>
+            {% endfor %}
+          </div>
+
+        {% endif %}
+
+      {% endif %}
+
+    </div>
+</section>
+
+
+
+{% schema %}
+
+{
+    "name": "Featured Collection",
+    "class": "index-featured-collectiion",
+    "settings": [
+        {
+            "type": "header",
+            "content": "Layout"
+        }, {
+            "type": "checkbox",
+            "id": "fluid_layout",
+            "label": "Full Width Layout?",
+            "default": false
+        }, {
+            "type": "select",
+            "id": "collection_grid_type",
+            "label": "Grid Type",
+            "options": [
+                {
+                    "value": "collage",
+                    "label": "Collage"
+                }, {
+                    "value": "grid",
+                    "label": "Grid"
+                }
+            ],
+            "default": "collage"
+        }, {
+            "type": "header",
+            "content": "Content"
+        }, {
+            "type": "text",
+            "id": "heading_txt",
+            "label": "Heading Text",
+            "default": "Featured Collection"
+        }, {
+            "type": "textarea",
+            "id": "lead_txt",
+            "label": "Lead Text"
+        }, {
+            "type": "header",
+            "content": "Collection"
+        }, {
+            "type": "collection",
+            "id": "home_featured_collection",
+            "label": "Select Collection"
+        }, {
+            "type": "header",
+            "content": "Styling"
+        }, {
+            "type": "color",
+            "id": "section_bg_color",
+            "label": "Background Color",
+            "default": "#f8f9fa"
+        }, {
+            "type": "color",
+            "id": "section_txt_color",
+            "label": "Text Color",
+            "default": "#343a40"
+        }
+    ],
+    "presets": [
+        {
+            "name": "Featured Collection",
+            "category": "Collection"
+        }
+    ]
+}
+
+{% endschema %}

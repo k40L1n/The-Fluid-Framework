@@ -1,0 +1,56 @@
+
+<template v-if="cart.item_count > 0">
+
+  <div class="inner">
+    <div v-for="(item, index, key) in cart.items" :key="item.id" class="row">
+      <div class="col-12 cart-item" data-cart-item>
+        <div class="row">
+          <div class="col-3">
+            <a v-if="item.image != null" :href="item.url">
+              <span class="badge badge-secondary" v-text="item.quantity"></span>
+              <img :src="_getSizedImageUrl(item.image, 'large')" class="img-fluid" />
+            </a>
+            <a v-else :href="item.url">{{ 'product-1' | placeholder_svg_tag: 'img-fluid bg-gray-100' }}</a>
+          </div>
+          <div class="col-7">
+            <a :href="item.url" v-text="item.product_title" class="item-title"></a>
+            <div v-html="_formatMoney(item.line_price)" class="item-price"></div>
+            <ul v-show="item.variant_options.length > 0" class="list-unstyled">
+              <li v-for="variant of item.variant_options">
+                <span v-if="variant != 'Default Title'" v-text="'- ' + variant" class="text-muted"></span>
+              </li>
+            </ul>
+          </div>
+          <div class="col-2 text-right">
+            <a href="#" @click.prevent="_removeFromCart(index+1, $event)" rel="nofollow" aria-label="Remove" title="Remove" class="btn-remove text-danger" title="{{ 'cart.general.remove' | t }}"><i class="icon ion-md-cancel"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col text-right">
+      <span class="h6 small d-inline-block">{{ 'cart.general.subtotal' | t }}:</span>
+      <span v-html="_formatMoney(cart.total_price)"></span>
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col text-center">
+      <div class="btn-group btn-group-sm btn-group-justified" role="group">
+        <a href="/cart" class="btn btn-outline-primary">{{ 'cart.general.viewcart' | t }}</a>
+        <a href="/checkout" class="btn btn-primary">{{ 'cart.general.checkout' | t }} </a>
+      </div>
+    </div>
+  </div>
+
+</template>
+
+<template v-else>
+  <div class="row">
+    <div class="col text-center">
+      {{ 'cart.general.empty' | t }}
+    </div>
+  </div>
+</template>

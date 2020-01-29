@@ -1,0 +1,61 @@
+{% assign items_per_page = section.settings.items_per_page %}
+{% paginate blog.articles by items_per_page %}
+
+<section class="section-content">
+    <div class="{% if fluid_layout %}container-fluid{% else %}container{% endif %}">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="page-title">{{ blog_title }}</h1>
+            </div>
+        </div>
+
+        {% if sidebar_enabled %}
+
+            {% comment %} layout with sidebar {% endcomment %}
+            <div class="row">
+                <div class="col-lg-9">
+                  <div class="row justify-content-center">
+                    {% for article in blog.articles %}
+                    <div class="col-12 my-3 d-flex align-items-stretch">
+                        {% include 'card-article-style-2' %}
+                    </div>
+                    {% endfor %}
+                  </div>
+                  {% if paginate.pages > 1 %}
+                    <div class="row">
+                        <div class="col-12 text-center mt-5">
+                            {% include 'pagination' %}
+                        </div>
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="col-lg-3">
+                  {% include 'sidebar-blog' %}
+                </div>
+            </div>
+
+      {% else %}
+
+          {% comment %} layout without sidebar {% endcomment %}
+          <div class="row">
+              {% for article in blog.articles %}
+              <div class="col-12 my-3">
+                  {% include 'card-article-style-2' %}
+              </div>
+              {% endfor %}
+          </div>
+
+          {% if paginate.pages > 1 %}
+          <div class="row">
+              <div class="col-12 text-center mt-5">
+                  {% include 'pagination' %}
+              </div>
+          </div>
+          {% endif %}
+
+      {% endif %}
+
+    </div>
+</section>
+
+{% endpaginate %}

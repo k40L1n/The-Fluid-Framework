@@ -1,0 +1,83 @@
+<div class="sidebar-blog {% if sidebar_is_sticky %}sticky-top{% endif %}">
+
+{% for block in section.blocks %}
+
+    {% comment %} social sharing {% endcomment %}
+    {% if block.settings.enable_socials %}
+      <div class="card card-socials mt-3" {{ block.shopify_attributes }}>
+        <div class="card-header">{{ block.settings.socials_title }}</div>
+        <div class="card-body text-center">
+          <ul class="list-unstyled social-icons list-inline my-0">
+            {% if block.settings.social_icon_facebook %}
+            <li class="list-inline-item mx-2">
+                <a href="{{ settings.social_facebook_link }}" name="Facebook" title="Facebook" rel="nofollow" aria-label="Facebook"><i class="icon ion-logo-facebook"></i></a>
+            </li>
+            {% endif %}
+
+            {% if block.settings.social_icon_twitter %}
+            <li class="list-inline-item mx-2">
+                <a href="{{ settings.social_twitter_link }}" name="Twitter" title="Twitter" rel="nofollow" aria-label="Twitter"><i class="icon ion-logo-twitter"></i></a>
+            </li>
+            {% endif %}
+
+            {% if block.settings.social_icon_googleplus %}
+            <li class="list-inline-item mx-2">
+                <a href="{{ settings.social_googleplus_link }}" name="Google+" title="Google+" rel="nofollow" aria-label="Google+"><i class="icon ion-logo-googleplus"></i></a>
+            </li>
+            {% endif %}
+
+            {% if block.settings.social_icon_instagram %}
+            <li class="list-inline-item mx-2">
+                <a href="{{ settings.social_instagram_link }}" name="Instagram" title="Instagram" rel="nofollow" aria-label="Instagram"><i class="ion-social-instagram"></i></a>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+
+    {% comment %} recent articles {% endcomment %}
+    {% if block.settings.enable_recent_articles %}
+      <div class="card card-recent-articles mt-3">
+        <div class="card-header">{{ block.settings.recent_articles_title }}</div>
+          <ul class="list-group list-group-flush">
+              {% assign total_recent_articles = block.settings.total_recent_articles %}
+              {% for article in blogs[blog.handle].articles limit:total_recent_articles %}
+                <li class="list-group-item">
+                    <div class="media">
+                      <a href="{{ article.url }}" name="{{ article.title }}" title="{{ article.title }}" aria-label="{{ article.title }}">
+                        {% unless article_image contains 'no-image' %}
+                          <img class="d-flex mr-3" src="{{ article.image | img_url: '40x40', crop: 'center' }}" class="img-fluid" alt="{{ article.title }}">
+                        {% endunless %}
+                      </a>
+                      <div class="media-body">
+                        <h6 class="small mt-0"><a href="{{ article.url }}">{{ article.title }}</a></h6>
+                        <p class="small py-0">{{ article.content | strip_html | truncatewords: 8 }}</p>
+                      </div>
+                    </div>
+                </li>
+              {% endfor %}
+          </ul>
+      </div>
+    {% endif %}
+
+
+    {% comment %} tags list {% endcomment %}
+    {% if block.settings.enable_tags %}
+      <div class="card card-tags mt-3">
+        <div class="card-header">{{ block.settings.tags_title }}</div>
+        <div class="card-body">
+          {% for tag in blog.all_tags %}
+            {% if current_tags contains tag %}
+              <span class="badge badge-pill badge-dark">{{ tag }}</span>
+            {% else %}
+              <span class="badge badge-pill badge-light">{{ tag | link_to_tag: tag }}</span>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+{% endfor %}
+
+</div>

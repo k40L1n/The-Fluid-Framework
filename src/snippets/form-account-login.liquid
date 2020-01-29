@@ -1,0 +1,45 @@
+<div id="customerLoginForm" data-login-form>
+
+  {% include 'loading-indicator' %}
+
+  <transition name="fade">
+    <div v-if="storeUtilities.ready" class="wrapper">
+      {% form 'customer_login' %}
+        {% comment %}
+        <h3 class="text-center">{{ 'customer.login.title' | t }}</h3>
+        {% endcomment %}
+
+        {% if form.errors %}
+        <div class="alert alert-warning" role="alert">
+          {{ form.errors | default_errors }}
+        </div>
+        {% endif %}
+
+        <div class="form-group input-group">
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="customerEmail"><i class="icon ion-md-person"></i></label>
+          </div>
+          <input type="email" name="customer[email]" aria-label="email" id="customerEmail" class="form-control {% if form.errors contains 'email' %} is-invalid{% endif %}" placeholder="{{ 'customer.login.email' | t }}" required>
+        </div>
+
+        {% if form.password_needed %}
+        <div class="form-group input-group">
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="customerPassword"><i class="icon ion-md-key"></i></label>
+          </div>
+          <input type="password" value="" id="customerPassword" name="customer[password]" aria-label="password" class="form-control {% if form.errors contains 'password' %} is-invalid{% endif %}" placeholder="{{ 'customer.login.password' | t }}" required>
+        </div>
+        {% endif %}
+
+        <input type="submit" class="btn btn-primary btn-block" value="{{ 'customer.login.sign_in' | t }}">
+
+        {% if form.password_needed %}
+        <p class="text-right mt-2 font-italic">
+          <a data-recover-link href="#recover">{{ 'customer.login.forgot_password' | t }}</a>
+        </p>
+        {% endif %}
+
+      {% endform %}
+    </div>
+  </transition>
+</div>

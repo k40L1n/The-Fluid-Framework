@@ -1,0 +1,52 @@
+<div data-product-reviews data-type="allReviews" style="display:none;">
+
+  <div id="reviewsList">
+    <div class="row">
+      <div class="col-12 text-center">
+        <h4><span v-text="totalReviews"></span> Review<span v-if="totalReviews > 1">s</span></h4>
+        <div v-if="totalReviews > 0" v-html="_getAvgRating()"></div>
+      </div>
+    </div>
+    <div v-for="review in allReviews.data" class="row mt-4">
+      <div class="col-12">
+        <div class="review-item py-4">
+          <div class="row">
+            <div class="col-sm-3">
+              <div class="row">
+                <div class="col-12">
+                  <div v-text="review.author" class="font-weight-bold"></div>
+                  <div class="my-1 small text-gray-700">
+                    <span class="icon ion-md-calendar"></span>
+                    <span v-text="_formatDate(review.created_at)"></span>
+                  </div>
+                </div>
+                <div class="col-12 my-1">
+                  <div v-for="field in review.review_custom_fields" v-if="field.value" class="row">
+                    <div class="col-12 small text-gray-700">
+                      <span v-text="field.label+':'" class="font-weight-bold"></span>
+                      <span v-text="field.value"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div :class="{ 'col-sm-7': reviewSettings.image_upload_enable, 'col-sm-9': !reviewSettings.image_upload_enable }">
+              <h5><a :href="'/products/'+review.product_handle"><span v-text="review.product_title"></span></a></h5>
+              <div v-html="_getRating(review)"></div>
+              <div v-text="review.title" class="font-weight-bold my-1"></div>
+              <div v-html="review.body"></div>
+            </div>
+            <div v-if="reviewSettings.image_upload_enable" class="col-sm-2 text-center">
+              <img v-if="review.image" :src="review.image" alt="review-image" class="review-image img-fluid mt-4 mt-sm-0"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-5">
+    <pagination :data="allReviews.pagination" :limit="2" @pagination-change-page="_getPagedResults"/>
+  </div>
+
+</div>

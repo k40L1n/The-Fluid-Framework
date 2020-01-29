@@ -1,0 +1,137 @@
+<div data-product-toolbar-mobile class="product-toolbar-mobile fixed-bottom bg-white py-3">
+  <div class="container">
+
+      <div class="row toolbar-mobile">
+        <div class="col-8 d-flex align-items-center">
+          {{ product.title }}
+        </div>
+        <div class="col-4 d-flex align-items-center justify-content-end">
+            {% if product.has_only_default_variant %}
+              <button type="submit" name="add" class="btn btn-primary btn-sm" @click.prevent="_addToCart(currentVariant.id, $event)">
+                {{ 'products.product.add_to_cart' | t }}
+              </button>
+            {% else %}
+              <button v-if="!isProductToolbarMobileOpen" type="submit" name="add" class="btn btn-primary btn-sm" @click.prevent="_toggleProductToolbarMobile">
+                {{ 'products.product.choose_options' | t }}
+              </button>
+              <a v-else href="#" class="btn-close float-right align-self-start "@click.prevent="_toggleProductToolbarMobile" rel="nofollow" aria-label="Close" title="Close"><i class="icon ion-md-close text-gray-900"></i></a>
+            {% endif %}
+        </div>
+      </div>
+
+      <form data-product-form action="/cart/add" method="post" enctype="multipart/form-data" class="form-row mt-3">
+        <div class="col-12 d-flex justify-content-between mb-2">
+          {% unless product.has_only_default_variant %}
+            {% for option in product.options_with_values %}
+              {% assign option_name = option.name | downcase %}
+              <div class="selector-wrapper flex-grow-1">
+                <label for="SingleOptionSelector-{{ forloop.index0 }}" class="small">
+                  {{ option.name }}
+                </label>
+                {% if enable_color_swatches and option_name == 'color' %}
+                  {% comment %} Color swatches {% endcomment %}
+                  <ul class="list-unstyled list-inline my-0 py-0">
+                    {% for value in option.values %}
+                      <li class="list-inline-item">
+                        <div class="color-swatch">
+                          <label
+                              data-toggle="tooltip"
+                              data-trigger="hover"
+                              title="{{ value | escape | replace: '-', ' ' }}"
+                              :style="_getSwatchStyle('{{ value }}')">
+                              <input
+                                type="radio"
+                                name='color'
+                                aria-label="color"
+                                value="{{ value | escape }}"
+                                data-single-option-selector
+                                data-index="option{{ option.position }}"
+                                @click="_getVariant($event)"
+                                {% if option.selected_value == value %}checked="checked"{% endif %} >
+                          </label>
+                        </div>
+                      </li>
+                    {% endfor %}
+                  </ul>
+
+                {% elsif enable_size_swatches and option_name == 'size' %}
+                  {% comment %} Size swatches {% endcomment %}
+                  <ul class="list-unstyled list-inline my-0 py-0">
+                    {% for value in option.values %}
+                      <li class="list-inline-item">
+                        <div class="size-swatch">
+                          <label>
+                              <input
+                                type="radio"
+                                name='size'
+                                aria-label="size"
+                                value="{{ value | escape }}"
+                                data-single-option-selector
+                                data-index="option{{ option.position }}"
+                                @click="_getVariant($event)"
+                                {% if option.selected_value == value %}checked="checked"{% endif %} >
+                          </label>
+                        </div>
+                      </li>
+                    {% endfor %}
+                  </ul>
+
+                {% else %}
+                  {% comment %} Normal select {% endcomment %}
+                  <select
+                    class="form-control form-control-sm"
+                    data-single-option-selector
+                    data-index="option{{ option.position }}"
+                    @click="_getVariant($event)">
+                    {% for value in option.values %}
+                      <option
+                        value="{{ value | escape }}"
+                        {% if option.selected_value == value %}selected="selected"{% endif %}>
+                          {{ value }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                {% endif %}
+
+              </div>
+            {% endfor %}
+          {% endunless %}
+
+          <div class="quantity-wrapper" data-qty-container>
+            <label for="Quantity" class="small">{{ 'products.product.quantity' | t }}</label>
+            <div class="input-group input-group-sm">
+              <div class="input-group-prepend">
+                <span class="input-group-text">
+                  <a href="#" class="btn-decrease" data-qty-decrease @click.prevent="_updateQty($event)" rel="nofollow" aria-label="Decrease" title="Decrease"><i class="icon ion-md-remove"></i></a>
+                </span>
+              </div>
+              <input type="number" name="quantity" aria-label="quantity" value="1" step="1" min="1" pattern="[0-9]*" inputmode="numeric" data-qty-input class="quantity form-control text-center">
+              <div class="input-group-append">
+                <span class="input-group-text">
+                  <a href="#" class="btn-increase" data-qty-increase @click.prevent="_updateQty($event)" rel="nofollow" aria-label="Increase" title="Increase"><i class="icon ion-md-add"></i></a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <button type="submit" name="add" class="btn btn-primary btn-block" :disabled="!currentVariant.available" @click.prevent="_addToCart(currentVariant.id, $event)">
+              <template v-if="isLoading && loadingEvent == 'cartAdding'">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {{ 'general.wait' | t }}
+              </template>
+              <template v-else>
+                <span v-if="currentVariant.available">
+                  {{ 'products.product.add_to_cart' | t }}
+                </span>
+                <span v-else>
+                  {{ 'products.product.sold_out' | t }}
+                </span>
+              </template>
+          </button>
+
+        </div>
+      </form>
+
+  </div>
+</div>

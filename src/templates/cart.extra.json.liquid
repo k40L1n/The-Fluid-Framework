@@ -1,0 +1,24 @@
+{% layout none %}
+
+{
+    "items": [
+        {% for item in cart.items %}
+            {
+                "id": {{ item.id | json }},
+                "key": {{ item.key | json }},
+                "title": {{ item.title | json }},
+                "handle": {{ item.handle | json }},
+                "variant_id": {{ item.variant_id | json }},
+                "product_options": [
+                    {% for option in item.product.options %}
+                        {
+                            "name": {{ option | json}},
+                            "value": {{ item.variant.options[forloop.index0] | json }}
+                        }{% unless forloop.last == true %},{% endunless %}
+                    {% endfor %}
+                ]
+            }
+            {% unless forloop.last == true %},{% endunless %}
+        {% endfor %}
+    ]
+}

@@ -1,0 +1,227 @@
+<section class="section-content" data-section-id="{{ section.id }}" style="background-color: {{ section.settings.section_bg_color }}; color: {{ section.settings.section_txt_color }}">
+    <div class="{% if section.settings.fluid_layout %}container-fluid{% else %}container{% endif %}">
+        <div class="row">
+            <div class="col-12 text-center">
+
+                {% if section.settings.heading_txt != '' %}
+                  <h2 class="section-title mb-4">{{ section.settings.heading_txt }}</h2>
+                {% endif %}
+
+                {% if section.settings.lead_txt != '' %}
+                  <p class="lead px-lg-6">
+                      {{ section.settings.lead_txt }}
+                  </p>
+                {% endif %}
+
+            </div>
+        </div>
+
+        {% assign blocks_size = section.blocks | size %}
+        {% if blocks_size > 0%}
+          <div class="row mt-5">
+              {% for block in section.blocks %}
+              <div class="{% unless section.settings.grid_size == '12' %}col-sm-6{% endunless %} col-md-{{ section.settings.grid_size }}">
+                  <div class="feature d-flex my-4">
+                      <div class="mr-4">
+                          <i class="{{ block.settings.icon_class }} display-4" style="color: {{ block.settings.icon_color }}!important;"></i>
+                      </div>
+                      <div>
+                          <h6 class="mb-3">{{ block.settings.heading }}</h6>
+                          <div>{{ block.settings.txt }}</div>
+                      </div>
+                  </div>
+              </div>
+              {% endfor %}
+          </div>
+        {% endif %}
+
+        {% if section.settings.btn_txt != '' %}
+          <div class="row">
+              <div class="col-12 text-center">
+                  <a class="btn btn{% if section.settings.btn_type == 'outline' %}-{% endif %}{{ section.settings.btn_type }}-{{ section.settings.btn_variant }} {{ section.settings.btn_size }} mt-5" href="{{ section.settings.btn_url }}">{{ section.settings.btn_txt }}</a>
+              </div>
+          </div>
+        {% endif %}
+
+    </div>
+</section>
+
+
+
+{% schema %}
+  {
+    "name": "Features Grid",
+    "class": "index-features-grid",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "checkbox",
+        "id": "fluid_layout",
+        "label": "Full Width Layout?",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "grid_size",
+        "label": "Grid Size",
+        "options": [{
+            "value": "12",
+            "label": "1 Column"
+          },
+          {
+            "value": "6",
+            "label": "2 Columns"
+          },
+          {
+            "value": "4",
+            "label": "3 Columns"
+          }
+        ],
+        "default": "6"
+      },
+      {
+        "type": "header",
+        "content": "Content"
+      },
+      {
+        "type": "text",
+        "id": "heading_txt",
+        "label": "Heading Text",
+        "default": "Awesome Heading"
+      },
+      {
+        "type": "textarea",
+        "id": "lead_txt",
+        "label": "Lead Text",
+        "default": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam pulvinar ac tortor imperdiet commodo."
+      },
+      {
+        "type": "text",
+        "id": "btn_txt",
+        "label": "Button Text"
+      },
+      {
+        "type": "url",
+        "id": "btn_url",
+        "label": "Button URL"
+      },
+      {
+        "type": "header",
+        "content": "Styling"
+      },
+      {
+        "type": "color",
+        "id": "section_bg_color",
+        "label": "Background Color",
+        "default": "#f8f9fa"
+      },
+      {
+        "type": "color",
+        "id": "section_txt_color",
+        "label": "Text Color",
+        "default": "#343a40"
+      },
+      {
+        "type": "select",
+        "id": "btn_type",
+        "label": "Button Type",
+        "options": [{
+            "value": "outline",
+            "label": "Outline"
+          },
+          {
+            "value": "",
+            "label": "Solid"
+          }
+        ],
+        "default": "outline"
+      },
+      {
+        "type": "select",
+        "id": "btn_variant",
+        "label": "Button Variant",
+        "options": [{
+            "value": "primary",
+            "label": "Primary"
+          },
+          {
+            "value": "secondary",
+            "label": "Secondary"
+          },
+          {
+            "value": "gray-100",
+            "label": "Light"
+          },
+          {
+            "value": "gray-900",
+            "label": "Dark"
+          }
+        ],
+        "default": "primary"
+      },
+      {
+        "type": "select",
+        "id": "btn_size",
+        "label": "Button Size",
+        "options": [{
+            "value": "",
+            "label": "Default"
+          },
+          {
+            "value": "btn-sm",
+            "label": "Small"
+          },
+          {
+            "value": "btn-lg",
+            "label": "Large"
+          }
+        ],
+        "default": ""
+      }
+    ],
+    "presets": [
+      {
+        "name": "Features Grid",
+        "category": "Content"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "content",
+        "name": "Feature Block",
+        "settings": [
+          {
+            "type": "text",
+            "id": "icon_class",
+            "label": "Icon Class",
+            "info": "You can use a class from any Icon Font of choice."
+          },
+          {
+            "type": "color",
+            "id": "icon_color",
+            "label": "Icon Color"
+          },
+          {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading"
+          },
+          {
+            "type": "richtext",
+            "id": "txt",
+            "label": "Text"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

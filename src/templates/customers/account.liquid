@@ -1,0 +1,64 @@
+<section data-template="account" class="section-content">
+    <div class="container">
+
+        <div class="row">
+          <div class="col-lg-3">
+          </div>
+          <div class="col-lg-9">
+            <h3 class="text-center mb-3">{{ 'customer.orders.title' | t }}</h3>
+          </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-lg-3">
+                {% include 'sidebar-account' %}
+            </div>
+
+            <div class="col-lg-9">
+
+                {% paginate customer.orders by 20 %}
+                  {% if customer.orders.size != 0 %}
+                    <div class="table-responsive">
+                      <table class="table table-bordered">
+                        <thead class="bg-gray-300">
+                          <tr>
+                            <th class="text-uppercase small">{{ 'customer.orders.order_number' | t }}</th>
+                            <th class="text-uppercase small">{{ 'customer.orders.date' | t }}</th>
+                            <th class="text-uppercase small">{{ 'customer.orders.payment_status' | t }}</th>
+                            <th class="text-uppercase small">{{ 'customer.orders.fulfillment_status' | t }}</th>
+                            <th class="text-uppercase small">{{ 'customer.orders.total' | t }}</th>
+                          </tr>
+                        </thead>
+                        <tbody class="bg-white">
+                          {% for order in customer.orders %}
+                            <tr>
+                              <td>{{ order.name | link_to: order.customer_url }}</td>
+                              <td>{{ order.created_at | date: format: 'month_day_year' }}</td>
+                              <td>{{ order.financial_status_label }}</td>
+                              <td>{{ order.fulfillment_status_label }}</td>
+                              <td>{{ order.total_price | money }}</td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+
+                  {% else %}
+                    <div class="alert alert-warning">
+                      {{ 'customer.orders.none' | t }}
+                    </div>
+                  {% endif %}
+
+                  {% if paginate.pages > 1 %}
+                    <div class="text-center">
+                      {% include 'pagination' %}
+                    </div>
+                  {% endif %}
+
+                {% endpaginate %}
+
+            </div>
+        </div>
+    </div>
+</section>

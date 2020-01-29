@@ -1,0 +1,41 @@
+
+<section data-section-id="{{ section.id }}" class="section-content">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <i class="{{ section.settings.icon_class }} display-1 text-gray-400" style="color:{{ section.settings.icon_color }}!important"></i>
+        <h1 class="my-4">{{ 'general.404.title' | t }}</h1>
+        <p class="mb-0">{{ 'general.404.subtext_html' | t }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{% schema %}
+  {
+    "name": "404 Template",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Content"
+      },
+      {
+        "type": "text",
+        "id": "icon_class",
+        "label": "Icon Class",
+        "default": "icon ion-md-compass"
+      },
+      {
+        "type": "header",
+        "content": "Styling"
+      },
+      {
+        "type": "color",
+        "id": "icon_color",
+        "label": "Icon Color",
+        "default": "#ced4da"
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,28 @@
+<div class="list-group mb-4 mb-lg-0 sticky-top">
+
+  <a class="list-group-item" href="/account" name="{{ 'customer.orders.title' | t }}" title="{{ 'customer.orders.title' | t }}" rel="nofollow" aria-label="{{ 'customer.orders.title' | t }}">
+    <i class="icon ion-md-calendar mr-2"></i> {{ 'customer.orders.title' | t }}
+  </a>
+
+  <a class="list-group-item" href="/account/addresses" name="{{ 'customer.addresses.title' | t }}" title="{{ 'customer.addresses.title' | t }}" rel="nofollow" aria-label="{{ 'customer.addresses.title' | t }}">
+    <i class="icon ion-md-document mr-2"></i> {{ 'customer.addresses.title' | t }}
+  </a>
+
+  {% comment %}Recharge Link{% endcomment %}
+  {% if customer.metafields.subscriptions.customer_string %}
+    <a class="list-group-item" href="/tools/recurring/customer/{{customer.metafields.subscriptions.customer_string}}/subscriptions/" name="{{ 'customer.orders.manage_subscriptions' | t }}" title="{{ 'customer.orders.manage_subscriptions' | t }}" rel="nofollow" aria-label="{{ 'customer.orders.manage_subscriptions' | t }}">
+      <i class="icon ion-md-refresh mr-2"></i> {{ 'customer.orders.manage_subscriptions' | t }}
+    </a>
+  {% endif %}
+
+  {% if settings.enable_wishlist %}
+    <a class="list-group-item" href="#" data-toggle="modal" data-target="[data-modal-wishlist]" tabindex="-1" name="{{ 'general.wishlist.title' | t }}" title="{{ 'general.wishlist.title' | t }}" rel="nofollow" aria-label="{{ 'general.wishlist.title' | t }}">
+      <i class="icon ion-md-star mr-2"></i> {{ 'general.wishlist.title' | t }}
+    </a>
+  {% endif %}
+
+  <a class="list-group-item" href="/account/logout" name="{{ 'layout.customer.log_out' | t }}" title="{{ 'layout.customer.log_out' | t }}" rel="nofollow" aria-label="{{ 'layout.customer.log_out' | t }}">
+    <i class="icon ion-md-unlock mr-2"></i> {{ 'layout.customer.log_out' | t }}
+  </a>
+
+</div>

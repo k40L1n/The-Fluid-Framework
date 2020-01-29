@@ -1,0 +1,293 @@
+<section class="section-content" data-section-id="{{ section.id }}" style="background-color: {{ section.settings.section_bg_color }}; color: {{ section.settings.section_txt_color }}">
+    <div class="{% if section.settings.fluid_layout %}container-fluid{% else %}container{% endif %}">
+        <div class="row">
+            <div class="col-12 text-center">
+
+                {% if section.settings.heading_txt != '' %}
+                  <h2 class="section-title mb-4">{{ section.settings.heading_txt | escape }}</h2>
+                {% endif %}
+
+                {% if section.settings.lead_txt != '' %}
+                  <p class="lead px-lg-6">
+                      {{ section.settings.lead_txt }}
+                  </p>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <div class="row no-gutters row-banner">
+
+          {% for block in section.blocks limit: section.blocks.size %}
+
+            {% if forloop.index == 1 %}
+              {% assign banner1_img = block.settings.banner_img  %}
+              {% assign banner1_title = block.settings.banner_title  %}
+              {% assign banner1_txt = block.settings.banner_txt  %}
+              {% assign banner1_url = block.settings.banner_url %}
+            {% endif %}
+
+            {% if forloop.index == 2 %}
+              {% assign banner2_img = block.settings.banner_img  %}
+              {% assign banner2_title = block.settings.banner_title  %}
+              {% assign banner2_txt = block.settings.banner_txt  %}
+              {% assign banner2_url = block.settings.banner_url %}
+            {% endif %}
+
+            {% if forloop.index == 3 %}
+              {% assign banner3_img = block.settings.banner_img  %}
+              {% assign banner3_title = block.settings.banner_title  %}
+              {% assign banner3_txt = block.settings.banner_txt  %}
+              {% assign banner3_url = block.settings.banner_url %}
+            {% endif %}
+
+            {% if forloop.index == 4 %}
+              {% assign banner4_img = block.settings.banner_img  %}
+              {% assign banner4_title = block.settings.banner_title  %}
+              {% assign banner4_txt = block.settings.banner_txt  %}
+              {% assign banner4_url = block.settings.banner_url %}
+            {% endif %}
+          {% endfor %}
+
+            <div class="col-lg-5">
+              <a href="{{ banner1_url }}">
+
+                <div class="banner banner-1 d-flex h-100 d-lg-block align-items-end mr-lg-4 bg-img lazyload bg-white"
+                  data-sizes="auto"
+
+                  {% if banner1_img %}
+                    data-bgset="
+                    {{ banner1_img | img_url: '800x800', crop: 'center' }} 576w,
+                    {{ banner1_img | img_url: '800x800', crop: 'center' }} 768w,
+                    {{ banner1_img | img_url: 'master' }} 992w,
+                    {{ banner1_img | img_url: 'master' }} 1200w"
+                  {% endif %} >
+
+                  {% unless banner1_img %}
+                    <div class="d-flex h-100">
+                      {{ 'product-1' | append: current | placeholder_svg_tag: 'svg-placeholder' }}
+                    </div>
+                  {% endunless %}
+
+                  <div class="inner w-100">
+                    <h5 class="my-0">{{ banner1_title }}</h5>
+                    <div>{{ banner1_txt }}</div>
+                  </div>
+                  <div class="overlay"></div>
+                </div>
+              </a>
+            </div>
+
+            <div class="col-lg-7">
+              <div class="row no-gutters h-100">
+
+                <div class="col-md-6 col-lg-12 mt-4 mt-lg-0 mb-lg-4 order-2 order-md-1">
+                  <a href="{{ banner2_url }}">
+                    <div class="banner banner-2 d-flex h-100 d-lg-block align-items-end bg-img lazyload bg-white mr-0 mr-md-4 mr-lg-0"
+                      data-sizes="auto"
+                      {% if banner2_img %}
+                      data-bgset="
+                        {{ banner2_img | img_url: '600x800', crop: 'center' }} 576w,
+                        {{ banner2_img | img_url: '600x800', crop: 'center' }} 768w,
+                        {{ banner2_img | img_url: 'master' }} 992w,
+                        {{ banner2_img | img_url: 'master' }} 1200w
+                        "
+                      {% endif %} >
+
+                      {% unless banner2_img %}
+                        <div class="d-flex h-100">
+                          {{ 'product-2' | append: current | placeholder_svg_tag: 'svg-placeholder' }}
+                        </div>
+                      {% endunless %}
+
+                      <div class="inner w-100">
+                        <h5 class="my-0">{{ banner2_title }}</h5>
+                        <div>{{ banner2_txt }}</div>
+                      </div>
+                      <div class="overlay"></div>
+                    </div>
+                  </a>
+                </div>
+
+                <div class="col-md-6 col-lg-12 mt-4 mt-lg-0 order-1 order-md-2">
+                    <div class="row no-gutters h-100">
+
+                      <div class="col-6 col-lg-5">
+                        <a href="{{ banner3_url }}">
+                          <div class="banner banner-3 d-flex h-100 d-lg-block align-items-end bg-img lazyload mb-4 mr-4 bg-white"
+                            data-sizes="auto"
+                            {% if banner3_img %}
+                            data-bgset="
+                              {{ banner3_img | img_url: '600x800', crop: 'center' }} 576w,
+                              {{ banner3_img | img_url: '600x800', crop: 'center' }} 768w,
+                              {{ banner3_img | img_url: 'master' }} 992w,
+                              {{ banner3_img | img_url: 'master' }} 1200w
+                              "
+                            {% endif %} >
+
+                            {% unless banner3_img %}
+                              <div class="d-flex h-100">
+                                {{ 'product-3' | append: current | placeholder_svg_tag: 'svg-placeholder' }}
+                              </div>
+                            {% endunless %}
+
+                            <div class="inner w-100">
+                              <h5 class="my-0">{{ banner3_title }}</h5>
+                              <div>{{ banner3_txt }}</div>
+                            </div>
+                            <div class="overlay"></div>
+                          </div>
+                        </a>
+                      </div>
+
+                      <div class="col-6 col-lg-7">
+                        <a href="{{ banner4_url }}">
+                          <div class="banner banner-4 d-flex h-100 d-lg-block align-items-end bg-img lazyload bg-white"
+                            data-sizes="auto"
+                            {% if banner4_img %}
+                            data-bgset="
+                              {{ banner4_img | img_url: '600x800', crop: 'center' }} 576w,
+                              {{ banner4_img | img_url: '600x800', crop: 'center' }} 768w,
+                              {{ banner4_img | img_url: 'master' }} 992w,
+                              {{ banner4_img | img_url: 'master' }} 1200w
+                              "
+                            {% endif %} >
+
+                            {% unless banner4_img %}
+                              <div class="d-flex h-100">
+                                {{ 'product-4' | append: current | placeholder_svg_tag: 'svg-placeholder' }}
+                              </div>
+                            {% endunless %}
+
+                            <div class="inner w-100">
+                              <h5 class="my-0">{{ banner4_title }}</h5>
+                              <div>{{ banner4_txt }}</div>
+                            </div>
+                            <div class="overlay"></div>
+                          </div>
+                        </a>
+                      </div>
+
+                    </div>
+                </div>
+              </div>
+            </div>
+
+        </div>
+
+
+        {% comment %}
+        {% for block in section.blocks limit: section.blocks.size %}
+          <div {{ block.shopify_attributes }}>
+            {% assign collection = collections[block.settings.collection] %}
+
+            <a href="{% if collection == empty %}#{% else %}{{ collection.url }}{% endif %}">
+              {% if collection.image != blank %}
+                {{ collection | img_url: '480x480' | img_tag: collection.title }}
+              {% elsif collection.products.first != blank %}
+                {{ collection.products.first | img_url: '480x480' | img_tag: collection.title }}
+              {% elsif collection == empty %}
+                {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                {{ 'collection-' | append: current | placeholder_svg_tag: 'placeholder-svg placeholder-svg--small' }}
+              {% endif %}
+
+              <p>
+                {% if collection == empty %}
+                  {{ 'homepage.onboarding.collection_title' | t }}
+                {% else %}
+                  {{ collection.title }}
+                {% endif %}
+              </p>
+            </a>
+          </div>
+        {% endfor %}
+        {% endcomment %}
+
+    </div>
+</section>
+
+
+
+{% schema %}
+  {
+    "name": "Banners Grid",
+    "class": "index-banners-grid",
+    "max_blocks": 4,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "checkbox",
+        "id": "fluid_layout",
+        "label": "Full Width Layout?",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Content"
+      },
+      {
+        "type": "text",
+        "id": "heading_txt",
+        "label": "Heading Text"
+      },
+      {
+        "type": "textarea",
+        "id": "lead_txt",
+        "label": "Lead Text"
+      },
+      {
+        "type": "header",
+        "content": "Styling"
+      },
+      {
+        "type": "color",
+        "id": "section_bg_color",
+        "label": "Background Color",
+        "default": "#f8f9fa"
+      },
+      {
+        "type": "color",
+        "id": "section_txt_color",
+        "label": "Text Color",
+        "default": "#343a40"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "banner-block",
+        "name": "Banner Block",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "banner_img",
+            "label": "Select Image"
+          },
+          {
+            "type": "text",
+            "id": "banner_title",
+            "label": "Title"
+          },
+          {
+          "type": "richtext",
+          "id": "banner_txt",
+          "label": "Text"
+          },
+          {
+          "type": "url",
+          "id": "banner_url",
+          "label": "Banner URL"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

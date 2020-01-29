@@ -1,0 +1,29 @@
+<div class="pagination">
+
+  {% if paginate.previous %}
+    <a href="{{ paginate.previous.url }}" name="{{ paginate.previous.title }}" title="{{ paginate.previous.title }}" aria-label="{{ paginate.previous.title }}">
+      {{ 'collections.pagination.previous' | t }}
+    </a>
+    <span class="sep">/</span>
+  {% endif %}
+
+  {% for part in paginate.parts %}
+    {% if part.is_link %}
+      <a href="{{ part.url }}" name="{{ part.title }}" title="{{ part.title }}" aria-label="{{ part.title }}">{{ part.title }}</a>
+      <span class="sep">/</span>
+    {% else %}
+      {% if part.title == paginate.current_page %}
+        <span class="active">{{ part.title }}</span>
+        <span class="sep">/</span>
+      {% else %}
+        <span>{{ part.title }}</span>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+
+  {% if paginate.next %}
+    <a href="{{ paginate.next.url }}" name="{{ paginate.next.title }}" title="{{ paginate.next.title }}" aria-label="{{ paginate.next.title }}">{{ 'collections.pagination.next' | t }}</a>
+    <link rel="prerender" href="{{ paginate.next.url }}">
+  {% endif %}
+
+</div>

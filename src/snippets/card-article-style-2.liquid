@@ -1,0 +1,31 @@
+{% assign article_image = article.image.src | img_url %}
+
+<div class="card bg-white no-gutters flex-column flex-lg-row">
+  <div class="{% if sidebar_enabled %}col-lg-6{% else %}col-lg-7{% endif %} bg-img lazyload" data-bg="{{ article.image.src | img_url: '1200x' }}" style="background-image:url({{ article.image.src | img_url: 'pico' }})">
+
+    {% unless article_image contains 'no-image' %}
+      <div class="card-img d-block d-lg-none">
+        <img
+          src="{{ article.image.src | img_url: 'pico'}}"
+          data-src="{{ article.image.src | img_url: '800x500', crop: 'center' }}"
+          class="img-fluid lazyload"
+          alt="{{ article.image.alt | escape }}" />
+      </div>
+    </div>
+  {% endunless %}
+
+  <div class="{% if sidebar_enabled %}col-lg-6{% else %}col-lg-5{% endif %} p-4 d-flex flex-column align-content-around flex-wrap">
+    <div class="card-body">
+      <div class="text-uppercase small text-muted">{{ blog.title}}</div>
+      <h5 class="mt-1 mt-lg-5"><a href="{{ article.url }}">{{ article.title }}</a></h5>
+      <div class="small text-muted mb-4">
+        <i class="icon ion-md-time text-warning"></i>
+        <time datetime="formatDate(article.node.publishedAt)"> {{ article.published_at | date: "%a, %b %d, %Y" }}</time>
+      </div>
+      <div>{{ article.excerpt_or_content | truncatewords: 20, '[...]' }}</div>
+    </div>
+    <div class="card-footer bg-white text-muted small">
+      <span class="font-italic font-secondary">by</span> <span class="text-uppercase">{{ article.author }}</span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<!-- Facebook Conversion code -->
+{% assign fb_pixel_id = settings.fb_pixel_id %}
+
+{% if fb_pixel_id != '' %}
+<script>(function() {
+var _fbq = window._fbq || (window._fbq = []);
+if (!_fbq.loaded) {
+var fbds = document.createElement('script');
+fbds.async = true;
+fbds.src = '//connect.facebook.net/en_US/fbds.js';
+var s = document.getElementsByTagName('script')[0];
+s.parentNode.insertBefore(fbds, s);
+_fbq.loaded = true;
+}
+})();
+window._fbq = window._fbq || [];
+window._fbq.push(['track', '{{ fb_pixel_id }}', {'value': '{{ order.total_price | money_without_currency }}','currency':'{{ shop.currency}}'}]);
+</script>
+<noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?ev={{ fb_pixel_id }}&amp;cd[value]={{ order.total_price | money_without_currency }}&amp;cd[currency]={{ shop.currency }}&amp;noscript=1" /></noscript>
+{% endif %}

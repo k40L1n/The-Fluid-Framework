@@ -1,0 +1,122 @@
+{% paginate collection.products by items_per_page %}
+
+    <section class="section-content">
+        <div class="{% if section.settings.fluid_layout %}container-fluid{% else %}container{% endif %}">
+
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <div class="fancy-heading active">
+                        {% if collection_ajaxed %}
+                            <h1 class="page-title" v-text="collection.title"></h1>
+                            <h3 class="text-muted" v-html="collection.description"></h3>
+                        {% else %}
+                            <h1 class="page-title">{{ collection.title }}</h1>
+                            <h3 class="text-muted">{{ collection.description }}</h3>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% if filters_enabled and filters_type == 'sidebar' %}
+                <a aria-controls="filtersCollapse" aria-expanded="false" class="btn btn-outline-primary btn-sm d-block d-lg-none" data-toggle="collapse" href="#filtersCollapse">
+                    <i class="icon ion-md-color-wand"></i>
+                    Collection Filters
+                </a>
+            {% else %}
+                <div class="row my-3">
+                    <div class="col-6 col-sm-4 col-md-3 mx-auto">
+                        {% include 'form-collection-sorting' %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="row">
+
+                {% if filters_enabled and filters_type == 'sidebar' %}
+                    <div class="col-lg-3 collapse d-lg-block" id="filtersCollapse">
+                        {% include 'sidebar-collection-filters' %}
+                    </div>
+                {% endif %}
+
+                <div class="col">
+                    <transition-group class="row justify-content-center" name="collection-tween" tag="div">
+                        <div :key="product.id" class="col-12 col-sm-6 col-lg-4 {% unless filters_enabled and filters_type == 'sidebar' %} col-xl-3 {% endunless %} my-3 d-flex align-items-stretch justify-content-around" v-for="(product, index, key) in collection.products">
+
+                            {% if promo_card_enabled %}
+                                <template v-if="index == parseFloat('{{ promo_card_index }}' - 1)">
+                                    {% case promo_card_type %}
+                                        {% when 'type_1' %}
+                                            {% include 'card-promo-style-1' %}
+                                    {% endcase %}
+                                </template>
+                                <template v-else>
+                                    {% case product_card_type %}
+                                        {% when 'type_1' %}
+                                            {% include 'card-product-style-1' %}
+                                        {% when 'type_2' %}
+                                            {% include 'card-product-style-2' %}
+                                        {% when 'type_3' %}
+                                            {% include 'card-product-style-3' %}
+                                    {% endcase %}
+                                </template>
+                            {% else %}
+                                {% case product_card_type %}
+                                    {% when 'type_1' %}
+                                        {% include 'card-product-style-1' %}
+                                    {% when 'type_2' %}
+                                        {% include 'card-product-style-2' %}
+                                    {% when 'type_3' %}
+                                        {% include 'card-product-style-3' %}
+                                {% endcase %}
+                            {% endif %}
+                        </div>
+                    </transition-group>
+
+                    {% if collection_ajaxed %}
+                        <div class="row mt-5" v-if="!isLoading && collection.products.length == 0">
+                            <div class="col-12 text-center">
+                                <i class="icon ion-md-information-circle-outline display-4 text-gray-400"></i>
+                                <h5>{{ 'collections.general.no_matches_within_filters' | t }}</h5>
+
+                                {% if filters_enabled %}
+                                    <p>{{ 'collections.general.refine_search' | t }}
+                                        <a href="#" @click.prevent="_clearAllFilters($event)" rel="nofollow" aria-label="{{ 'collections.general.reset_filters' | t }}" title="{{ 'collections.general.reset_filters' | t }}">{{ 'collections.general.reset_filters' | t }}</a>
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% else %}
+                        {% if collection.products.size == 0 %}
+                            <div class="row mt-5">
+                                <div class="col-12 text-center mt-5">
+                                    <i class="icon ion-md-information-circle-outline display-4 text-gray-400"></i>
+                                    <h5>{{ 'collections.general.no_matches_within_filters' | t }}</h5>
+
+                                    {% if filters_enabled %}
+                                        <p>{{ 'collections.general.refine_search' | t }}
+                                            <a href="#" @click.prevent="_clearAllFilters($event)" rel="nofollow" aria-label="{{ 'collections.general.reset_filters' | t }}" title="{{ 'collections.general.reset_filters' | t }}">{{ 'collections.general.reset_filters' | t }}</a>
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if paginate.pages > 1 %}
+                        <div class="row">
+                            <div class="col-12 text-center mt-5">
+                                {% if collection_ajaxed %}
+                                    {% include 'pagination-collection-ajaxed' %}
+                                {% else %}
+                                    {% include 'pagination' %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+{% endpaginate %}

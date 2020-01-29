@@ -1,0 +1,13 @@
+
+{%- comment -%} https://epic-spinners.epicmax.co/#/get-started {%- endcomment -%}
+
+<div v-if="!storeUtilities.ready" class="d-flex flex-column align-items-center justify-content-center">
+  <div class="my-3">
+    <hollow-dots-spinner
+      :animation-duration="1000"
+      :size="60"
+      :color="'#3F4EB1'"
+    />
+  </div>
+  <p class="small text-gray-700">Please Wait...</p>
+</div>

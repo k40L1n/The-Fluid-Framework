@@ -1,0 +1,52 @@
+<div id="customerLoginForm" data-login-form v-if="storeUtilities.loginHelper.isLoginFormVisible">
+
+  {% include 'loading-indicator' %}
+
+  <transition name="fade">
+    <div v-if="storeUtilities.ready" class="wrapper">
+      {% form 'customer_login' %}
+        <div v-if="storeUtilities.loginHelper.status" :class="{ 'alert alert-success': storeUtilities.loginHelper.status === 'enabled' || storeUtilities.loginHelper.status === 'other', 'alert alert-warning': storeUtilities.loginHelper.status === 'disabled' || storeUtilities.loginHelper.status === 'unregistered' }" role="alert">
+          <span v-html="storeUtilities.loginHelper.message"></span>
+        </div>
+
+        {% if form.errors %}
+        <div class="alert alert-warning shopify-warning" role="alert">
+          {{ form.errors | default_errors }}
+        </div>
+        {% endif %}
+
+        <div class="form-group input-group">
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="customerEmail"><i class="icon ion-md-person"></i></label>
+          </div>
+          <input type="email" id="customerEmail" name="customer[email]" aria-label="email" class="form-control" v-model="storeUtilities.loginHelper.customerEmail" placeholder="{{ 'customer.login.email' | t }}" autocorrect="off" autocapitalize="off" required>
+        </div>
+
+        <div v-if="storeUtilities.loginHelper.status === 'enabled'" class="form-group input-group">
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="customerPassword"><i class="icon ion-md-key"></i></label>
+          </div>
+          <input type="password" id="customerPassword" name="customer[password]" aria-label="password" class="form-control" placeholder="{{ 'customer.login.password' | t }}">
+        </div>
+
+        <button class="btn btn-primary btn-block"
+          type="submit"
+          name="sign-in"
+          @click.prevent="_submitLoginHelperForm($event)">
+            <template v-if="isLoading">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {{ 'general.wait' | t }}
+            </template>
+            <template v-else>
+              {{ 'customer.login.sign_in' | t }}
+            </template>
+        </button>
+
+        <p v-if="storeUtilities.loginHelper.status === 'enabled'" class="text-right mt-2 font-italic">
+          <a data-recover-link href="#recover">{{ 'customer.login.forgot_password' | t }}</a>
+        </p>
+
+      {% endform %}
+    </div>
+  </transition>
+
+</div>

@@ -1,0 +1,157 @@
+{% assign template_type = section.settings.template_type %}
+{% assign homepage_transparent_header = section.settings.homepage_transparent_header %}
+{% assign logo = settings.main_logo | img_url: '200x' %}
+{% assign logo_light = settings.main_logo_light | img_url: '200x' %}
+{% assign logo_width = settings.logo_max_width %}
+
+<header class="site-header {% if homepage_transparent_header %}header-transparent{% endif %} {% if section.settings.is_sticky %}fixed-top{% endif %}" data-site-header data-section-id="{{ section.id }}" data-cart-type="{{ section.settings.cart_type }}" data-fixed-header="{% if section.settings.is_sticky%}true{% else %}false{% endif %}" data-transparent-header="{{ homepage_transparent_header }}">
+
+    {% if section.settings.topbar_enabled %}
+        <div class="topbar d-block" data-top-bar style="background-color: {{ section.settings.topbar_bg_color }}">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 d-flex align-items-center justify-content-center" style="min-height: {{ section.settings.topbar_height }}px !important; font-size: {{ section.settings.topbar_font_size}}rem !important; color: {{ section.settings.topbar_text_color }} !important">
+                        <div class="d-block text-center">{{ section.settings.topbar_text }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <nav class="navbar navbar-main navbar-expand-lg py-2 {% if template_type == 'centered-logo' %}navbar-centered-logo{% endif %}">
+        <div class="{% if section.settings.fluid_header %}container-fluid{% else %}container{% endif %}">
+            {% case template_type %}
+                {% when 'centered-logo' %}
+                    {% include 'navbar-centered-logo' %}
+                {% else %}
+                    {% include 'navbar-default' %}
+            {% endcase %}
+        </div>
+    </nav>
+
+</header>
+
+
+{% schema %}
+
+{
+    "name": "Header",
+    "settings": [
+        {
+            "type": "header",
+            "content": "Template"
+        }, {
+            "type": "select",
+            "id": "template_type",
+            "label": "Template Type",
+            "options": [
+                {
+                    "value": "default",
+                    "label": "Logo Left"
+                }, {
+                    "value": "centered-logo",
+                    "label": "Logo Centered"
+                }
+            ],
+            "default": "default"
+        }, {
+            "type": "header",
+            "content": "Layout"
+        }, {
+            "type": "checkbox",
+            "id": "fluid_header",
+            "label": "Full Width Header?",
+            "default": false
+        }, {
+            "type": "checkbox",
+            "id": "is_sticky",
+            "label": "Sticky Header?",
+            "default": false
+        }, {
+            "type": "header",
+            "content": "Styling"
+        }, {
+            "type": "checkbox",
+            "id": "homepage_transparent_header",
+            "label": "Transparent Header at Homepage?",
+            "default": false
+        }, {
+            "type": "header",
+            "content": "Menu"
+        }, {
+            "type": "link_list",
+            "id": "main_linklist",
+            "label": "Select Menu",
+            "default": "main-menu"
+        }, {
+            "type": "header",
+            "content": "Cart Button"
+        }, {
+            "type": "select",
+            "id": "cart_type",
+            "label": "Select Button Action",
+            "options": [
+                {
+                    "value": "cart_page",
+                    "label": "Link to cart page"
+                }, {
+                    "value": "cart_dropdown",
+                    "label": "Mini cart as dropdown"
+                }, {
+                    "value": "cart_drawer",
+                    "label": "Mini cart as right drawer"
+                }
+            ],
+            "default": "cart_page"
+        }, {
+            "type": "header",
+            "content": "Top Bar"
+        }, {
+            "type": "checkbox",
+            "id": "topbar_enabled",
+            "label": "Enabled?",
+            "default": false
+        }, {
+            "type": "html",
+            "id": "topbar_text",
+            "label": "Message"
+        }, {
+            "type": "color",
+            "id": "topbar_bg_color",
+            "label": "Background Color",
+            "default": "#000000"
+        }, {
+            "type": "color",
+            "id": "topbar_text_color",
+            "label": "Text Color",
+            "default": "#ffffff"
+        }, {
+            "type": "range",
+            "id": "topbar_height",
+            "label": "Minimum Height",
+            "min": 20,
+            "max": 100,
+            "step": 1,
+            "unit": "px",
+            "default": 40
+        }, {
+            "type": "range",
+            "id": "topbar_font_size",
+            "min": 1,
+            "max": 3,
+            "step": 0.1,
+            "unit": "rem",
+            "label": "Font Size",
+            "default": 1
+        }
+    ]
+}
+
+{% endschema %}
+
+
+{% javascript %}
+
+
+
+{% endjavascript %}

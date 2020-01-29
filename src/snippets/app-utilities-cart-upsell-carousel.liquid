@@ -1,0 +1,98 @@
+<div class="wrapper">
+    <h5 class="{% if target == 'modal' %} h6 {% endif %} mt-5 mb-3 text-capitalize">{{ 'cart.general.upsell' | t }}</h5>
+
+    <div class="row no-gutters">
+      <div class="col-12 mb-4">
+        <div class="carousel" role="tree"
+          data-flickity-cart-upsells='{
+            "adaptiveHeight": true,
+            "contain": true,
+            "wrapAround": false,
+            "freeScroll": false,
+            "groupCells": "100%",
+            "accessibility": false,
+            "setGallerySize": true,
+            "dragThreshold": 20,
+            "lazyLoad": false,
+            "prevNextButtons": false,
+            "pageDots": true,
+            "arrowShape": {"x0": 10, "x1": 60, "y1": 50, "x2": 60, "y2": 45, "x3": 15}
+            }'>
+
+          <div v-for="(product, index) in storeUtilities.cartUpsells.products" :key="index" class="carousel-cell d-flex equal-height col-6 col-sm-6 col-lg-4 col-xl-3" role="treeitem">
+
+              <div class="card card-product text-left mx-2">
+                <span class="badges">
+                  <span v-if="product.compare_at_price > product.price" class="badge badge-warning">{{ 'products.product.on_sale' | t | escape }}</span>
+                </span>
+                <div class="card-img text-center" :class="{'bg-gray-300': !product.image.src}">
+                  <a v-if="product.image" :href="_getvariantUrl(product.handle, product.id)">
+                    <img
+                        class="img-fluid"
+                        :src="_getSizedImageUrl(product.image.src, '600x')"
+                        :alt="product.name"/>
+                  </a>
+                  <span v-else>
+                    {{ 'product-1' | placeholder_svg_tag: 'img-fluid' }}
+                  </span>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="{% if target == 'modal' %} col-12 {% else %} col-md-8 {% endif %}" v-match-heights="{el: ['.card-title']}">
+                      <h6 class="card-title m-0">
+                        <a :href="_getvariantUrl(product.handle, product.id)" v-text="product.title"></a>
+                      </h6>
+                    </div>
+                    <div class="{% if target == 'modal' %} col-12 {% else %} col-md-4 text-left text-md-right {% endif %}">
+                      <s v-if="product.variants[0].compare_at_price > product.variants[0].price" v-html="_formatMoney(product.variants[0].compare_at_price)" class="price small m-0 p-0"></s>
+                      <span v-html="_formatMoney(product.variants[0].price)" class="price m-0 p-0"></span>
+                    </div>
+                </div>
+                <div class="row no-gutters mt-3">
+                  <div class="col-12">
+                    <form data-product-form :data-product-id="product.id" action="/cart/add" method="post" enctype="multipart/form-data" class="d-flex justify-content-between">
+
+                      <template v-for="(option, index) in product.options" v-if="option.name != 'Title'" class="selector-wrapper">
+                        <input type="hidden" :name="'product_options_'+ product.variants[0].id +'[]'" v-model="JSON.stringify(option)" />
+                      </template>
+
+                      <button class="btn btn-primary btn-sm flex-grow-1"
+                        type="submit"
+                        name="add"
+                        aria-label="{{ 'products.product.add_to_cart' | t | escape }}"
+                        :data-cart-limit="product.cart_limit"
+                        @click.prevent="_addToCart(product.variants[0].id, $event)">
+                          <i class="icon ion-md-cart"></i> {{ 'products.product.add_to_cart' | t }}
+                      </button>
+
+                      {% if settings.enable_quickshop and target == 'cart' %}
+                        <a href="#" @click.prevent="_viewQuickShop(product.handle, product.variants[0].options, $event)" class="btn btn-outline-primary btn-sm ml-1" title="{{ 'products.product.quickshop' | t | escape }}" rel="nofollow" aria-label="{{ 'products.product.quickshop' | t | escape }}" data-toggle="tooltip" data-trigger="hover" data-placement="top">
+                          <i class="icon ion-md-eye"></i>
+                      </a>
+                      {% endif %}
+
+                      {% if settings.enable_wishlist and target == 'cart' %}
+                        <template v-if="!_checkWishlist(product.variants[0].id)" >
+                          <a href="#" @click.prevent="_addVariantToWishlist(product.handle, product.variants[0].id, $event)" class="btn btn-outline-primary btn-sm ml-1" title="{{ 'general.wishlist.add_to_wishlist' | t }}" rel="nofollow" aria-label="{{ 'general.wishlist.add_to_wishlist' | t }}" data-toggle="tooltip" data-trigger="hover" data-placement="top">
+                            <i class="icon ion-md-star-outline"></i>
+                          </a>
+                        </template>
+                        <template v-else>
+                          <a class="btn btn-outline-primary btn-sm ml-1" rel="nofollow" title="{{ 'general.wishlist.added_to_wishlist' | t }}" rel="nofollow" aria-label="{{ 'general.wishlist.added_to_wishlist' | t }}" data-toggle="modal" data-target="[data-modal-wishlist]" tabindex="-1">
+                            <i class="icon ion-md-star"></i>
+                          </a>
+                        </template>
+                      {% endif %}
+                    </form>
+                  </div>
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+</div>

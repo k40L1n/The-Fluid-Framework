@@ -1,0 +1,210 @@
+<div data-template="quickshop" class="modal modal-quickshop fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg shadow" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-dark">
+        <h5 class="modal-title"><a :href="quickShop.product.url">${ quickShop.product.title }</a></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="icon ion-md-close"></i></span>
+        </button>
+      </div>
+      <div class="modal-body text-dark">
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="product-images-wrapper text-center">
+
+                    <template v-if="!quickShop.images">
+                      {{ 'image' | append: current | placeholder_svg_tag: 'img-fluid bg-gray-100' }}
+                    </template>
+
+                    <template v-else>
+                        <img
+                          v-if="quickShop.images.length == 1"
+                          :src="_getSizedImageUrl(quickShop.product.featured_image, 'large')"
+                          class="img-fluid"
+                          :alt="quickShop.product.handle"/>
+
+                        <div
+                          v-else-if="quickShop.images.length > 1"
+                          class="carousel" role="tree"
+                          data-carousel-main
+                          data-flickity='{
+                           "adaptiveHeight": false,
+                           "contain": true,
+                           "wrapAround": false,
+                           "setGallerySize": true,
+                           "freeScroll": false,
+                           "accessibility": true,
+                           "prevNextButtons": true,
+                           "pageDots": true,
+                           "lazyLoad": true,
+                           "dragThreshold": 20,
+                           "arrowShape": {"x0": 10, "x1": 60, "y1": 50, "x2": 60, "y2": 45, "x3": 15}
+                         }'>
+                            <div
+                              v-for="image in quickShop.images"
+                              class="carousel-cell"
+                              role="treeitem"
+                              :data-variant-title="image.alt">
+                                <img class="img-fluid" :data-flickity-lazyload-src="_getSizedImageUrl(image.src, '800x')"/>
+                            </div>
+                        </div>
+                    </template>
+
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="product-details-wrapper mt-lg-0">
+
+                  <p class="mt-3 mt-lg-0">${ quickShop.product.vendor }</p>
+
+                  <div class="price-wrapper mb-3">
+                    <s v-if="_formatMoney(quickShop.currentVariant.compare_at_price) > _formatMoney(quickShop.currentVariant.price)" v-html="_formatMoney(quickShop.currentVariant.compare_at_price)" class="h6 my-0 text-gray-600"></s>
+                    <span v-html="_formatMoney(quickShop.currentVariant.price)" class="h5 actual-price my-0"></span>
+                  </div>
+
+                  <form data-product-form :data-product-id="quickShop.product.id" action="/cart/add" method="post" enctype="multipart/form-data">
+
+                    <div class="row">
+                      <div class="col-12 mb-2 d-flex justify-content-between">
+
+                        <div v-for="(option, index) in quickShop.product.options" v-if="option.name != 'Title'" class="selector-wrapper">
+
+                          <input type="hidden" :name="'product_options_'+ quickShop.currentVariant.id +'[]'" v-model="JSON.stringify(option)" />
+
+                          <label>${ option.name }</label>
+                          {% comment %} Color swatches {% endcomment %}
+                          <ul v-if="colorSwatchesEnabled && option.name == 'Color'" class="list-unstyled list-inline my-0 py-0">
+                              <li v-for="value in option.values" class="list-inline-item">
+                                <div v-for="optionImage in quickShop.optionImages" v-if="optionImage.value == value" class="color-swatch">
+                                  <label
+                                      data-toggle="tooltip"
+                                      data-trigger="hover"
+                                      :title="_unhandleize(value)"
+                                      :style="_getSwatchStyle(value)">
+                                      <input
+                                        data-single-option-selector
+                                        type="radio"
+                                        name='color'
+                                        aria-label="color"
+                                        :value="value"
+                                        :data-index="'option' + option.position"
+                                        @change="_getVariant($event)">
+                                  </label>
+                                </div>
+                              </li>
+                          </ul>
+
+                          {% comment %} Size swatches {% endcomment %}
+                          <ul v-else-if="sizeSwatchesEnabled && option.name == 'Size'" class="list-unstyled list-inline my-0 py-0">
+                            <li v-for="value in option.values" class="list-inline-item">
+                              <div class="size-swatch">
+                                <label>
+                                    <input
+                                      data-single-option-selector
+                                      type="radio"
+                                      name='size'
+                                      aria-label="size"
+                                      :value="value"
+                                      :data-index="'option' + option.position"
+                                      @change="_getVariant($event)">
+                                </label>
+                              </div>
+                            </li>
+                          </ul>
+
+                          {% comment %} Normal select {% endcomment %}
+                          <select v-else class="form-control form-control-sm"
+                            data-single-option-selector
+                            :data-index="'option' + option.position"
+                            @change="_getVariant($event)">
+                            <option v-for="value in option.values" :value="value">${ value }</option>
+                          </select>
+                        </div>
+
+                        <div class="quantity-wrapper" data-qty-container>
+                          <label for="Quantity">{{ 'products.product.quantity' | t }}:</label>
+                          <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                              <a href="#" class="input-group-text" rel="nofollow" aria-label="Decrease" title="Decrease" data-qty-decrease @click.prevent="_updateQty($event)">
+                                <span class="btn-decrease"><i class="icon ion-md-remove"></i></span>
+                              </a>
+                            </div>
+                            <input type="number" name="quantity" aria-label="quantity" value="1" step="1" min="1" inputmode="numeric" data-qty-input class="quantity form-control text-center" readonly>
+                            <div class="input-group-append">
+                              <a href="#" class="input-group-text" rel="nofollow" aria-label="Increase" title="Increase" data-qty-increase @click.prevent="_updateQty($event)">
+                                <span class="btn-increase"><i class="icon ion-md-add"></i></span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+
+                    {% comment %} DEFAULT HIDDEN OPTIONS SELECT {% endcomment %}
+                    {% comment %} DO NOT REMOVE THIS {% endcomment %}
+                    <div class="row" style="display:none !important;">
+                      <div class="col">
+                          <select name="id">
+                            <option v-for="variant in quickShop.product.variants"
+                              :data-sku="variant.sku"
+                              :value="variant"
+                              :data-product-id="quickShop.product.id">
+                              ${ variant.title } - ${ _formatMoney(variant.price) }
+                            </option>
+                          </select>
+                      </div>
+                    </div>
+
+                    {% comment %} Recharge Subscription Widget {% endcomment %}
+                    {% if settings.enable_recharge %}
+                      <div :data-recharge-subscription-widget="quickShop.product.id" class="row" style="display:none !important;">
+                        <div class="col-12">
+                          <h6 class="my-2">Subscription:</h6>
+                          <div class="inner mb-3"></div>
+                        </div>
+                      </div>
+                    {% endif %}
+
+                    <div class="row">
+                      <div class="col-12 mb-3">
+                        <button class="btn btn-primary btn-block"
+                            type="submit"
+                            name="add"
+                            :disabled="!quickShop.currentVariant.available"
+                            :data-cart-limit="quickShop.product.cart_limit"
+                            @click.prevent="_addToCart(quickShop.currentVariant.id, $event)">
+                            <template v-if="isLoading && loadingEvent == 'cartAdding'">
+                              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {{ 'general.wait' | t }}
+                            </template>
+                            <template v-else>
+                              <span v-if="quickShop.currentVariant.available">
+                                <i class="icon ion-md-cart"></i> {{ 'products.product.add_to_cart' | t }}
+                              </span>
+                              <span v-else>{{ 'products.product.sold_out' | t }}</span>
+                            </template>
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+
+                  <template v-if="quickShop.product.description">
+                    <h6 class="mt-3">Description:</h6>
+                    <div class="rte small" v-html="_truncate(quickShop.product.description, 40)"></div>
+                    <a class="small" :href="quickShop.product.url">{{ 'products.product.read_more' | t }} <i class="icon ion-md-arrow-forward"></i></a>
+                  </template>
+
+                </div>
+
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          {{ 'general.close' | t }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

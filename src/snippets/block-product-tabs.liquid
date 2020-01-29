@@ -1,0 +1,51 @@
+<section class="section-content bg-white" {{ block.shopify_attributes }}>
+  <div class="{% if block.settings.product_tabs_fluid_layout %}container-fluid{% else %}container{% endif %}">
+    <div id="productTabs" data-product-tabs>
+      <ul class="nav nav-pills justify-content-center" role="tablist">
+        {% if template_type == 'modern' and product.description %}
+        <li class="nav-item" role="tab">
+          <a class="nav-link" data-toggle="tab" href="#description">{{ 'products.product.description' | t }}</a>
+        </li>
+        {% endif %}
+        {% if block.settings.enable_custom_tab_1 %}
+        <li class="nav-item" role="tab">
+          <a class="nav-link" data-toggle="tab" href="#custom-tab-1">{{ block.settings.tab_1_title }}</a>
+        </li>
+        {% endif %}
+        {% if block.settings.enable_custom_tab_2 %}
+        <li class="nav-item" role="tab">
+          <a class="nav-link" data-toggle="tab" href="#custom-tab-2">{{ block.settings.tab_2_title }}</a>
+        </li>
+        {% endif %}
+        {% if block.settings.enable_reviews_tab %}
+        <li class="nav-item" role="tab">
+          <a class="nav-link" data-toggle="tab" href="#reviews">Reviews</a>
+        </li>
+        {% endif %}
+      </ul>
+      <div class="tab-content text-left" id="productTabsContent">
+        {% if template_type == 'modern' and product.description %}
+        <div class="tab-pane fade show" id="description" role="tabpanel">
+          <div class="rte pt-5 px-lg-6">{{ product.description }}</div>
+        </div>
+        {% endif %}
+        {% if block.settings.enable_custom_tab_1 %}
+        <div class="tab-pane fade show" id="custom-tab-1" role="tabpanel">
+          <div class="rte pt-5">{{ pages[block.settings.tab_1_content].content }}</div>
+        </div>
+        {% endif %}
+        {% if block.settings.enable_custom_tab_2 %}
+        <div class="tab-pane fade show" id="custom-tab-2" role="tabpanel">
+          <div class="rpt-5">{{ block.settings.tab_2_content }}</div>
+        </div>
+        {% endif %}
+        {% if block.settings.enable_reviews_tab %}
+        <div class="tab-pane fade show" id="reviews" role="tabpanel">
+          <div class="pt-5">
+            {% include 'app-product-reviews' %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+</section>

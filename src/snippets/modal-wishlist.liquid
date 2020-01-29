@@ -1,0 +1,43 @@
+<div data-modal-wishlist class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg shadow" role="document">
+    <div class="modal-content d-block">
+      <div class="modal-header text-dark">
+        <h5 class="modal-title">{{ 'general.wishlist.title' | t }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="icon ion-md-close"></i></span>
+        </button>
+      </div>
+      <div class="modal-body text-dark">
+        <div v-if="wishlist.length > 0" class="row no-gutters ">
+          <div v-for="product in wishlist" class="col-lg-6 p-1 d-flex align-items-stretch">
+            <div class="row no-gutters d-flex align-items-center bg-gray-100">
+              <div class="col-3 d-flex align-items-center">
+                <img v-if="product.featured_image" :src="_getSizedImageUrl(product.featured_image, '400x')" class="img-fluid" :alt="product.name"/>
+                <span v-else>
+                  {{ 'product-1' | placeholder_svg_tag: 'img-fluid bg-gray-300' }}
+                </span>
+              </div>
+              <div class="col-9">
+                <div class="py-3 pl-3 pr-5">
+                  <a :href="_getvariantUrl(product.product_handle, product.id)" v-text="product.name" class="clearfix font-weight-bold"></a>
+                  <s v-if="product.compare_at_price > product.price" v-html="_formatMoney(product.compare_at_price)" class="price"></s>
+                  <span v-html="_formatMoney(product.price)" class="price"></span>
+                </div>
+              </div>
+            </div>
+            <a @click.prevent="_removeFromWishlist(product.id, $event)" class="btn position-absolute" style="right: 0" rel="nofollow"><i class="icon ion-md-close"></i></a>
+          </div>
+        </div>
+        <div v-else class="row my-3">
+          <div class="col-12 text-center">
+            <p class="m-0"><i class="icon ion-md-heart-empty text-gray-400 display-4"></i></p>
+            <p class="lead m-0">{{ 'general.wishlist.none' | t }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ 'general.close' | t }}</button>
+      </div>
+    </div>
+  </div>
+</div>

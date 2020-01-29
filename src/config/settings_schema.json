@@ -1,0 +1,222 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Fluid Framework",
+    "theme_version": "1.0",
+    "theme_author": "FluidFramework",
+    "theme_documentation_url": "https:\/\/www.fluidframework.com",
+    "theme_support_url": "https:\/\/www.fluidframework.com",
+    "theme_packaged_with": "@shopify\/slate-tools@1.0.0-beta.15"
+  },
+  {
+    "name": "Logo Images",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "main_logo",
+        "label": "Select main logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "main_logo_light",
+        "label": "Select logo for dark backgrounds"
+      },
+      {
+        "type": "range",
+        "id": "logo_max_width",
+        "min": 5,
+        "max": 300,
+        "step": 5,
+        "unit": "px",
+        "label": "Logo width",
+        "default": 180
+      }
+    ]
+  },
+  {
+    "name": "Favicon",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon_image",
+        "label": "Favicon"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon_image_retina",
+        "label": "Favicon retina image"
+      }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Logo Image for Socials"
+      },
+      {
+        "type": "image_picker",
+        "id": "main_logo_socials",
+        "label": "Select image",
+        "info": "Minimum size in pixels is 600x315. Recommended size is 1200x630 - Images this size will get a larger display treatment. Aspect ratio should be 1.91:1"
+      },
+      {
+        "type": "header",
+        "content": "Social accounts"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook_link",
+        "label": "Facebook",
+        "info": "https:\/\/facebook.com\/shopify"
+      },
+      {
+        "type": "text",
+        "id": "social_twitter_link",
+        "label": "Twitter",
+        "info": "https:\/\/twitter.com\/shopify"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest_link",
+        "label": "Pinterest",
+        "info": "https:\/\/pinterest.com\/shopify"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram_link",
+        "label": "Instagram",
+        "info": "http:\/\/instagram.com\/shopify"
+      },
+      {
+        "type": "text",
+        "id": "social_tumblr_link",
+        "label": "Tumblr",
+        "info": "http:\/\/shopify.tumblr.com"
+      },
+      {
+        "type": "text",
+        "id": "social_snapchat_link",
+        "label": "Snapchat",
+        "info": "https:\/\/www.snapchat.com\/add\/shopify"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube_link",
+        "label": "YouTube",
+        "info": "https:\/\/www.youtube.com\/shopify"
+      },
+      {
+        "type": "text",
+        "id": "social_vimeo_link",
+        "label": "Vimeo",
+        "info": "https:\/\/vimeo.com\/shopify"
+      }
+    ]
+  },
+  {
+    "name": "Theme Features",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Select to enable"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_color_swatches",
+        "label": "Enable Color Swatches?",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_size_swatches",
+        "label": "Enable Size Swatches?",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_quickshop",
+        "label": "Enable Quick Shop?",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_wishlist",
+        "label": "Enable Wishlist?",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_currency_selector",
+        "label": "Enable Currency Selector?",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_meta_noindex",
+        "label": "Enable No Index Meta?",
+        "info": "If you enable this the site will no be indexed by search engines.",
+        "default": false
+      }
+    ]
+  },
+  {
+    "name": "Misc Settings",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Product Exclude Tag"
+      },
+      {
+        "type": "text",
+        "id": "product_exclude_tag_text",
+        "label": "Product Tag",
+        "info": "Products with the above tag will be excluded from collections and search results."
+      },
+      {
+        "type": "header",
+        "content": "QA Widget"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_qa_widget",
+        "label": "Enable?",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "path_issue_id",
+        "label": "Path Issue ID",
+        "info": "You need to associate the widget with a specific Path Issue ID."
+      }
+    ]
+  },
+  {
+    "name": "3rd Party Apps",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Select to enable"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_recharge",
+        "label": "Enable ReCharge?",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_product_reviews",
+        "label": "Enable Product Reviews?",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_utilities_app",
+        "label": "Enable Store Utilities?",
+        "default": false
+      }
+    ]
+  }
+]

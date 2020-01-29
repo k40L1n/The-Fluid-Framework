@@ -1,0 +1,199 @@
+<section class="section-content" data-section-id="{{ section.id }}" style="background-color: {{ section.settings.section_bg_color }}; color: {{ section.settings.section_txt_color }}">
+    <div class="{% if section.settings.fluid_layout %}container-fluid{% else %}container{% endif %}">
+        <div class="row">
+            <div class="col-12 text-center">
+
+                {% if section.settings.heading_txt != '' %}
+                    <h2 class="section-title mb-4">{{ section.settings.heading_txt }}</h2>
+                {% endif %}
+
+                {% if section.settings.lead_txt != '' %}
+                    <p class="lead px-lg-6">
+                        {{ section.settings.lead_txt }}
+                    </p>
+                {% endif %}
+
+                <div class="row justify-content-center mt-5">
+                    {% comment %}
+                  First add all the handles of the blogs you want to include.
+                  In this example I just use my own two blogs - works and news.
+                  {% endcomment %}
+                    {% assign featuredBlogs = section.settings.blog_handles | remove: " " | split:',' %}
+
+                    {% comment %}
+                  Set the featuredArticles variable to false by default.
+                  {% endcomment %}
+                    {% assign featuredArticles = false %}
+
+                    {% comment %}
+                  Grab the last 50 (default) articles from each Blog. Add the articles to the featureArticles variable.
+                  {% endcomment %}
+                    {% for featuredBlog in featuredBlogs %}
+                        {% if blogs[featuredBlog].articles %}
+                            {% if featuredArticles %}
+                                {% assign featuredArticles = featuredArticles | concat:blogs[featuredBlog].articles %}
+                            {% else %}
+                                {% assign featuredArticles = blogs[featuredBlog].articles %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% comment %}
+                      If featuredArticles is not false we should have articles to show
+                    {% endcomment %}
+
+                    {% if featuredArticles %}
+                        {% assign featuredArticles = featuredArticles | sort:'published_at' | reverse %}
+
+                        {% comment %}
+                      Showing the latest articles from our master article list
+                    {% endcomment %}
+
+                        {% for article in featuredArticles limit:4 %}
+                            <div class="col-sm-6 col-lg-4 d-flex equal-height mt-2 pt-4 {% if forloop.index == 4 %}d-lg-none{% endif %}">
+                                {% include 'card-article-style-1' %}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                {% if section.settings.btn_txt != '' %}
+                    <a class="btn btn{% if section.settings.btn_type == 'outline' %}-{% endif %}{{ section.settings.btn_type }}-{{ section.settings.btn_variant }} {{ section.settings.btn_size }} mt-5" href="{{ section.settings.btn_url }}">{{ section.settings.btn_txt }}</a>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% schema %}
+
+{
+    "name": "Blog Posts Grid",
+    "class": "index-blog-posts-grid",
+    "settings": [
+        {
+            "type": "header",
+            "content": "Layout"
+        }, {
+            "type": "checkbox",
+            "id": "fluid_layout",
+            "label": "Full Width Layout?",
+            "default": false
+        }, {
+            "type": "header",
+            "content": "Source Blogs"
+        }, {
+            "type": "text",
+            "id": "blog_handles",
+            "label": "Blog Handles",
+            "info": "Fetch the recent posts from multiple blogs by using each blog handle separared by a comma."
+        }, {
+            "type": "header",
+            "content": "Content"
+        }, {
+            "type": "text",
+            "id": "heading_txt",
+            "label": "Heading Text",
+            "default": "News & Views"
+        }, {
+            "type": "textarea",
+            "id": "lead_txt",
+            "label": "Lead Text",
+            "default": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam pulvinar ac tortor imperdiet commodo."
+        }, {
+            "type": "text",
+            "id": "btn_txt",
+            "label": "Button Text"
+        }, {
+            "type": "url",
+            "id": "btn_url",
+            "label": "Button URL"
+        }, {
+            "type": "header",
+            "content": "Styling"
+        }, {
+            "type": "color",
+            "id": "section_bg_color",
+            "label": "Background Color",
+            "default": "#f8f9fa"
+        }, {
+            "type": "color",
+            "id": "section_txt_color",
+            "label": "Text Color",
+            "default": "#212529"
+        }, {
+            "type": "select",
+            "id": "btn_type",
+            "label": "Button Type",
+            "options": [
+                {
+                    "value": "outline",
+                    "label": "Outline"
+                }, {
+                    "value": "",
+                    "label": "Solid"
+                }
+            ],
+            "default": "outline"
+        }, {
+            "type": "select",
+            "id": "btn_variant",
+            "label": "Button Variant",
+            "options": [
+                {
+                    "value": "primary",
+                    "label": "Primary"
+                }, {
+                    "value": "secondary",
+                    "label": "Secondary"
+                }, {
+                    "value": "gray-100",
+                    "label": "Light"
+                }, {
+                    "value": "gray-900",
+                    "label": "Dark"
+                }
+            ],
+            "default": "primary"
+        }, {
+            "type": "select",
+            "id": "btn_size",
+            "label": "Button Size",
+            "options": [
+                {
+                    "value": "",
+                    "label": "Default"
+                }, {
+                    "value": "btn-sm",
+                    "label": "Small"
+                }, {
+                    "value": "btn-lg",
+                    "label": "Large"
+                }
+            ],
+            "default": ""
+        }
+    ],
+    "presets": [
+        {
+            "name": "Blog Posts Grid",
+            "category": "Blog"
+        }
+    ]
+}
+
+{% endschema %}
+
+{% stylesheet %}
+
+
+
+{% endstylesheet %}
+
+{% javascript %}
+
+
+
+{% endjavascript %}

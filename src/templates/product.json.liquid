@@ -1,0 +1,4 @@
+{% layout none %}
+{% assign file_extension = '.jpg' %}
+
+{"product":{{ product | json }},{% unless product.has_only_default_variant %}"option_images":[{% for option in product.options_with_values %}{% if option.name == 'Color' %}{% for value in option.values %}{"value":"{{ value }}","src":"{{ value | handle | append: file_extension | asset_url }}"}{% unless forloop.last == true %},{% endunless %}{% endfor %}{% endif %}{% endfor %}],{% endunless %}"images":[{% for image in product.images %}{"id":"{{ image.id }}","alt":"{{ image.alt | replace: '"', '\"' | replace: '/', '\/' }}","src":"{{ image | img_url: 'master' }}"}{% unless forloop.last == true %},{% endunless %}{% endfor %}]}

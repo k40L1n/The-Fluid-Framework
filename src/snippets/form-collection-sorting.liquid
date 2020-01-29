@@ -1,0 +1,13 @@
+<form>
+    <label for="sortBy" class="small text-uppercase">{{ 'collections.sorting.title' | t }}:</label>
+    <select class="form-control form-control-sm" id="sortBy" name="sort-by" @change="_parseFilters($event)" data-filter-sort data-filter-type="sort">
+        <option value="manual">{{ 'collections.sorting.featured' | t }}</option>
+        <option value="best-selling">{{ 'collections.sorting.best_selling' | t }}</option>
+        <option value="title-ascending">{{ 'collections.sorting.az' | t }}</option>
+        <option value="title-descending">{{ 'collections.sorting.za' | t }}</option>
+        <option value="price-ascending">{{ 'collections.sorting.price_ascending' | t }}</option>
+        <option value="price-descending">{{ 'collections.sorting.price_descending' | t }}</option>
+        <option value="created-descending">{{ 'collections.sorting.date_descending' | t }}</option>
+        <option value="created-ascending">{{ 'collections.sorting.date_ascending' | t }}</option>
+    </select>
+</form>

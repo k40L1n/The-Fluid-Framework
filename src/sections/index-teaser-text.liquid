@@ -1,0 +1,155 @@
+<section class="section-content" data-section-id="{{ section.id }}" style="background-color: {{ section.settings.section_bg_color }}; color: {{ section.settings.section_txt_color }}">
+    <div class="{% if section.settings.fluid_layout %}container-fluid{% else %}container{% endif %}">
+        <div class="row">
+            <div class="col-12 text-center">
+
+                {% if section.settings.heading_txt != '' %}
+                  <h2 class="section-title mb-4">{{ section.settings.heading_txt }}</h2>
+                {% endif %}
+
+                {% if section.settings.lead_txt != '' %}
+                  <p class="lead mt-5 px-lg-6">
+                      {{ section.settings.lead_txt }}
+                  </p>
+                {% endif %}
+
+                {% if section.settings.btn_txt != '' %}
+                  <a class="btn btn{% if section.settings.btn_type == 'outline' %}-{% endif %}{{ section.settings.btn_type }}-{{ section.settings.btn_variant }} {{ section.settings.btn_size }}" href="{{ section.settings.btn_url }}">{{ section.settings.btn_txt }}</a>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+{% schema %}
+  {
+    "name": "Teaser Text",
+    "class": "index-teaser-text",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "checkbox",
+        "id": "fluid_layout",
+        "label": "Full Width Layout?",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Content"
+      },
+      {
+        "type": "text",
+        "id": "heading_txt",
+        "label": "Heading Text",
+        "default": "Awesome Heading"
+      },
+      {
+        "type": "textarea",
+        "id": "lead_txt",
+        "label": "Lead Text",
+        "default": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam pulvinar ac tortor imperdiet commodo."
+      },
+      {
+        "type": "text",
+        "id": "btn_txt",
+        "label": "Button Text"
+      },
+      {
+        "type": "url",
+        "id": "btn_url",
+        "label": "Button URL"
+      },
+      {
+        "type": "header",
+        "content": "Styling"
+      },
+      {
+        "type": "color",
+        "id": "section_bg_color",
+        "label": "Background Color",
+        "default": "#f8f9fa"
+      },
+      {
+        "type": "color",
+        "id": "section_txt_color",
+        "label": "Text Color",
+        "default": "#343a40"
+      },
+      {
+        "type": "select",
+        "id": "btn_type",
+        "label": "Button Type",
+        "options": [{
+            "value": "outline",
+            "label": "Outline"
+          },
+          {
+            "value": "",
+            "label": "Solid"
+          }
+        ],
+        "default": "outline"
+      },
+      {
+        "type": "select",
+        "id": "btn_variant",
+        "label": "Button Variant",
+        "options": [{
+            "value": "primary",
+            "label": "Primary"
+          },
+          {
+            "value": "secondary",
+            "label": "Secondary"
+          },
+          {
+            "value": "gray-100",
+            "label": "Light"
+          },
+          {
+            "value": "gray-900",
+            "label": "Dark"
+          }
+        ],
+        "default": "primary"
+      },
+      {
+        "type": "select",
+        "id": "btn_size",
+        "label": "Button Size",
+        "options": [{
+            "value": "",
+            "label": "Default"
+          },
+          {
+            "value": "btn-sm",
+            "label": "Small"
+          },
+          {
+            "value": "btn-lg",
+            "label": "Large"
+          }
+        ],
+        "default": ""
+      }
+    ],
+    "presets": [
+      {
+        "name": "Teaser Text",
+        "category": "Content"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

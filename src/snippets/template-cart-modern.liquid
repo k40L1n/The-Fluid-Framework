@@ -1,0 +1,255 @@
+{% assign is_promo_in_cart = false %}
+{% assign promoPrices = '' %}
+
+{% include 'loading-indicator' %}
+
+<form v-show="storeUtilities.ready" data-cart-form action="/cart" method="post">
+  <div class="row justify-content-center">
+    {% for item in cart.items %}
+
+      {% assign is_promo_product = false %}
+      {% assign add_mode = 'manual' %}
+      {% comment %}ReCharge App{% endcomment %}
+      {% assign recurringchecked = "false" %}
+
+      {% for property in item.properties %}
+        {% if property.first == 'promo_product' and property.last == 'true' %}
+          {% assign is_promo_in_cart = true %}
+          {% assign is_promo_product = true %}
+          {% assign promoPrices = promoPrices | plus: item.line_price %}
+        {% endif %}
+        {% if property.first == 'add_mode' and property.last == 'auto' %}
+          {% assign add_mode = 'auto' %}
+        {% endif %}
+
+        {% comment %}ReCharge App{% endcomment %}
+        {% if property.first == 'shipping_interval_frequency' %}
+          {% assign frequency = property.last %}
+          {% assign recurringchecked = "true" %}
+        {% endif %}
+        {% if property.first == 'shipping_interval_unit_type' %}
+          {% if frequency == '1'%}
+            {% if property.last == 'Days' %}
+              {% assign frequency_unit = 'Day' %}
+            {% elsif property.last == 'Months'%}
+              {% assign frequency_unit = 'Month' %}
+            {% elsif property.last == 'Weeks'%}
+              {% assign frequency_unit = 'Week' %}
+            {% endif %}
+          {% else %}
+            {% assign frequency_unit = property.last %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+
+      <div class="col-sm-6 col-lg-4 col-xl-3 my-3 d-flex align-items-stretch"  data-cart-item
+       data-variant-id="{{ item.variant_id }}"
+       data-cart-limit="{{ item.properties['cart_limit'] }}">
+        <div class="card text-left w-100">
+
+          <div class="card-img text-center {% if item.featured_image.size == 0 %}bg-gray-300{% endif %}">
+            {% unless is_promo_product and add_mode == 'auto' %}
+              <div class="position-absolute w-100 d-flex justify-content-end p-2">
+                <a href="/cart/change?line={{ forloop.index }}&amp;quantity=0" title="{{ 'cart.general.remove' | t }}" name="{{ 'cart.general.remove' | t }}" aria-label="{{ 'cart.general.remove' | t }}" data-toggle="tooltip" data-placement="left" class="h3 my-0 text-danger">
+                  <i class="icon ion-md-remove-circle-outline"></i>
+                </a>
+              </div>
+            {% endunless %}
+
+            {% if is_promo_product %}
+              <div class="ribbon position-absolute d-flex justify-content-start">
+                <div class="ribbon-left">
+                  <span><i class="icon ion-md-star"></i></span>
+                </div>
+              </div>
+            {% endif %}
+
+            {% if item.image != blank %}
+              <img src="{{ item | img_url: 'large' }}" alt="{{ item.title | escape }}" class="img-fluid item-img"/>
+            {% else %}
+              {{ 'product-1' | placeholder_svg_tag: 'img-fluid bg-gray-100' }}
+            {% endif %}
+
+          </div>
+
+          <div class="card-body">
+            <div class="row">
+              <div class="col">
+                <a href="{{ item.url }}" class="card-title">
+                  {{ item.product.title }}
+                </a>
+
+                {% unless item.variant.title contains 'Default' %}
+                  <ul class="list-unstyled">
+                    {% for option in item.product.options %}
+                      <li class="text-muted small text-capitalize">
+                        {{ option }}: {{ item.variant.options[forloop.index0] }}
+                      </li>
+                    {% endfor %}
+                  </ul>
+                {% endunless %}
+              </div>
+              <div class="col-5 text-right">
+                {% if is_promo_product %}
+                  <s class="text-muted m-0 p-0">{{ item.price | money }}</s>
+                {% else %}
+                  {% if item.product.compare_at_price > item.price %}
+                    <s class="text-muted small m-0 p-0">{{ item.product.compare_at_price | money }}</s>
+                  {% endif %}
+                  <span class="m-0 p-0">{{ item.price | money }}</span>
+                {% endif %}
+              </div>
+            </div>
+
+            {% comment %}ReCharge frequency{% endcomment %}
+            {% if recurringchecked == "true" %}
+              <div class="row">
+                <div class="col">
+                  <span class="small">
+                    Recurring Delivery every {{frequency}} {{frequency_unit}}. Change or cancel anytime.
+                  </span>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+
+          {% if is_promo_product %}
+            <input type="hidden" name="updates[]" id="updates_{{ item.key }}" value="{{ item.quantity }}" step="1" min="1" pattern="[0-9]*" inputmode="numeric" data-qty-input class="quantity form-control text-center">
+          {% else %}
+            <div class="card-footer bg-gray-100">
+              <div class="quantity-wrapper mx-auto" data-qty-container>
+                <div class="input-group input-group-sm">
+                  <div class="input-group-prepend">
+                    <a href="#" class="input-group-text" rel="nofollow" aria-label="Decrease" title="Decrease" data-qty-decrease @click.prevent="_updateQty($event)">
+                      <span class="btn-decrease"><i class="icon ion-md-remove"></i></span>
+                    </a>
+                  </div>
+                  <input type="number" name="updates[]" id="updates_{{ item.key }}" aria-label="quantity" value="{{ item.quantity }}" step="1" min="1" inputmode="numeric" data-qty-input class="quantity form-control text-center" readonly>
+                  <div class="input-group-append">
+                    <a href="#" class="input-group-text" rel="nofollow" aria-label="Increase" title="Increase" data-qty-increase @click.prevent="_updateQty($event)">
+                      <span class="btn-increase"><i class="icon ion-md-add"></i></span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-12 text-center">
+      {% if section.settings.show_back_btn %}
+        <a href="/collections" class="btn btn-info btn-sm"><i class="icon ion-md-arrow-back"></i> {{ 'cart.general.back_to_shop' | t }}</a>
+      {% endif %}
+      <button type="submit" name="update" class="btn btn-outline-primary btn-sm"><i class="icon ion-md-refresh"></i> {{ 'cart.general.update' | t }}</button>
+    </div>
+  </div>
+
+  {% if section.settings.enable_cart_notes %}
+    <div class="row mt-5">
+      <div class="col-12 col-lg-8 mx-auto text-center">
+        <p>{{ 'cart.general.note' | t }}:</p>
+        <textarea name="note" class="form-control" rows="4">{{ cart.note }}</textarea>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if section.settings.enable_delivery_date_selection %}
+    <div class="row mt-5">
+      <div class="col-12 col-sm-8 col-md-6 col-lg-4 col-xl-3 mx-auto">
+        <label>{{ 'cart.general.delivery_date' | t }}</label>
+        <div class="form-group input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="icon ion-md-calendar"></i>
+            </span>
+          </div>
+          <flat-pickr
+              value="{{ cart.attributes.date }}"
+              :config="datePickerConfig"
+              :required="false"
+              name="attributes[date]"
+              aria-label="delivery date"
+              class="form-control">
+          </flat-pickr>
+        </div>
+        <p class="small font-italic text-center">{{ 'cart.general.delivery_date_note' | t }}</p>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if section.settings.enable_shipping_calculator %}
+    <div class="row mt-5">
+      <div class="col-12 col-lg-8 mx-auto text-center mb-5">
+        {% include 'shipping-calculator' %}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="row mt-5">
+    <div class="col-12 col-lg-4 mx-auto">
+      <template v-if="storeUtilities.cartPromos.inCartTotalValue > 0">
+        <div class="row align-items-center no-gutters">
+          <div class="col">
+            <h6 class="my-0">{{ 'cart.general.subtotal' | t }}:</h6>
+          </div>
+          <div class="col-4 text-right">
+            <span v-text="_formatMoney(cart.subtotal_price)"></span>
+          </div>
+        </div>
+
+        <div class="row no-gutters">
+          <div class="col">
+            <h6 class="my-0">{{ 'cart.general.discount' | t }}:</h6>
+          </div>
+          <div class="col-4"></div>
+        </div>
+
+        <div class="row no-gutters mb-4">
+          <div class="col">
+            <span class="small text-primary text-uppercase"
+                  v-if="storeUtilities.cartPromos.settings.discountCode">
+              <i class="icon ion-md-pricetag"></i> ${ storeUtilities.cartPromos.settings.discountCode }
+            </span>
+          </div>
+          <div class="col-4 text-right">
+            <span v-text="'-' + _formatMoney(storeUtilities.cartPromos.inCartTotalValue)"></span>
+          </div>
+        </div>
+      </template>
+
+      <hr>
+
+      <div class="row no-gutters">
+        <div class="col">
+          <h4 class="text-uppercase my-0">{{ 'cart.general.total' | t }}:</h4>
+        </div>
+        <div class="col-4 text-right">
+          <h4 class="my-0">{{ cart.total_price | minus: promoPrices | money }}</h4>
+        </div>
+      </div>
+
+      <p class="small font-italic mt-3 text-center">{{ 'cart.general.shipping_at_checkout' | t}}</p>
+
+      <button class="btn btn-primary btn-block"
+        type="submit"
+        name="checkout"
+        {% if cart_has_subscription_item == 'true' %} onclick="event.preventDefault(); reChargeSaveCartNoteAndRedirect()"{% endif %}>
+        {{ 'cart.general.checkout' | t }} <i class="icon ion-md-arrow-forward"></i>
+      </button>
+
+      {% if additional_checkout_buttons %}
+      {% comment %}span wrapper tag is needed by the ReCharce App{% endcomment %}
+      <span class="additional-checkout-buttons">
+        <div id="additional-checkout-buttons">
+          {{ content_for_additional_checkout_buttons }}
+        </div>
+      </span>
+      {% endif %}
+    </div>
+  </div>
+</form>

@@ -1,0 +1,89 @@
+<section class="section-content pt-5">
+    <div class="{% if fluid_layout %}container-fluid{% else %}container{% endif %}">
+        <div class="row">
+            <div class="col-md-7 col-lg-8">
+                <div class="product-images-wrapper d-none d-md-block pr-md-4">
+                    {% if featured_image == blank %}
+                        {% comment %} No images exist - show svg placeholder {% endcomment %}
+                        {{ 'image' | append: current | placeholder_svg_tag: 'img-fluid' }}
+                    {% else %}
+                        {% comment %} Display current variant image, or default first{% endcomment %}
+                        <img class="img-fluid lazyload {% unless forloop.last %}mb-5{% endunless %}" src="{{ featured_image | img_url: 'pico' }}" data-src="{{ featured_image | img_url: '1024x' }}" data-variant-title="{{ featured_image.alt | escape }}" {% if section.settings.enable_images_zoom %} data-img-zoom {% endif %} data-largesrc="{{ featured_image | img_url: '1920x' }}" alt="{{ featured_image.alt | escape }}"/>
+                        {% comment %} Display rest of product images, not repeating the featured one {% endcomment %}
+                        {% if product.images.size >= 1 %}
+                            {% for image in product.images %}
+                                {% unless image contains featured_image %}
+                                    <img class="img-fluid lazyload {% unless forloop.last %}mb-5{% endunless %}" src="{{ image.src | img_url: 'pico' }}" data-src="{{ image.src | img_url: '1024x' }}" data-variant-title="{{ image.alt | escape }}" {% if section.settings.enable_images_zoom %} data-img-zoom {% endif %} data-largesrc="{{ image | img_url: '1920x' }}" :alt="currentVariant.title"/>
+                                {% endunless %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <div class="product-images-wrapper-mobile d-block d-md-none pr-md-4">
+                    <div class="carousel" data-flickity="{
+                                                 'contain': true,
+                                                 'wrapAround': false,
+                                                 'freeScroll': false,
+                                                 'accessibility': true,
+                                                 'setGallerySize': true,
+                                                 'prevNextButtons': false,
+                                                 'pageDots': true,
+                                                 'lazyLoad': 2,
+                                                 'fullscreen': true,
+                                                 'dragThreshold': 20
+                                               }" role="tree">
+                        {% for image in product.images %}
+                            <img class="carousel-cell img-fluid" role="treeitem" data-flickity-lazyload-src="{{ image.src | img_url: 'pico' }}" data-flickity-lazyload-srcset="
+                                                            {{ image.src | img_url: 'large' }} 576w,
+                                                            {{ image.src | img_url: '1280x' }} 768w,
+                                                            {{ image.src | img_url: '1440x' }} 992w,
+                                                            {{ image.src | img_url: '1920x' }} 1200w
+                                                            " sizes="(min-width: 1024px) 720px, 360px" data-variant-title="{{ image.alt | escape }}" alt="{{ image.alt | escape }}"/>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5 col-lg-4">
+                <div class="product-details-wrapper sticky-top pt-5">
+                    <h1>{{ product.title }}</h1>
+
+                    <div class="align-items-center">
+                        {% if show_vendor %}
+                            <span class="my-0">{{ product.vendor }}</span>
+                        {% endif %}
+
+                        <a @click.prevent="_scrollToReviews" class="float-right" href="#" v-if="totalReviews > 0">
+                            <span v-text="totalReviews"></span>
+                            Review<span v-if="totalReviews > 1">s</span>
+                            <span v-html="_getAvgRating()"></span>
+                        </a>
+                    </div>
+
+                    <div class="price-wrapper mt-2">
+                        <s class="h6 text-gray-600 mr-2" v-html="_formatMoney(currentVariant.compare_at_price + storeUtilities.productAddons.totalValue)" v-if="_formatMoney(currentVariant.compare_at_price) > _formatMoney(currentVariant.price)"></s>
+                        <span class="h5 actual-price" v-html="_formatMoney(currentVariant.price + storeUtilities.productAddons.totalValue)"></span>
+                    </div>
+
+                    {% include 'form-product' %}
+                    {% include 'app-utilities-product-addons' %}
+
+                    {% if product.description %}
+                        <h6 class="mt-5 mb-2">{{ 'products.product.description' | t }}</h6>
+                        <div class="rte">
+                            {{ product.description }}
+                        </div>
+                    {% endif %}
+
+                    {% if section.settings.show_social_share %}
+                        <h6 class="mt-5 mb-2">{{ 'general.social.share' | t }}</h6>
+                        {% include 'social-sharing', share_title: product.title, share_permalink: product.url, share_image: product %}
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</section>

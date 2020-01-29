@@ -1,0 +1,47 @@
+<section data-section-id="{{ block.id }}" class="section-instagram-feed {% if block.settings.instagram_section_padding %}section-content{% endif %}" style="background-color: {{ block.settings.instagram_section_bg_color }}; color: {{ block.settings.instagram_section_txt_color }}">
+  <div class="{% if block.settings.instagram_fluid_layout %}container-fluid{%else%}container{% endif %}">
+
+    {% if block.settings.instagram_heading_txt != '' %}
+    <div class="row">
+      <div class="col text-center">
+        <h2 class="section-title mb-4">{{ block.settings.instagram_heading_txt }}</h2>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if block.settings.instagram_token != '' %}
+      <vue-instagram token="{{ block.settings.instagram_token }}" :count="{{ block.settings.instagram_view  }}" class="row justify-content-center {% if block.settings.section_no_gutters %}no-gutters{% endif %}">
+        <template slot="feeds" slot-scope="props">
+            <div class="instagram-item d-flex align-items-stretch justify-content-around col-4 col-md-3">
+              <a :href="props.feed.link" target="_blank" :title="props.feed.user.full_name" rel="noopener noreferrer" >
+                <div class="overlay d-flex align-items-center justify-content-center">
+                  <i class="icon ion-logo-instagram"></i>
+                </div>
+                <img :src="props.feed.images.standard_resolution.url"/>
+              </a>
+            </div>
+        </template>
+        <template slot="error" slot-scope="props" v-if="props.error">
+          <div class="alert alert-warning" role="alert"> ${ props.error.error_message } </div>
+        </template>
+      </vue-instagram>
+    {% else %}
+      <div class="row">
+        {% comment %} dummy content {% endcomment %}
+        {% for i in (1..6) %}
+          {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+            <div class="col-4 col-lg-2"><a>{{'collection-' | append: current | placeholder_svg_tag: 'placeholder-svg'}}</a></div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if block.settings.show_profile_link %}
+    <div class="row">
+      <div class="col text-center">
+        <p class="lead mt-4 {% if block.settings.instagram_section_padding %}mb-0{% else %}mb-4{% endif %}">Follow <a href="https://www.instagram.com/{{block.settings.instagram_username}}" target="_blank" rel="noopener noreferrer"  style="color: {{ block.settings.instagram_section_color }}">@{{block.settings.instagram_username}}</a> on Instagram</p>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</section>

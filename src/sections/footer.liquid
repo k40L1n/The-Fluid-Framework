@@ -1,0 +1,360 @@
+{% assign logo = section.settings.footer_logo | img_url: '200x' %}
+{% assign footer_linklist = section.settings.footer_linklist %}
+{% assign blog_handle = section.settings.footer_blog %}
+
+<footer class="site-footer" data-section-id="{{ section.id }}">
+
+    <div data-footer-top class="footer-top section-content" style="background-color: {{ section.settings.footer_top_bg_color }}; color: {{ section.settings.footer_top_txt_color }};">
+      <div class="{% if section.settings.fluid_footer %}container-fluid{% else %}container{% endif %}">
+          <div class="row">
+              <div class="col-sm-5 col-md-2 col-lg-3">
+
+                  {% unless logo contains 'no-image' %}
+                  <a href="/" name="{{ shop.name | escape }}" title="{{ shop.name | escape }}" aria-label="{{ shop.name | escape }}">
+                    <img src="{{ logo }}" alt="{{ shop.name | escape }}" class="img-fluid mb-4" style="max-width: {{ section.settings.logo_max_width }}px">
+                  </a>
+                  {% endunless %}
+
+                  {% if section.settings.col_1_heading != '' %}
+                  <h6 class="mb-3">{{ section.settings.col_1_heading }}</h6>
+                  {% endif %}
+
+                  {% if linklists[footer_linklist].links.size > 0 %}
+                    <ul class="list-unstyled footer-navigation">
+                      {% for link in linklists[footer_linklist].links %}
+                        <li class="{% unless forloop.index == 1 %}my-3{% endunless %}">
+                          <a href="{{ link.url }}" style="color: {{ section.settings.footer_top_link_color }};" name="{{ link.title }}" title="{{ link.title }}" aria-label="{{ link.title }}">
+                            <span>{{ link.title }}</span>
+                          </a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+              </div>
+
+              <div class="col-sm-7 col-md-5 col-lg-4 ml-auto mr-auto mt-5 mt-sm-0 mt-md-0 mt-lg-0 mt-xl-0">
+                  {% if section.settings.col_2_heading != '' %}
+                    <h6 class="mb-3">{{ section.settings.col_2_heading }}</h6>
+                  {% endif %}
+
+                  <ul class="list-unstyled articles-list my-0">
+                  {{ settings.footer_blog }}
+
+                  {% for article in blogs[blog_handle].articles limit:3 %}
+                    <li>
+                      <a href="{{ article.url }}" class="d-block" style="color: {{ section.settings.footer_top_link_color }};" name="{{ article.title }}" title="{{ article.title }}" rel="nofollow" aria-label="{{ article.title }}">
+                        {{ article.title }}
+                      </a>
+                      <span class="small font-italic font-secondary">
+                        <i class="icon ion-md-time"></i> <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%b %d, %Y' }}</time>
+                      </span>
+                    </li>
+                  {% endfor %}
+                  </ul>
+              </div>
+
+              <div class="col-sm-12 col-md-5 col-lg-4 ml-auto mt-5 mt-md-0 mt-lg-0 mt-xl-0">
+
+                  {% if section.settings.show_newsletter %}
+                    {% if section.settings.col_3_heading != '' %}
+                    <h6 class="mb-3">{{ section.settings.col_3_heading }}</h6>
+                    {% endif %}
+
+                    {% if section.settings.col_3_txt !='' %}
+                      <p class="mb-2">{{ section.settings.col_3_txt }}</p>
+                    {% endif %}
+
+                    {% form 'customer', id: 'NewsletterFooter' %}
+                      <div class="input-group input-group-sm mb-4">
+                        <div class="input-group-prepend">
+                          <label class="input-group-text" for="newsletterFooterCustomerEmail"><i class="icon ion-md-mail"></i></label>
+                        </div>
+                        <input type="email" name="contact[email]" aria-label="email" id="newsletterFooterCustomerEmail" class="form-control" placeholder="{{ 'general.newsletter_form.newsletter_email' | t }}" value="{% if customer %}{{ customer.email }}{% endif %}" autocorrect="off" autocapitalize="off" required>
+                        <input type="hidden" name="contact[tags]" value="newsletter">
+                        <div class="input-group-append">
+                          <button type="submit" name="commit" class="btn btn-primary" >GO!</button>
+                        </div>
+                      </div>
+                      {% if form.errors %}
+                        <p class="text-danger mt-2 mb-0">{{ form.errors | default_errors }}</p>
+                      {% endif %}
+                    {% endform %}
+                  {% endif %}
+
+                  {% if section.settings.show_social_links %}
+                    {% if section.settings.col_3_heading != '' %}
+                    <h6>{{ section.settings.col_3_social_heading }}</h6>
+                    {% endif %}
+
+                    <ul class="social-links list-unstyled list-inline mt-3 mb-0">
+                      {% if section.settings.social_icon_facebook %}
+                      <li class="list-inline-item">
+                          <a href="{{ settings.social_facebook_link }}" style="color: {{ section.settings.footer_top_txt_color }}; border-color: {{ section.settings.footer_top_txt_color }};" name="Facebook" title="Facebook" rel="nofollow" aria-label="Facebook">
+                            <i class="icon ion-logo-facebook"></i>
+                          </a>
+                      </li>
+                      {% endif %}
+
+                      {% if section.settings.social_icon_twitter %}
+                      <li class="list-inline-item">
+                          <a href="{{ settings.social_twitter_link }}" style="color: {{ section.settings.footer_top_txt_color }}; border-color: {{ section.settings.footer_top_txt_color }};" name="Twitter" title="Twitter" rel="nofollow" aria-label="Twitter">
+                            <i class="icon ion-logo-twitter"></i>
+                          </a>
+                      </li>
+                      {% endif %}
+
+                      {% if section.settings.social_icon_instagram %}
+                      <li class="list-inline-item">
+                          <a href="{{ settings.social_instagram_link }}" style="color: {{ section.settings.footer_top_txt_color }}; border-color: {{ section.settings.footer_top_txt_color }};" name="Instagram" title="Instagram" rel="nofollow" aria-label="Instagram">
+                            <i class="icon ion-logo-instagram"></i>
+                          </a>
+                      </li>
+                      {% endif %}
+                    </ul>
+                  {% endif %}
+
+              </div>
+          </div>
+          <!--end of row-->
+
+      </div>
+      <!--end of container-->
+    </div>
+
+    <div data-footer-bottom class="footer-bottom py-3" style="background-color: {{ section.settings.footer_bottom_bg_color }}; color: {{ section.settings.footer_bottom_txt_color }};">
+        <div class="{% if section.settings.fluid_footer %}container-fluid{% else %}container{% endif %}">
+            <div class="row d-flex align-items-center">
+                <div class="col-md-6 text-center text-md-left">
+                    <span class="small copyright font-secondary">&copy; {{ 'layout.footer.copyright' | t }} {{ 'now' | date: "%Y" }} {{ shop.name }} - {{ 'layout.footer.all_rights_reserved' | t }}</span>
+                </div>
+                <div class="col-md-6 text-center text-md-right mt-3 mt-md-0">
+                  {% if section.settings.show_payment_icons %}
+                  <ul class="list-inline payment-icons my-0">
+                    {% if section.settings.payment_icon_visa %}<li class="list-inline-item"><img src="{{ 'visa' | payment_type_img_url }}" height="24" alt="visa" /></li>{% endif %}
+                    {% if section.settings.payment_icon_mastercard %}<li class="list-inline-item"><img src="{{ 'master' | payment_type_img_url }}" height="24" alt="master" /></li>{% endif %}
+                    {% if section.settings.payment_icon_diners %}<li class="list-inline-item"><img src="{{ 'diners_club' | payment_type_img_url }}" height="24" alt="diners club" /></li>{% endif %}
+                    {% if section.settings.payment_icon_ae %}<li class="list-inline-item"><img src="{{ 'american_express' | payment_type_img_url }}" height="24" alt="american express" /></li>{% endif %}
+                    {% if section.settings.payment_icon_paypal %}<li class="list-inline-item"><img src="{{ 'paypal' | payment_type_img_url }}" height="24" alt="paypal" /></li>{% endif %}
+                    {% if section.settings.payment_icon_applepay %}<li class="list-inline-item"><img src="{{ 'apple_pay' | payment_type_img_url }}" height="24" alt="apple pay" /></li>{% endif %}
+                    {% if section.settings.payment_icon_amazonpay %}<li class="list-inline-item"> <img src="{{ 'amazon_payments' | payment_type_img_url }}" height="24" alt="amazon payments" /></li>{% endif %}
+                  </ul>
+                  {% endif %}
+                </div>
+            </div>
+            <!--end of row-->
+        </div>
+        <!--end of container-->
+    </div>
+</footer>
+
+
+
+{% schema %}
+  {
+    "name": "Footer",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "checkbox",
+        "id": "fluid_footer",
+        "label": "Full Width Footer?",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Styling"
+      },
+      {
+        "type": "color",
+        "id": "footer_top_bg_color",
+        "label": "Footer Top Background Color",
+        "default": "#343a40"
+      },
+      {
+        "type": "color",
+        "id": "footer_top_txt_color",
+        "label": "Footer Top Text Color",
+        "default": "#fff"
+      },
+      {
+        "type": "color",
+        "id": "footer_top_link_color",
+        "label": "Footer Top Links Color",
+        "default": "#fff"
+      },
+      {
+        "type": "color",
+        "id": "footer_bottom_bg_color",
+        "label": "Footer Bottom Background Color",
+        "default": "#212529"
+      },
+      {
+        "type": "color",
+        "id": "footer_bottom_txt_color",
+        "label": "Footer Bottom Text Color",
+        "default": "#fff"
+      },
+      {
+        "type": "header",
+        "content": "Column 1"
+      },
+      {
+        "type": "image_picker",
+        "id": "footer_logo",
+        "label": "Logo image"
+      },
+      {
+        "type": "range",
+        "id": "logo_max_width",
+        "min": 5,
+        "max": 500,
+        "step": 5,
+        "unit": "px",
+        "label": "Logo width",
+        "default": 180
+      },
+      {
+        "type": "text",
+        "id": "col_1_heading",
+        "label": "Heading"
+      },
+      {
+        "type": "link_list",
+        "id": "footer_linklist",
+        "label": "Select Menu",
+        "default": "footer"
+      },
+      {
+        "type": "header",
+        "content": "Column 2"
+      },
+      {
+        "type": "text",
+        "id": "col_2_heading",
+        "label": "Heading",
+        "default": "From the Blog"
+      },
+      {
+        "type": "blog",
+        "id": "footer_blog",
+        "label": "Select Blog"
+      },
+      {
+        "type": "header",
+        "content": "Column 3"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_newsletter",
+        "label": "Show Newsletter Subscription?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "col_3_heading",
+        "label": "Heading",
+        "default": "Subscribe"
+      },
+      {
+        "type": "text",
+        "id": "col_3_txt",
+        "label": "Text",
+        "default": "Get monthly updates and free resources."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_social_links",
+        "label": "Show Social Links?",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "col_3_social_heading",
+        "label": "Heading",
+        "default": "Connect with Us"
+      },
+      {
+        "type": "paragraph",
+        "content": "Select Networks"
+      },
+      {
+        "type": "checkbox",
+        "id": "social_icon_facebook",
+        "label": "Facebook",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "social_icon_twitter",
+        "label": "Twitter",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "social_icon_instagram",
+        "label": "Instagram",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Payment Icons"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_payment_icons",
+        "label": "Show Payment Icons?",
+        "default": true
+      },
+      {
+        "type": "paragraph",
+        "content": "Select Payment Methods"
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_visa",
+        "label": "Visa",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_mastercard",
+        "label": "Mastercard",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_ae",
+        "label": "American Express",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_diners",
+        "label": "Diners",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_paypal",
+        "label": "Paypal",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_applepay",
+        "label": "Apple Pay",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_icon_amazonpay",
+        "label": "Amazon Pay",
+        "default": true
+      }
+    ]
+  }
+
+{% endschema %}

@@ -1,0 +1,169 @@
+<div class="card card-product card-product-style-3 text-left" v-match-heights="{el: ['.card-title']}">
+  <span class="badges">
+    <span v-if="product.compare_at_price > product.price" class="badge badge-right badge-warning">{{ 'products.product.on_sale' | t | escape }}</span>
+  </span>
+  <div class="card-img text-center" :class="{'bg-gray-300': !product.featured_image}">
+    <a :href="'/products/' + product.handle">
+      <img v-if="product.current_variant.featured_image" class="img-fluid lazyload"
+          :src="_getSizedImageUrl(product.current_variant.featured_image.src, 'pico')"
+          :data-src="_getSizedImageUrl(product.current_variant.featured_image.src, '400x')"
+          :alt="product.title"/>
+      <img v-else class="img-fluid lazyload"
+            :src="_getSizedImageUrl(product.featured_image, 'pico')"
+            :data-src="_getSizedImageUrl(product.featured_image, '400x')"
+            :alt="product.title"/>
+
+      <span v-if="!product.featured_image">
+        {{ 'product-1' | placeholder_svg_tag: 'img-fluid' }}
+      </span>
+    </a>
+  </div>
+
+  <form data-product-form :data-product-id="product.id" action="/cart/add" method="post" enctype="multipart/form-data" class="card-body no-gutters">
+    <div class="row">
+      <div class="col-md-8">
+        <h6 class="card-title m-0"><a :href="'/products/' + product.handle" v-text="product.title"></a></h6>
+      </div>
+
+      <div class="col-md-4 text-left text-md-right">
+        <s v-if="product.current_variant.compare_at_price > product.price" v-html="_formatMoney(product.current_variant.compare_at_price)" class="price small m-0 p-0"></s>
+        <span v-html="_formatMoney(product.current_variant.price)" class="price m-0 p-0"></span>
+      </div>
+    </div>
+
+    <div class="row mt-2">
+      <div class="selector-wrapper col-12 d-flex justify-content-between">
+
+        <div v-if="product.options_with_values[0].name !== 'Title'" class="d-flex flex-column">
+          <div v-for="(option, index) in product.options_with_values" :key="index" v-if="option.name !== 'Title'">
+
+            <input type="hidden" :name="'product_options_'+ product.current_variant.id +'[]'" v-model="JSON.stringify(option)" />
+
+            <div v-if="colorSwatchesEnabled && option.name === 'Color'" class="">
+              <label v-text="option.name" class="small"></label>
+              {% comment %} Color swatches {% endcomment %}
+              <ul class="list-unstyled list-inline">
+                  <li v-for="value in option.values" class="list-inline-item">
+                    <div class="color-swatch">
+                      <label
+                          data-toggle="tooltip"
+                          data-trigger="hover"
+                          :title="_unhandleize(value)"
+                          :style="_getSwatchStyle(value)">
+                          <input
+                            data-single-option-selector
+                            type="radio"
+                            name="color"
+                            aria-label="color"
+                            v-model="product.variants[0].options[index]"
+                            :value="value"
+                            :data-index="'option' + option.position"
+                            @change="_getVariant($event)">
+                      </label>
+                    </div>
+                  </li>
+              </ul>
+            </div>
+
+            {% comment %} Size swatches {% endcomment %}
+            <div v-else-if="sizeSwatchesEnabled && option.name === 'Size'" class="">
+              <label v-text="option.name" class="small"></label>
+              <ul class="list-unstyled list-inline">
+                <li v-for="value in option.values" class="list-inline-item">
+                  <div class="size-swatch">
+                    <label :title="_unhandleize(value)">
+                        <input
+                          data-single-option-selector
+                          type="radio"
+                          name="size"
+                          aria-label="size"
+                          v-model="product.variants[0].options[index]"
+                          :value="value"
+                          :data-index="'option' + option.position"
+                          @change="_getVariant($event)">
+                    </label>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            {% comment %} Normal select {% endcomment %}
+            <div v-else class="flex-grow-1 mr-1">
+              <label v-text="option.name" class="small"></label>
+              <select class="form-control form-control-sm d-inline-block"
+                data-single-option-selector
+                :data-index="'option' + option.position"
+                @change="_getVariant($event)">
+                <option v-for="value in option.values"
+                  :value="value"
+                  v-text="value">
+                </option>
+              </select>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="quantity-wrapper" data-qty-container>
+          <label for="Quantity" class="small">{{ 'products.product.quantity' | t }}</label>
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <a href="#" class="input-group-text" rel="nofollow" aria-label="Decrease" title="Decrease" data-qty-decrease @click.prevent="_updateQty($event)">
+                <span class="btn-decrease"><i class="icon ion-md-remove"></i></span>
+              </a>
+            </div>
+            <input type="number" name="quantity" aria-label="quantity" value="1" step="1" min="1" inputmode="numeric" data-qty-input class="quantity form-control text-center" readonly>
+            <div class="input-group-append">
+              <a href="#" class="input-group-text" rel="nofollow" aria-label="Increase" title="Increase" data-qty-increase @click.prevent="_updateQty($event)">
+                <span class="btn-increase"><i class="icon ion-md-add"></i></span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col-12 d-flex justify-content-between">
+        <button class="btn btn-primary btn-sm flex-grow-1"
+            type="submit"
+            name="add"
+            aria-label="{{ 'products.product.add_to_cart' | t | escape }}"
+            :disabled="!product.current_variant.available"
+            :data-cart-limit="product.cart_limit" @click.prevent="_addToCart(product.current_variant.id, $event)">
+          <template v-if="product.current_variant.available">
+            <i class="icon ion-md-cart"></i> {{ 'products.product.add_to_cart' | t }}
+          </template>
+          <template v-else>
+            {{ 'products.product.sold_out' | t }}
+          </template>
+        </button>
+
+        {% if settings.enable_quickshop %}
+          <a href="#" @click.prevent="_viewQuickShop(product.handle, product.current_variant.options, $event)" class="btn btn-outline-primary btn-sm ml-1 d-flex align-items-center" title="{{ 'products.product.quickshop' | t | escape }}" rel="nofollow" aria-label="{{ 'products.product.quickshop' | t | escape }}" data-toggle="tooltip" data-trigger="hover" data-placement="top">
+            <i class="icon ion-md-eye"></i>
+        </a>
+        {% endif %}
+
+        {% if settings.enable_wishlist %}
+          <template v-if="!_checkWishlist(product.current_variant.id)" >
+            <a href="#" @click.prevent="_addVariantToWishlist(product.handle, product.current_variant.id, $event)" class="btn btn-outline-primary btn-sm ml-1 d-flex align-items-center" title="{{ 'general.wishlist.add_to_wishlist' | t }}" rel="nofollow" aria-label="{{ 'general.wishlist.add_to_wishlist' | t }}" data-toggle="tooltip" data-trigger="hover" data-placement="top">
+              <i class="icon ion-md-star-outline"></i>
+            </a>
+          </template>
+          <template v-else>
+            <a class="btn btn-outline-primary btn-sm ml-1 d-flex align-items-center" rel="nofollow" title="{{ 'general.wishlist.added_to_wishlist' | t }}" rel="nofollow" aria-label="{{ 'general.wishlist.added_to_wishlist' | t }}" data-toggle="modal" data-target="[data-modal-wishlist]" tabindex="-1">
+              <i class="icon ion-md-star"></i>
+            </a>
+          </template>
+        {% endif %}
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-12">
+        <div data-item-reviews :data-product-id="product.id"></div>
+      </div>
+    </div>
+  </form>
+</div>

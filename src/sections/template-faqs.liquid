@@ -1,0 +1,99 @@
+<section data-section-id="{{ section.id }}" class="section-content section-faq">
+  <div class="{% if section.settings.fluid_layout %}container-fluid{% else %}container{% endif %}">
+    <div class="row">
+      <div class="col-12 text-center">
+        <h1 class="page-title">{{ page.title }}</h1>
+      </div>
+    </div>
+
+    {% if section.settings.template_type == '6' or  section.settings.template_type == '12' %}
+      {% for block in section.blocks %}
+        <div class="row {% if forloop.index > 1 %}mt-5{% endif %}">
+          <div class="col-lg-{{ section.settings.template_type }}">
+            <h4>{{ block.settings.heading }}</h4>
+          </div>
+          <div class="col-lg-{{ section.settings.template_type }}">
+            {{ block.settings.txt }}
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="accordion" id="faq">
+        {% for block in section.blocks %}
+          <div class="card">
+            <div class="card-header p-2" id="heading{{ forloop.index }}">
+              <h3 class="m-0">
+                <button class="btn btn-link text-left d-flex align-items-center justify-content-between collapsed" type="button" data-toggle="collapse" data-target="#collapse{{ forloop.index }}" aria-expanded="false" aria-controls="collapseOne">
+                  <span class="heading">{{ block.settings.heading }}</span>
+                  <i class="icon ion-ios-arrow-forward"></i>
+                </button>
+              </h3>
+            </div>
+
+            <div id="collapse{{ forloop.index }}" class="collapse" aria-labelledby="heading{{ forloop.index }}" data-parent="#faq">
+              <div class="card-body">
+                {{ block.settings.txt }}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "FAQs Template",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "checkbox",
+        "id": "fluid_layout",
+        "label": "Full Width Layout?",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "template_type",
+        "label": "Templare Type",
+        "options": [{
+            "value": "12",
+            "label": "List"
+          },
+          {
+            "value": "6",
+            "label": "Grid: 2 Columns"
+          },
+          {
+            "value": "accordion",
+            "label": "Accordion"
+          }
+        ],
+        "default": "6"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "content",
+        "name": "FAQ",
+        "settings": [
+          {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading"
+          },
+          {
+            "type": "richtext",
+            "id": "txt",
+            "label": "Text"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

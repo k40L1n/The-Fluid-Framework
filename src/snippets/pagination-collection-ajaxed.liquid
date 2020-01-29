@@ -1,0 +1,40 @@
+<div v-if="!isLoading && collection.products.length > 0" class="pagination" v-cloak>
+
+  {% if pagination_type == 'page_numbers' %}
+
+      <template v-if="collection.pagination.previous">
+        <a :href="collection.pagination.previous.url" :title="collection.pagination.previous.title" rel="nofollow" @click.prevent="_parseFilters($event)" data-filter-type="pagination">
+          {{ 'collections.pagination.previous' | t }}
+        </a>
+        <span class="sep">/</span>
+      </template>
+
+    	<template v-for="part in collection.pagination.parts">
+        <template v-if="part.is_link">
+          <a :href="part.url" rel="nofollow" @click.prevent="_parseFilters($event)" data-filter-type="pagination" v-text="part.title"></a>
+          <span class="sep">/</span>
+        </template>
+        <template v-else>
+          <span v-if="part.title == collection.pagination.current_page">
+            <span v-text="part.title" class="active"></span>
+            <span class="sep">/</span>
+          </span>
+          <span v-else v-html="part.title"></span>
+        </template>
+      </template>
+
+      <a v-if="collection.pagination.next" :href="collection.pagination.next.url" :title="collection.pagination.next.title" rel="nofollow" @click.prevent="_parseFilters($event)" data-filter-type="pagination">
+        {{ 'collections.pagination.next' | t }}
+      </a>
+
+  {% else %}
+
+      <div v-if="collection.pagination.next" class="text-center">
+        <a :href="collection.pagination.next.url" rel="nofollow" class="btn btn-primary text-white" @click.prevent="_loadMore($event)">
+          {{ 'collections.pagination.more' | t }}
+        </a>
+      </div>
+
+  {% endif %}
+
+</div>

@@ -1,0 +1,745 @@
+/* --------------------------------------------------------------------------------- */
+
+/*  Bootstrap Components
+/*--------------------------------------------------------------------------------- */
+
+/* Forms */
+
+// Make select Bootstrap compatible
+select.form-control {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  height: auto !important;
+  padding-right: 2em;
+  background-image: url("data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMjkgMTI5IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAxMjkgMTI5IiB3aWR0aD0iNTEycHgiIGhlaWdodD0iNTEycHgiPgogIDxnPgogICAgPHBhdGggZD0ibTEyMS4zLDM0LjZjLTEuNi0xLjYtNC4yLTEuNi01LjgsMGwtNTEsNTEuMS01MS4xLTUxLjFjLTEuNi0xLjYtNC4yLTEuNi01LjgsMC0xLjYsMS42LTEuNiw0LjIgMCw1LjhsNTMuOSw1My45YzAuOCwwLjggMS44LDEuMiAyLjksMS4yIDEsMCAyLjEtMC40IDIuOS0xLjJsNTMuOS01My45YzEuNy0xLjYgMS43LTQuMiAwLjEtNS44eiIgZmlsbD0iIzAwMDAwMCIvPgogIDwvZz4KPC9zdmc+Cg==");
+  background-repeat: no-repeat;
+  background-position: 96% 50%;
+  background-size: 1rem;
+}
+
+// input readonly
+.form-control[readonly] {
+  background: $gray-100;
+}
+
+/* Buttons */
+.btn-group-justified {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+}
+
+.btn-group-justified .btn,
+.btn-group-justified .btn-group {
+  display: table-cell;
+  float: none;
+  width: 1%;
+}
+
+.btn-group-justified .btn .btn,
+.btn-group-justified .btn-group .btn {
+  width: 100%;
+}
+
+.btn-group-justified .btn .dropdown-menu,
+.btn-group-justified .btn-group .dropdown-menu {
+  left: auto;
+}
+
+/*  Pagination */
+.pagination {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+
+  a,
+  span {
+    display: inline-block;
+  }
+}
+
+
+/* Cards */
+.card {
+  width: 100%;
+  overflow: hidden;
+
+  .badges {
+    position: absolute;
+    z-index: 9;
+    top: 0.4em;
+    left: 0.5em;
+
+    &.badge-left {
+      left: 0.5em;
+
+    }
+
+    &.badge-right {
+      right: 0.5em !important;
+    }
+  }
+
+  .card-img {
+    position: relative;
+    overflow: hidden;
+
+    img {
+      object-fit: cover;
+    }
+  }
+
+  .card-body {
+    .price {
+      white-space: nowrap;
+    }
+  }
+
+  .flickity-prev-next-button {
+    width: 50px !important;
+    height: 50px !important;
+    background: transparent !important;
+    transition: $transition-base;
+
+    &.previous {
+      left: $grid-gutter-width/2 !important;
+    }
+
+    &.next {
+      right: $grid-gutter-width/2 !important;
+    }
+  }
+
+  .flickity-page-dots {
+    bottom: $grid-gutter-width/2;
+  }
+
+  .variant-selector {
+    position: absolute;
+    bottom: $grid-gutter-width/2;
+    display: block;
+    width: 100%;
+
+    .list-inline-item {
+      margin: 0.1rem;
+    }
+  }
+}
+
+/* Alerts */
+.alert {
+  ul {
+    margin: 0;
+    padding: 0 1em;
+  }
+
+  p:last-child {
+    margin: 0 !important;
+  }
+}
+
+/* Modal */
+.modal {
+  .modal-header {
+    .close {
+      cursor: pointer;
+      transition: $transition-base;
+    }
+  }
+
+  .modal-body {
+    white-space: pre-line;
+  }
+}
+
+
+/* --------------------------------------------------------------------------------- */
+
+/*  3rd party Components & Plugins custom shared styles
+/*--------------------------------------------------------------------------------- */
+// Video.js
+.video-js {
+  .vjs-poster{
+    background-size: cover !important;
+  }
+
+  .vjs-big-play-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 !important;
+    transform: translate(-50%, -50%) !important;
+    width: 8rem !important;
+    height: 8rem !important;
+    line-height: 8rem !important;
+    border-radius: 8rem !important;
+    border: 2px solid #ffffff !important;
+    text-align: center;
+    font-size: 6rem !important;
+    background-color: transparent !important;
+    transition: $transition-base !important;
+
+    .vjs-icon-placeholder{
+      margin: 0 !important;
+      padding: 0 !important;
+
+      ::before{
+        font-family: "Ionicons" !important;
+        content: "\f357" !important;
+      }
+    }
+
+    &:hover{
+      background: rgba(255,255,255, 0.3) !important;
+    }
+  }
+}
+
+// Notification toast
+.snotifyToast {
+  box-shadow: $box-shadow;
+
+  &__inner {
+    padding: 15px 65px 15px 15px;
+  }
+
+  &__title {
+    font-size: 1.2rem;
+    line-height: 0.8rem;
+    margin-bottom: 0.6rem;
+  }
+
+  &__body {
+    max-width: 100%; // for older IE
+    font-size: 0.9rem;
+    color: $gray-800;
+  }
+}
+
+// Flatpicker component
+.flatpickr-day.selected {
+  background: $primary !important;
+  border-color: $primary !important;
+}
+
+// password strength meter
+.pass-wrapper {
+  width: 100%;
+  font-style: italic;
+  color: $gray-900;
+  font-size: 0.9rem;
+}
+
+.pass-graybar {
+  position: relative;
+  width: 100%;
+  height: 3px;
+  background-color: #cccccc;
+}
+
+.pass-colorbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 3px
+}
+
+.pass-percent,
+.pass-text {
+  font-size: 1rem;
+}
+
+.pass-percent {
+  margin-right: 5px;
+}
+
+
+
+/*! Flickity v2.0.10
+http://flickity.metafizzy.co
+---------------------------------------------- */
+.flickity-enabled {
+  position: relative;
+}
+
+.flickity-enabled:focus {
+  outline: none;
+}
+
+.flickity-viewport {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+.flickity-slider {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.hide-nav-ui {
+  .flickity-prev-next-button,
+  .flickity-page-dots {
+    display: none;
+  }
+}
+
+/* draggable */
+.flickity-enabled.is-draggable {
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.flickity-enabled.is-draggable .flickity-viewport {
+  cursor: move;
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+
+.flickity-enabled.is-draggable .flickity-viewport.is-pointer-down {
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+}
+
+/* ---- previous/next buttons ---- */
+.flickity-prev-next-button {
+  position: absolute;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: white;
+  background: hsla(0, 0%, 100%, 0.75);
+  cursor: pointer;
+
+  /* vertically center */
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.flickity-prev-next-button:hover {
+  background: white;
+}
+
+.flickity-prev-next-button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.flickity-prev-next-button:active {
+  opacity: 0.6;
+}
+
+.flickity-prev-next-button.previous {
+  left: 10px;
+}
+
+.flickity-prev-next-button.next {
+  right: 10px;
+}
+
+/* right to left */
+.flickity-rtl .flickity-prev-next-button.previous {
+  left: auto;
+  right: 10px;
+}
+
+.flickity-rtl .flickity-prev-next-button.next {
+  right: auto;
+  left: 10px;
+}
+
+.flickity-prev-next-button:disabled {
+  opacity: 0.3;
+  cursor: auto;
+}
+
+.flickity-prev-next-button svg {
+  position: absolute;
+  left: 20%;
+  top: 20%;
+  width: 60%;
+  height: 60%;
+}
+
+.flickity-prev-next-button .arrow {
+  fill: #333333;
+}
+
+/* ---- page dots ---- */
+.flickity-page-dots {
+  position: absolute;
+  bottom: -25px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: center;
+  line-height: 1;
+}
+
+.flickity-rtl .flickity-page-dots {
+  direction: rtl;
+}
+
+.flickity-page-dots .dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin: 0 8px;
+  background: #333333;
+  border-radius: 50%;
+  opacity: 0.4;
+  cursor: pointer;
+}
+
+.flickity-page-dots .dot.is-selected {
+  opacity: 1;
+}
+
+/* flickity additional custom styles */
+.flickity-viewport {
+  transition: $transition-base;
+}
+
+.carousel {
+  .carousel-cell.equal-height {
+    min-height: 100%;
+  }
+
+  .flickity-page-dots .dot {
+    background: $primary;
+  }
+
+  .flickity-prev-next-button {
+    width: 80px;
+    height: 80px;
+    background: transparent;
+
+    .arrow {
+      transition: $transition-base;
+      fill: $primary;
+    }
+
+    &:hover {
+      background: transparent;
+    }
+
+    &.previous {
+      left: 0;
+    }
+
+    &.next {
+      right: 0;
+    }
+  }
+
+  &.carousel-nav {
+    .carousel-cell {
+      transition: all 0.2s linear;
+      opacity: 0.6;
+      border: 1px solid transparent;
+
+      &.is-nav-selected {
+        opacity: 1;
+        border: 1px solid $primary;
+      }
+    }
+
+    .flickity-prev-next-button {
+      width: 40px;
+      height: 40px;
+      border-radius: 0;
+      background: $gray-100;
+    }
+  }
+}
+
+/* fade in image when loaded */
+.img-carousel-cell {
+  transition: $transition-base;
+  opacity: 0;
+
+  &.flickity-lazyloaded {
+    opacity: 1;
+  }
+}
+
+/* Flickity fullscreen v1.0.1
+------------------------- */
+.flickity-enabled.is-fullscreen {
+  position: fixed;
+  z-index: 999999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+}
+
+.flickity-enabled.is-fullscreen .flickity-page-dots {
+  bottom: 10px;
+}
+
+.flickity-enabled.is-fullscreen .flickity-page-dots .dot {
+  background: white;
+}
+
+/* prevent page scrolling when flickity is fullscreen */
+html.is-flickity-fullscreen {
+  overflow: hidden;
+
+  .img-fluid {
+    height: 100%;
+    object-fit: contain !important;
+  }
+
+  .flickity-prev-next-button {
+    width: 50px;
+    height: 50px;
+    background:#ffffff;
+
+    &.previous {
+      left: $grid-gutter-width/2;
+    }
+
+    &.next {
+      right: $grid-gutter-width/2;
+    }
+
+    .arrow {
+      fill: #333333;
+    }
+
+    &:hover{
+      background:#ffffff;
+    }
+  }
+}
+
+/* ---- flickity-fullscreen-button ---- */
+
+.flickity-fullscreen-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: block;
+  width: 24px !important;
+  height: 24px !important;
+  border-width: 0;
+  border-radius: $border-radius;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+/* right-to-left */
+.flickity-rtl .flickity-fullscreen-button {
+  right: auto;
+  left: 10px;
+}
+
+.flickity-fullscreen-button-exit {
+  display: none;
+}
+
+.flickity-enabled.is-fullscreen .flickity-fullscreen-button-exit {
+  display: block;
+}
+
+.flickity-enabled.is-fullscreen .flickity-fullscreen-button-view {
+  display: none;
+}
+
+.flickity-fullscreen-button .flickity-button-icon {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* --------------------------------------------------------------------------------- */
+
+/*  Images Zoom Plugin (https://github.com/dynamicdriverepo/zoomio)
+/*--------------------------------------------------------------------------------- */
+#zoomiocontainer {
+  /* container containing enlarged image (native sized image) */
+  position: absolute;
+  z-index: 9999;
+  overflow: hidden;
+  visibility: visible;
+}
+
+#zoomiocontainer img {
+  position: absolute !important;
+  display: block !important;
+
+  /* image inside zoom container */
+  width: auto !important;
+  height: auto !important;
+}
+
+#zoomiocontainer.mobileclass {
+  /* CSS class added to zoom container on mobile OS */
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ### Loading DIV CSS ### */
+#zoomioloadingdiv {
+  position: absolute;
+  z-index: 10000;
+  top: 0;
+  left: 0;
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#zoomioloadingdiv .spinner {
+  width: 40px;
+  height: 40px;
+  margin: 100px auto;
+  background-color: #333333;
+  border-radius: 100%;
+  -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
+  animation: sk-scaleout 1.0s infinite ease-in-out;
+}
+
+@-webkit-keyframes sk-scaleout {
+  0% {
+    -webkit-transform: scale(0)
+  }
+
+  100% {
+    -webkit-transform: scale(1.0);
+    opacity: 0;
+  }
+}
+
+@keyframes sk-scaleout {
+  0% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  }
+
+  100% {
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+    opacity: 0;
+  }
+}
+
+
+/* --------------------------------------------------------------------------------- */
+
+/*  Product Reviews
+/*--------------------------------------------------------------------------------- */
+[data-item-reviews] {
+  .icon-review {
+    font-size: 0.8rem;
+  }
+
+  .icon-review:not(:last-child) {
+    margin: 0 1px;
+  }
+}
+
+[data-product-reviews] {
+  .icon-review {
+    margin-right: 2px;
+  }
+
+  #reviewsList {
+    .review-item {
+      border-top: 1px solid #D4D4D4;
+    }
+
+    .review-image {
+      max-width: 400px;
+    }
+  }
+
+  .flickity-page-dots {
+    bottom: -40px !important;
+  }
+
+  @include media-breakpoint-up(md) {
+    .flickity-page-dots {
+      display: none;
+    }
+  }
+
+  .carousel-cell {
+    min-height: 100%;
+  }
+
+  .modal {
+    .vue-star-rating {
+      position: relative;
+      top: -0.15rem;
+      margin-left: 0.2rem;
+    }
+
+    .vue-star-rating-pointer {
+      position: relative;
+      top: 0.2rem;
+    }
+
+    .vue-star-rating-rating-text {
+      position: relative;
+      top: 0.1rem;
+    }
+
+    .modal-body {
+      font-size: 0.9rem;
+    }
+
+    .vue-dropzone {
+      border-radius: $border-radius;
+      border-width: $border-width;
+      border-color: $border-color;
+    }
+  }
+
+  ul.pagination {
+    list-style: none;
+    list-style-type: none;
+
+    li {
+      display: inline-block;
+
+      a {
+        float: left;
+        padding: 5px 10px;
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: normal;
+      }
+
+      &.active {
+        a {
+          background-color: $gray-600;
+          border-color: $gray-600;
+          color: $light;
+          cursor: default;
+        }
+      }
+
+      &:hover:not(.active) a {
+        background-color: $gray-200;
+      }
+    }
+  }
+}

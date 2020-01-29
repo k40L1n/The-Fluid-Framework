@@ -1,0 +1,120 @@
+/* -----------------------------------------------------------------------------------
+
+    Custom Theme Design
+
+    When making your own theme it is important to consider modifying the variables.scss
+    file in order to change fonts, sizes & colors. By doing that you will reduce the need
+    of writing extra css styles.
+
+    However sometimes you will need extra styles in order to further modify Bootstrap's
+    elements and look & feel in general so as to match your theme design.
+
+    You should place all these extra styles here.
+
+----------------------------------------------------------------------------------- */
+body {
+  background-color: $gray-100;
+}
+
+/* --------------------------------------------------------------------------------- */
+
+/*  Typography
+/*--------------------------------------------------------------------------------- */
+a {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.page-title {
+  margin-bottom: 1.6rem;
+}
+
+/* --------------------------------------------------------------------------------- */
+
+/*  Layout
+/*--------------------------------------------------------------------------------- */
+.section-content {
+  padding: $spacer*5 0;
+
+  @include media-breakpoint-down(md) {
+    padding: $spacer*3 0;
+  }
+}
+
+/* --------------------------------------------------------------------------------- */
+
+/*  Components
+/*--------------------------------------------------------------------------------- */
+
+/* Button */
+.btn {
+  cursor: pointer;
+}
+
+/* Card */
+.card {
+  box-shadow: $box-shadow-sm;
+
+  &.card-product-style-2 {
+    .color-swatch {
+      label {
+        border-radius: 100%;
+        margin: 0.1rem;
+      }
+
+      input {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  &.card-product-style-3 {
+    .list-inline {
+      margin: 0;
+      padding: 0;
+
+      .list-inline-item {
+        margin-right: 0.2rem;
+      }
+    }
+
+    .color-swatch {
+      label {
+        position: relative;
+        top: 0.2rem;
+        border-radius: 100%;
+      }
+
+      input {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+}
+
+/*  Pagination */
+.pagination {
+  font-weight: bold;
+
+  a,
+  span {
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: $gray-800;
+    font-size: 0.8rem;
+
+    &:hover {
+      color: $primary;
+    }
+  }
+
+  .active {
+    color: $primary;
+  }
+
+  .sep {
+    margin: 0 10px;
+  }
+}

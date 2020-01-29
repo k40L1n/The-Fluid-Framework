@@ -1,0 +1,493 @@
+{% assign sidebar_enabled = section.settings.enable_sidebar %}
+{% assign sidebar_is_sticky = section.settings.sidebar_is_sticky %}
+{% assign number_of_comments = article.comments_count %}
+{% assign article_image = article.image.src | img_url %}
+
+{% comment %}
+  If a comment was just submitted but requires moderation, we have an extra comment to count.
+{% endcomment %}
+{% if comment and comment.status != 'published' %}
+  {% assign number_of_comments = article.comments_count | plus: 1 %}
+{% endif %}
+
+
+{% comment %} Next/Prev article nagigation {% endcomment %}
+{% assign current_found = false %}
+{% assign done = false %}
+{% for a in blog.articles %}
+  {% if current_found and done == false %}
+    {% assign next_article = a %}
+    {% assign done = true %}
+  {% endif %}
+  {% unless done %}
+    {% if a.id == article.id %}
+      {% assign current_found = true %}
+    {% else %}
+      {% assign prev_article = a %}
+    {% endif %}
+  {% endunless %}
+{% endfor %}
+
+
+<section data-section-id="{{ section.id }}" class="section-content" role="article">
+    <div class="{% if section.settings.fluid_layout %}container-fluid{% else %}container{% endif %}">
+      <div class="row">
+          <div class="col-12 text-center">
+            <h1>{{ article.title }}</h1>
+            <div class="article-meta h6 mt-3">
+              <i class="icon ion-md-time text-warning"></i>
+              <time datetime="formatDate(article.node.publishedAt)"> {{ article.published_at | date: "%a, %b %d, %Y" }}</time>
+              &nbsp;&nbsp;
+              <i class="icon ion-md-create text-warning"></i>
+              <span>By: {{ article.author }}</span>
+              {% if blog.comments_enabled? and article.comments_count > 0 %}
+                &nbsp;&nbsp;<i class="icon ion-md-chat text-warning"></i> Comments: {{ article.comments_count }}
+              {% endif %}
+            </div>
+          </div>
+      </div>
+
+      {% unless article_image contains 'no-image' %}
+        <div class="row mt-5">
+          <div class="col-12">
+            <div style="overflow: hidden">
+              <img
+                  data-sizes="auto"
+                  src="{{ article.image.src | img_url: 'pico' }}"
+                  data-srcset="
+                    {{ article.image.src | img_url: 'large' }} 576w,
+                    {{ article.image.src | img_url: '1280x' }} 768w,
+                    {{ article.image.src | img_url: '1440x' }} 992w,
+                    {{ article.image.src | img_url: '1920x' }} 1200w
+                    "
+                  class="lazyload"
+                  alt="{{ article.image.alt }}"/>
+              </div>
+          </div>
+        </div>
+      {% endunless %}
+
+      <div class="row mt-5">
+
+          {% if sidebar_enabled %}
+              {% comment %} layout with sidebar {% endcomment %}
+              <div class="col-lg-9 article-body has-sidebar pr-lg-5">
+                <div class="rte mt-lg-3">
+                  {{ article.content }}
+                </div>
+                {% if section.settings.enable_social_sharing %}
+                  <div class="my-5 text-center">
+                    <h6>{{ 'general.social.share' | t }}</h6>
+                    {% include 'social-sharing', share_title: article.title, share_permalink: article.url, share_image: article.image %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="col-lg-3">
+                {% include 'sidebar-blog' %}
+              </div>
+
+          {% else %}
+              {% comment %} layout without sidebar {% endcomment %}
+              <div class="col-12 article-body">
+                <div class="rte">
+                  {{ article.content }}
+                </div>
+                {% if section.settings.enable_social_sharing %}
+                  <div class="mt-5 text-center">
+                    <h6>{{ 'general.social.share' | t }}</h6>
+                    {% include 'social-sharing', share_title: article.title, share_permalink: article.url, share_image: article.image %}
+                  </div>
+                {% endif %}
+              </div>
+
+          {% endif %}
+
+      </div>
+
+    </div>
+</section>
+
+{% paginate article.comments by 5 %}
+
+{% if article.comments_enabled? and number_of_comments > 0 %}
+<section class="section-content pb-0 bg-white" id="comments">
+  <div class="{% if section.settings.fluid_layout %}container-fluid{% else %}container{% endif %}">
+
+    <div class="row">
+      <div class="col-12">
+        <h2 class="section-title text-center">{{ 'blogs.comments.heading' | t }}</h2>
+      </div>
+    </div>
+
+    {% if comment and comment.created_at %}
+    <div class="row my-3">
+      <div class="col-lg-10 ml-auto mr-auto">
+        <div class="alert alert-success">
+        {% if blog.moderated? and comment.status != 'published' %}
+            {{ 'blogs.comments.success_moderated' | t }}
+        {% else %}
+            {{ 'blogs.comments.success' | t }}
+        {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+      <div class="col-lg-10 ml-auto mr-auto">
+        {% for comment in article.comments %}
+          <div class="media" id="{{ comment.id }}">
+            <i class="icon ion-md-chatboxes-outline display-4 mr-4"></i>
+            <div class="media-body">
+              <h5 class="my-0">{{ comment.author }}</h5>
+              <p class="small text-muted font-italic">- {{ comment.created_at | date: "%B %d, %Y" }}</p>
+              {{ comment.content }}
+              {% unless forloop.last %}
+                <hr/>
+              {% endunless %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% if paginate.pages > 1 %}
+      <div class="row">
+        <div class="col-12 text-center">
+          {{ paginate | default_pagination }}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+{% endpaginate %}
+
+
+{% if article.comments_enabled? %}
+<section class="section-content bg-white">
+  <div class="{% if section.settings.fluid_layout %}container-fluid{% else %}container{% endif %}">
+
+    <div class="row">
+      <div class="col-12">
+        <h2 class="section-title text-center">{{ 'blogs.comments.title' | t }}</h2>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-8 ml-auto mr-auto">
+        <!-- Comment Form -->
+        {% form "new_comment", article %}
+
+          {% if form.errors %}
+            <div class="row">
+              <div class="col">
+                <div class="alert alert-warning">{{ form.errors | default_errors }}</div>
+              </div>
+            </div>
+          {% endif %}
+
+          <div class="row">
+            <div class="col-md-6">
+              <input type="text"
+                  class="form-control mt-4"
+                  id="comment-author"
+                  name="comment[author]"
+                  aria-label="name"
+                  placeholder="{{ 'blogs.comments.name' | t }}"
+                  value="{{ form.author }}"
+                  required
+                  spellcheck="false"
+                  autocomplete="off"
+                  autocapitalize="off">
+            </div>
+            <div class="col-md-6">
+              <input
+                  type="email"
+                  class="form-control mt-4"
+                  id="comment-email"
+                  name="comment[email]"
+                  aria-label="email"
+                  placeholder="{{ 'blogs.comments.email' | t }}"
+                  value="{{ form.email }}"
+                  required
+                   spellcheck="false"
+                   autocomplete="off"
+                   autocapitalize="off">
+            </div>
+            <div class="col-sm-12">
+              <textarea
+                  class="form-control mt-4"
+                  rows="4" id="comment-body"
+                  name="comment[body]"
+                  aria-label="comments"
+                  placeholder="{{ 'blogs.comments.message' | t }}"
+                  required
+                   spellcheck="false"
+                   autocomplete="off"
+                   autocapitalize="off">
+                      {{ form.body }}
+              </textarea>
+            </div>
+            <div class="col-sm-12 text-center">
+              {% if blog.moderated? %}
+                <p class="mt-3 mb-0 font-italic">{{ 'blogs.comments.moderated' | t }}</p>
+              {% endif %}
+              <input type="submit" value="{{ 'blogs.comments.post' | t }}" class="btn btn-primary mt-4" />
+            </div>
+          </div>
+        {% endform %}
+        <!-- End Comment Form -->
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endif %}
+
+
+
+{% comment %} article navigation {% endcomment %}
+{% if section.settings.enable_article_navigation %}
+  {% assign current_found = false %}
+  {% assign done = false %}
+  {% for a in blog.articles %}
+    {% if current_found and done == false %}
+      {% assign next_article = a %}
+      {% assign done = true %}
+    {% endif %}
+    {% unless done %}
+      {% if a.id == article.id %}
+        {% assign current_found = true %}
+      {% else %}
+        {% assign prev_article = a %}
+      {% endif %}
+    {% endunless %}
+  {% endfor %}
+
+  {% if section.settings.navigation_type == 'modern' %}
+
+    {% if next_article %}
+      <section class="article-navigation section-content">
+        <a href="{{ next_article.url }}" name="{{ next_article.title }}" title="{{ next_article.title }}" aria-label="{{ next_article.title }}">
+          <link rel="prerender" href="{{ next_article.url }}">
+          <div class="inner py-5">
+            <div class="container">
+              <div class="row">
+                <div class="col-12 text-center">
+                  <h6 class="text-warning">NEXT <i class="icon ion-md-arrow-forward"></i></h6>
+                  <h4 class="text-white my-0">{{ next_article.title }}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="overlay"></div>
+          <div
+            data-sizes="auto"
+            data-bgset="
+              {{ next_article.image.src | img_url: 'large' }} 576w,
+              {{ next_article.image.src | img_url: '1280x' }} 768w,
+              {{ next_article.image.src | img_url: '1440x' }} 992w,
+              {{ next_article.image.src | img_url: '1920x' }} 1200w
+              "
+            class="bg-img lazyload"></div>
+        </a>
+      </section>
+    {% endif %}
+
+  {% else %}
+
+    <section class="section-content bg-gray-100">
+      <div class="{% if section.settings.fluid_layout %}container-fluid{% else %}container{% endif %}">
+        <div class="row">
+          <div class="col-6 col-md-5 d-flex align-items-center">
+            {% if prev_article %}
+              <a href="{{ prev_article.url }}" class="d-flex align-items-center" name="{{ prev_article.title }}" title="{{ prev_article.title }}" aria-label="{{ prev_article.title }}">
+                <i class="icon ion-md-arrow-back mr-3"></i>
+                <img src="{{ prev_article.image.src | img_url: '50x50', crop: 'center' }}" class="d-none d-md-inline-block mr-3"/>
+                <span class="pr-lg-4">{{ prev_article.title }}</span>
+              </a>
+            {% endif %}
+          </div>
+          <div class="col-md-2 d-none d-md-flex align-items-center justify-content-center">
+            <a href="{{ blog.url }}" data-toggle="tooltip" data-placement="top" title="Back to {{ blog.title | downcase }} index"><i class="ion-grid display-4"></i></a>
+          </div>
+          <div class="col-6 col-md-5 d-flex align-items-center text-right">
+            {% if next_article %}
+              <a href="{{ next_article.url }}" class="d-flex align-items-center" name="{{ next_article.title }}" title="{{ next_article.title }}" aria-label="{{ next_article.title }}">
+                <link rel="prerender" href="{{ next_article.url }}">
+                <span class="pl-lg-4">{{ next_article.title }}</span>
+                <img src="{{ next_article.image.src | img_url: '50x50', crop: 'center' }}" class="d-none d-md-inline-block ml-3"/>
+                <i class="icon ion-md-arrow-forward ml-3"></i>
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+  {% endif %}
+{% endif %}
+
+
+{% schema %}
+  {
+    "name": "Article Template",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "checkbox",
+        "id": "fluid_layout",
+        "label": "Full Width Layout?",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_social_sharing",
+        "label": "Enable Article Social Sharing?",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sidebar",
+        "label": "Enable Sidebar?",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "sidebar_is_sticky",
+        "label": "Sticky Sidebar?",
+        "default": false
+      },
+      {
+        "type": "paragraph",
+        "content": "Use the 'Content' section below to customize the sidebar content."
+      },
+      {
+        "type": "header",
+        "content": "Article Navigation"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_article_navigation",
+        "label": "Enable Article Navigation?",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "navigation_type",
+        "label": "Navigation Type",
+        "options": [{
+            "value": "simple",
+            "label": "Simple"
+          },
+          {
+            "value": "modern",
+            "label": "Modern"
+          }
+        ],
+        "default": "simple"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "socials",
+        "name": "Socials",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "enable_socials",
+            "label": "Enabled?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "socials_title",
+            "label": "Title",
+            "default": "Connect with Us"
+          },
+          {
+            "type": "paragraph",
+            "content": "Select Networks"
+          },
+          {
+            "type": "checkbox",
+            "id": "social_icon_facebook",
+            "label": "Facebook",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "social_icon_twitter",
+            "label": "Twitter",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "social_icon_googleplus",
+            "label": "Google+",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "social_icon_instagram",
+            "label": "Instagram",
+            "default": true
+          }
+        ]
+      },
+      {
+        "type": "recent-articles",
+        "name": "Recent Articles",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "enable_recent_articles",
+            "label": "Enabled?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "recent_articles_title",
+            "label": "Title",
+            "default": "Recent Articles"
+          },
+          {
+            "type": "range",
+            "id": "total_recent_articles",
+            "label": "Articles Limit",
+            "min": 1,
+            "max": 10,
+            "step": 1,
+            "default": 5
+          }
+        ]
+      },
+      {
+        "type": "tags",
+        "name": "Tags",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "enable_tags",
+            "label": "Enabled?",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "tags_title",
+            "label": "Title",
+            "default": "Tags"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

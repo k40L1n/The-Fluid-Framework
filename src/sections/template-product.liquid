@@ -1,0 +1,502 @@
+{% assign template_type = section.settings.template_type %}
+{% assign fluid_layout = section.settings.fluid_layout %}
+{% assign current_variant = product.selected_or_first_available_variant %}
+{% assign featured_image = current_variant.featured_image | default: product.featured_image %}
+{% assign show_vendor = section.settings.show_vendor %}
+{% assign addons_enabled = section.settings.enable_product_addons %}
+{% assign addons_type = section.settings.addons_type %}
+{% assign enable_color_swatches = settings.enable_color_swatches %}
+{% assign enable_size_swatches = settings.enable_size_swatches %}
+
+<div
+  data-section-id="{{ section.id }}"
+  data-template="product"
+  data-product-template="{{ template_type }}"
+  data-enable-history-state="true"
+  class="{% if product.has_only_default_variant %}only-default-variant{% endif %}">
+
+  {% case template_type %}
+    {% when 'modern' %}
+      {% include 'template-product-modern' %}
+    {% when 'minimal' %}
+      {% include 'template-product-minimal' %}
+    {% when 'classic-horizontal' %}
+      {% include 'template-product-classic-horizontal' %}
+    {% when 'classic-vertical' %}
+      {% include 'template-product-classic-vertical' %}
+    {% else %}
+      {% include 'template-product-classic-horizontal' %}
+  {% endcase %}
+
+  {% if section.settings.enable_mobile_toolbar %}
+    {% include 'product-toolbar-mobile' %}
+  {% endif %}
+
+  {% for block in section.blocks %}
+    {% case block.type %}
+    {% when 'product-tabs' %}
+      {% if block.settings.enable_product_tabs %}
+        {% include 'block-product-tabs' %}
+      {% endif %}
+    {% when 'related-products' %}
+      {% if block.settings.enable_related_products %}
+        {% include 'block-related-products' %}
+      {% endif %}
+    {% when 'recently-viewed' %}
+      {% if block.settings.enable_recently_viewed_products %}
+        {% include 'block-recently-viewed-products' %}
+      {% endif %}
+    {% when 'instagram-feed' %}
+      {% if block.settings.enable_instagram %}
+        {% include 'block-instagram-feed' %}
+      {% endif %}
+    {% endcase %}
+  {% endfor %}
+
+  {% include 'app-utilities-related-products' %}
+
+  {% unless product == empty %}
+  <script type="application/json" data-product-json>
+  {
+    "product": {{ product | json }},
+    "options_with_values": {{ product.options_with_values | json }}
+  }
+  </script>
+  {% endunless %}
+</div>
+
+{% schema %}
+  {
+    "name": "Product Template",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Template"
+      },
+      {
+        "type": "select",
+        "id": "template_type",
+        "label": "Template Type",
+        "options": [
+          {
+            "value": "classic-horizontal",
+            "label": "Classic: Horizontal Thumbs"
+          },
+          {
+            "value": "classic-vertical",
+            "label": "Classic: Vertical Thumbs"
+          },
+          {
+            "value": "modern",
+            "label": "Modern: Hero Carousel"
+          },
+          {
+            "value": "minimal",
+            "label": "Minimal: Sticky Product Details"
+          }
+        ],
+        "default": "minimal"
+      },
+      {
+        "type": "paragraph",
+        "content": "Classic: Product images on the left and product options on the right."
+      },
+      {
+        "type": "paragraph",
+        "content": "Modern: Centered product template with image slider on top that stands out, followed by the product options."
+      },
+      {
+        "type": "paragraph",
+        "content": "Minimal: Big product images as a list on the left. Sticky product options that follow page scroll on the right."
+      },
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "checkbox",
+        "id": "fluid_layout",
+        "label": "Full Width Layout?",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Features"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "label": "Show Vendor?",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_social_share",
+        "label": "Show Social Share?",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_mobile_toolbar",
+        "label": "Enable Mobile Toolbar?",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_images_zoom",
+        "label": "Enable Images Zoom?",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Product Reviews"
+      },
+      {
+        "type": "paragraph",
+        "content": "To include Product Reviews functionality you must add the 'Product Tabs' block from the content section down below. Reviews are being displayed as tab content."
+      }
+    ],
+    "blocks": [
+      {
+        "type": "product-tabs",
+        "name": "Product Tabs",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "header",
+            "content": "Layout"
+          },
+          {
+            "type": "checkbox",
+            "id": "enable_product_tabs",
+            "label": "Enabled?"
+          },
+          {
+            "type": "checkbox",
+            "id": "product_tabs_fluid_layout",
+            "label": "Full Width Layout?",
+            "default": false
+          },
+          {
+            "type": "header",
+            "content": "Tabs"
+          },
+          {
+            "type": "checkbox",
+            "id": "enable_custom_tab_1",
+            "label": "Enable Custom Tab 1?"
+          },
+          {
+            "type": "text",
+            "id": "tab_1_title",
+            "label": "Tab 1 Title",
+            "default": "Tab Title 1"
+          },
+          {
+            "type": "page",
+            "id": "tab_1_content",
+            "label": "Tab 1 Content"
+          },
+          {
+            "type": "checkbox",
+            "id": "enable_custom_tab_2",
+            "label": "Enable Custom Tab 2?"
+          },
+          {
+            "type": "text",
+            "id": "tab_2_title",
+            "label": "Tab 2 Title",
+            "default": "Tab Title 2"
+          },
+          {
+            "type": "page",
+            "id": "tab_2_content",
+            "label": "Tab 2 Content"
+          },
+          {
+            "type": "checkbox",
+            "id": "enable_reviews_tab",
+            "label": "Enable Product Reviews Tab?",
+            "info": "You must install our [Product Reviews](https:\/\/reviews.hulkapps.com) app."
+          }
+        ]
+      },
+      {
+        "type": "related-products",
+        "name": "Related Products",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "header",
+            "content": "Layout"
+          },
+          {
+            "type": "checkbox",
+            "id": "enable_related_products",
+            "label": "Enabled?"
+          },
+          {
+            "type": "checkbox",
+            "id": "related_products_fluid_layout",
+            "label": "Full Width Layout?",
+            "default": false
+          },
+          {
+            "type": "checkbox",
+            "id": "related_products_section_padding",
+            "label": "Section Padding?",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "related_products_section_no_gutters",
+            "label": "No Gutters?",
+            "default": false
+          },
+          {
+            "type": "checkbox",
+            "id": "related_products_nav_arrows",
+            "label": "Arrows Navigation",
+            "default": false
+          },
+          {
+            "type": "checkbox",
+            "id": "related_products_nav_dots",
+            "label": "Dots Navigation",
+            "default": true
+          },
+          {
+            "type": "range",
+            "id": "related_products_view",
+            "label": "Total Items to Show",
+            "min": 0,
+            "max": 16,
+            "step": 1,
+            "default": 9
+          },
+          {
+            "type": "range",
+            "id": "related_products_auto_play",
+            "label": "Autoplay",
+            "info": "Duration of animation between slides (in seconds). Set to zero if you don't want the slider to autoplay.",
+            "min": 0,
+            "max": 10,
+            "step": 1,
+            "default": 0
+          },
+          {
+            "type": "header",
+            "content": "Content"
+          },
+          {
+            "type": "text",
+            "id": "related_products_heading_txt",
+            "label": "Heading Text",
+            "default": "Related Products"
+          },
+          {
+            "type": "header",
+            "content": "Styling"
+          },
+          {
+            "type": "color",
+            "id": "related_products_section_bg_color",
+            "label": "Background Color",
+            "default": "#F8F9FA"
+          },
+          {
+            "type": "color",
+            "id": "related_products_section_color",
+            "label": "Text Color",
+            "default": "#343a40"
+          }
+        ]
+      },
+      {
+        "type": "recently-viewed",
+        "name": "Recently Viewed",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "header",
+            "content": "Layout"
+          },
+          {
+            "type": "checkbox",
+            "id": "enable_recently_viewed_products",
+            "label": "Enabled?"
+          },
+          {
+            "type": "checkbox",
+            "id": "recently_viewed_products_fluid_layout",
+            "label": "Full Width Layout?",
+            "default": false
+          },
+          {
+            "type": "checkbox",
+            "id": "recently_viewed_products_section_padding",
+            "label": "Section Padding?",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "recently_viewed_products_section_no_gutters",
+            "label": "No Gutters?",
+            "default": false
+          },
+          {
+            "type": "checkbox",
+            "id": "recently_viewed_products_nav_arrows",
+            "label": "Arrows Navigation",
+            "default": false
+          },
+          {
+            "type": "checkbox",
+            "id": "recently_viewed_products_nav_dots",
+            "label": "Dots Navigation",
+            "default": true
+          },
+          {
+            "type": "range",
+            "id": "recently_viewed_products_view",
+            "label": "Total Items to Show",
+            "min": 0,
+            "max": 16,
+            "step": 1,
+            "default": 9
+          },
+          {
+            "type": "range",
+            "id": "recently_viewed_products_auto_play",
+            "label": "Autoplay",
+            "info": "Duration of animation between slides (in seconds). Set to zero if you don't want the slider to autoplay.",
+            "min": 0,
+            "max": 10,
+            "step": 1,
+            "default": 0
+          },
+          {
+            "type": "header",
+            "content": "Content"
+          },
+          {
+            "type": "text",
+            "id": "recently_viewed_products_heading_txt",
+            "label": "Heading Text",
+            "default": "Recently Viewed"
+          },
+          {
+            "type": "header",
+            "content": "Styling"
+          },
+          {
+            "type": "color",
+            "id": "recently_viewed_products_section_bg_color",
+            "label": "Background Color",
+            "default": "#F8F9FA"
+          },
+          {
+            "type": "color",
+            "id": "recently_viewed_products_section_color",
+            "label": "Text Color",
+            "default": "#343a40"
+          }
+        ]
+      },
+      {
+        "type": "instagram-feed",
+        "name": "Instagram Feed",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "header",
+            "content": "Layout"
+          },
+          {
+            "type": "checkbox",
+            "id": "enable_instagram",
+            "label": "Enabled?"
+          },
+          {
+            "type": "checkbox",
+            "id": "instagram_fluid_layout",
+            "label": "Full Width Layout?",
+            "default": false
+          },
+          {
+            "type": "checkbox",
+            "id": "instagram_section_padding",
+            "label": "Section Padding?",
+            "default": false
+          },
+          {
+            "type": "checkbox",
+            "id": "instagram_section_no_gutters",
+            "label": "No Gutters?",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "show_profile_link",
+            "label": "Show Profile Link?",
+            "default": false
+          },
+          {
+            "type": "range",
+            "id": "instagram_view",
+            "label": "Total Items to Show",
+            "min": 0,
+            "max": 48,
+            "step": 1,
+            "default": 12
+          },
+          {
+            "type": "header",
+            "content": "Content"
+          },
+          {
+            "type": "text",
+            "id": "instagram_heading_txt",
+            "label": "Heading Text"
+          },
+          {
+            "type": "header",
+            "content": "Styling"
+          },
+          {
+            "type": "color",
+            "id": "instagram_section_bg_color",
+            "label": "Background Color"
+          },
+          {
+            "type": "color",
+            "id": "instagram_section_txt_color",
+            "label": "Text Color"
+          },
+          {
+            "type": "header",
+            "content": "Account Info"
+          },
+          {
+            "type": "text",
+            "id": "instagram_username",
+            "label": "Username",
+            "info": "Instagram username without the '@' symbol."
+          },
+          {
+            "type": "text",
+            "id": "instagram_token",
+            "label": "Access Token [( ? )](\/\/goo.gl\/OypFlG)"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+
+{% javascript %}
+{% endjavascript %}
+
+{% stylesheet 'scss' %}
+{% endstylesheet %}

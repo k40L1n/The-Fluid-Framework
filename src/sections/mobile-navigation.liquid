@@ -1,0 +1,230 @@
+{% assign main_menu = section.settings.main_menu_linklist  %}
+{% assign secondary_menu = section.settings.secondary_menu_linklist  %}
+
+
+<div data-section-id="{{ section.id }}" class="mobile-nav-drawer d-flex flex-column" :class="{'opened shadow-lg': isMobileNavDrawerOpen}" v-touch:swipe.left="_toggleMobileNavDrawer">
+
+  <div class="drawer-header d-flex justify-content-between align-items-center px-4 py-3">
+
+    {% if section.settings.mobile_nav_show_logo %}
+      <a href="/" class="navbar-brand" name="{{ shop.name | escape }}" title="{{ shop.name | escape }}" aria-label="{{ shop.name | escape }}">
+        {% assign logo = section.settings.main_logo | img_url: '200x' %}
+        {% if logo contains 'no-image' %}
+          {% comment %}
+            <span class="h5 text-primary"><i class="ion-pound text-warning"></i> {{ shop.name | escape }}</span>
+          {% endcomment %}
+        {% else %}
+          <img src="{{ logo }}" alt="{{ shop.name | escape }}" class="img-fluid"  style="max-width: {{ section.settings.logo_max_width }}px">
+        {% endif %}
+      </a>
+    {% endif %}
+
+    <a href="#" class="btn-close ml-auto float-right" @click.prevent="_toggleMobileNavDrawer" name="close" title="close" rel="nofollow" aria-label="Close">
+      <i class="icon ion-md-close"></i>
+    </a>
+  </div>
+
+  <div class="drawer-header px-4 pt-3">
+    {% if settings.enable_currency_selector %}
+      {% form 'currency', id: 'currencyFormMobile', data-currency-selector: "" %}
+        <div class="form-group">
+          <select name="currency" id="currencySelector" aria-label="currency-selector" class="form-control form-control-sm" @change="_changeCurrency()">
+            {% for currency in shop.enabled_currencies %}
+              {% if currency == cart.currency %}
+                <option selected="true">{{currency.iso_code}}</option>
+                {% else %}
+                <option>{{currency.iso_code}}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+      {% endform %}
+    {% endif %}
+  </div>
+
+  <div class="drawer-body py-3" data-touch-moveable>
+    {% if main_menu %}
+      <nav class="navbar-mobile">
+        <ul class="navbar-nav">
+          {% for link in linklists[main_menu].links %}
+            {% assign child_list_handle = link.title | handleize %}
+            {% if menus[child_list_handle].links != blank %}
+              <li class="nav-item {% if link.active %} active{% endif %}">
+                <a class="nav-link submenu-toggle d-flex align-items-center justify-content-between {{ link.handle }}" href="#" role="button" data-toggle="collapse" data-target="#submenu-{{ child_list_handle }}" aria-expanded="false" name="{{ link.title }}" title="{{ link.title }}" aria-label="{{ link.title }}">
+                  <span>{{ link.title }}</span> <i class="icon-toggle"></i>
+                </a>
+                <div class="submenu collapse" id="submenu-{{ child_list_handle }}">
+                {% for childlink in menus[child_list_handle].links %}
+                  <a class="nav-link {% if childlink.active %} active{% endif %} {{ childlink.handle }}" href="{{ childlink.url }}" name="{{ childlink.title }}" title="{{ childlink.title }}" aria-label="{{ childlink.title }}">
+                    {{ childlink.title }}
+                  </a>
+                {% endfor %}
+                </div>
+              </li>
+            {% else %}
+              <li class="nav-item {% if link.active %} active{% endif %}">
+                <a class="nav-link" href="{{ link.url }}" name="{{ link.title }}" title="{{ link.title }}" aria-label="{{ link.title }}">
+                  {{ link.title }}
+                </a>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </nav>
+    {% endif %}
+
+    {% if secondary_menu %}
+      <nav class="navbar-mobile navbar-mobile-secondary">
+        <ul class="navbar-nav">
+          {% for link in linklists[secondary_menu].links %}
+            {% assign child_list_handle = link.title | handleize %}
+            {% if menus[child_list_handle].links != blank %}
+              <li class="nav-item {% if link.active %} active{% endif %}">
+                <a class="nav-link submenu-toggle d-flex align-items-center justify-content-between" href="#" role="button" data-toggle="collapse" data-target="#submenu-{{ child_list_handle }}" aria-expanded="false" name="{{ link.title }}" title="{{ link.title }}" aria-label="{{ link.title }}">
+                  <span>{{ link.title }}</span> <i class="icon-toggle"></i>
+                </a>
+                <div class="submenu collapse" id="submenu-{{ child_list_handle }}">
+                {% for childlink in menus[child_list_handle].links %}
+                  <a class="nav-link {% if childlink.active %} active{% endif %}" href="{{ childlink.url }}" name="{{ childlink.title }}" title="{{ childlink.title }}" aria-label="{{ childlink.title }}">
+                    {{ childlink.title }}
+                  </a>
+                {% endfor %}
+                </div>
+              </li>
+            {% else %}
+              <li class="nav-item {% if link.active %} active{% endif %}">
+                <a class="nav-link" href="{{ link.url }}" name="{{ link.title }}" title="{{ link.title }}" aria-label="{{ link.title }}">
+                  {{ link.title }}
+                </a>
+              </li>
+            {% endif %}
+          {% endfor %}
+          {% if settings.enable_wishlist %}
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-toggle="modal" data-target="[data-modal-wishlist]" tabindex="-1" name="{{ 'general.wishlist.title' | t }}" title="{{ 'general.wishlist.title' | t }}" rel="nofollow" aria-label="{{ 'general.wishlist.title' | t }}">
+                <span>
+                  {{ 'general.wishlist.title' | t }}
+                  <span v-if="wishlist.length > 0" v-text="'('+wishlist.length+')'"></span>
+                </span>
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+  </div>
+
+  <div class="drawer-footer text-center mt-auto px-4 py-3">
+    {% if section.settings.mobile_nav_show_social_links %}
+      {% if section.settings.col_3_heading != '' %}
+      <h6 class="small mb-3">{{ section.settings.col_3_social_heading }}</h6>
+      {% endif %}
+
+      <ul class="list-unstyled list-inline social-icons">
+        {% if section.settings.social_icon_facebook %}
+        <li class="list-inline-item">
+            <a href="{{ settings.social_facebook_link }}" name="Facebook" title="Facebook" rel="nofollow" aria-label="Facebook"><i class="icon ion-logo-facebook"></i></a>
+        </li>
+        {% endif %}
+
+        {% if section.settings.social_icon_twitter %}
+        <li class="list-inline-item">
+            <a href="{{ settings.social_twitter_link }}" name="Twitter" title="Twitter" rel="nofollow" aria-label="Twitter"><i class="icon ion-logo-twitter"></i></a>
+        </li>
+        {% endif %}
+
+        {% if section.settings.social_icon_instagram %}
+        <li class="list-inline-item">
+            <a href="{{ settings.social_instagram_link }}" name="Instagram" title="Instagram" rel="nofollow" aria-label="Instagram"><i class="icon ion-logo-instagram"></i></a>
+        </li>
+        {% endif %}
+      </ul>
+    {% endif %}
+  </div>
+
+</div>
+
+
+{% schema %}
+  {
+    "name": "Mobile Navigation",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Logo"
+      },
+      {
+        "type": "checkbox",
+        "id": "mobile_nav_show_logo",
+        "label": "Show Logo?",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "main_logo",
+        "label": "Select Image"
+      },
+      {
+        "type": "range",
+        "id": "logo_max_width",
+        "min": 5,
+        "max": 300,
+        "step": 5,
+        "unit": "px",
+        "label": "Logo width",
+        "default": 180
+      },
+      {
+        "type": "header",
+        "content": "Menus"
+      },
+      {
+        "type": "link_list",
+        "id": "main_menu_linklist",
+        "label": "Select Main Menu",
+        "default": "main-menu"
+      },
+      {
+        "type": "link_list",
+        "id": "secondary_menu_linklist",
+        "label": "Select Secondary Menu"
+      },
+      {
+        "type": "header",
+        "content": "Social Networks"
+      },
+      {
+        "type": "checkbox",
+        "id": "mobile_nav_show_social_links",
+        "label": "Show Socials?",
+        "default": true
+      },
+      {
+        "type": "paragraph",
+        "content": "Select Networks"
+      },
+      {
+        "type": "checkbox",
+        "id": "social_icon_facebook",
+        "label": "Facebook",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "social_icon_twitter",
+        "label": "Twitter",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "social_icon_instagram",
+        "label": "Instagram",
+        "default": true
+      }
+    ]
+  }
+{% endschema %}
+
+
+{% javascript %}
+{% endjavascript %}

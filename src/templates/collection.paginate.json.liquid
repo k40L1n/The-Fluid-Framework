@@ -1,0 +1,9 @@
+{% layout none %}
+
+{% assign products_per_page = 12 %}
+
+{% paginate collection.products by products_per_page %}
+
+{{ paginate | json }}
+
+{% endpaginate %}

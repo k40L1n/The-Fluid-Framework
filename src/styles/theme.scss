@@ -1,0 +1,26 @@
+@charset 'UTF-8';
+
+/* ================ UTILS & SETTINGS =========================== */
+@import "~bootstrap/scss/functions";
+@import "variables_bootstrap";
+@import "variables_custom";
+
+/* ================ BOOTSTRAP MAIN ============================= */
+@import "~bootstrap/scss/bootstrap";
+
+/* ================ 3rd PARTY PLUGINS ========================== */
+// Import your plugins .scss or .css files here,
+// they can be imported directly from node_modules
+@import "~vue-snotify/styles/simple";
+
+/* ================ THEME BASE ================================ */
+@import "partials/base";
+
+/* ================ PARTIALS ================================== */
+@import "partials/header";
+@import "partials/footer";
+@import "partials/components";
+@import "partials/sections";
+
+/* ================ CUSTOM STYLES ============================= */
+@import "partials/custom";

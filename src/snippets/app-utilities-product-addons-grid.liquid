@@ -1,0 +1,50 @@
+<div class="product-addons">
+  <div class="wrapper">
+    <template v-if="storeUtilities.productAddons.settings.enabled && storeUtilities.productAddons.currentProductEnabled">
+      <h6 class="mt-5 mb-2">{{ 'products.product.add_ons' | t }}</h6>
+      <div class="row">
+         <div v-for="product in storeUtilities.productAddons.products" class="d-flex align-items-stretch justify-content-around col-6 col-sm-4 col-md-12 col-xl-12">
+          <div class="card my-2">
+
+            <div class="row no-gutters">
+              <div class="col-12 col-md-3">
+               <span class="badges">
+                 <span v-if="product.variants[0].compare_at_price > product.variants[0].price" class="badge bg-warning">{{ 'products.product.on_sale' | t | escape }}</span>
+               </span>
+
+               <a v-if="product.image" :href="_getvariantUrl(product.handle, product.id)">
+                 <img
+                     :src="_getSizedImageUrl(product.image.src, 'pico')"
+                     :data-src="_getSizedImageUrl(product.image.src, '600x')"
+                     :alt="product.title" class="img-fluid lazyload"/>
+               </a>
+               <span v-else>
+                 {{ 'product-1' | placeholder_svg_tag: 'img-fluid' }}
+               </span>
+             </div>
+
+              <div class="col d-flex align-items-center justify-content-between p-2">
+
+                <div class="pr-2">
+                  <a class="d-block" :href="_getvariantUrl(product.handle, product.id)" v-text="product.title"></a>
+
+                  <s v-if="product.variants[0].compare_at_price > product.variants[0].price" v-html="_formatMoney(product.variants[0].compare_at_price)" class="price small m-0 p-0"></s>
+                  <span v-html="_formatMoney(product.variants[0].price)" class="price small m-0 p-0"></span>
+                </div>
+
+                <a v-if="!product.selected" href="#" @click.prevent="_addProductAddon(product.variants[0].id, $event)" class="btn btn-outline-primary btn-sm" title="{{ 'products.product.add_product' | t | escape }}" rel="nofollow" aria-label="{{ 'products.product.add_product' | t | escape }}">
+                 <i class="icon ion-md-add"></i>
+                </a>
+                <a v-else href="#" @click.prevent="_removeProductAddon(product.variants[0].id, $event)" class="btn btn-primary btn-sm" title="{{ 'products.product.remove_product' | t | escape }}" rel="nofollow" aria-label="{{ 'products.product.remove_product' | t | escape }}">
+                 <i class="icon ion-md-remove"></i>
+                </a>
+
+             </div>
+           </div>
+
+         </div>
+       </div>
+      </div>
+    </template>
+  </div>
+</div>

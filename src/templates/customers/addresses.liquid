@@ -1,0 +1,181 @@
+<section data-template="account" data-account-address class="section-content">
+    <div class="container">
+
+        <div class="row">
+          <div class="col-lg-3 d-flex align-items-end">
+              <a href="/account" class="btn btn-outline-primary btn-sm mb-4">
+                <i class="icon ion-md-arrow-back mr-2"></i> {{ 'customer.account.return' | t }}
+              </a>
+          </div>
+          <div class="col-lg-9 text-center">
+            <h4>{{ 'customer.addresses.title' | t }}</h4>
+            <a href="#" class="btn btn-outline-primary btn-sm mb-4" data-toggle="collapse" data-target="#collapseAddressNew">
+              <i class="icon ion-md-person-add mr-2"></i> {{ 'customer.addresses.add_new' | t }}
+            </a>
+          </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-lg-3">
+                {% include 'sidebar-account' %}
+            </div>
+
+            <div class="col-lg-9">
+
+                <div id="collapseAddressNew" class="collapse">
+                  <div class="card mb-4">
+                    {% form 'customer_address', customer.new_address %}
+                      <div class="card-header">
+                        {{ 'customer.addresses.add_new' | t }}
+                      </div>
+
+                      <div class="card-body">
+
+                        <div class="form-group input-group">
+                          <input placeholder="{{ 'customer.addresses.first_name' | t }}" type="text" id="AddressFirstNameNew" class="form-control" name="address[first_name]" value="{{form.first_name}}" autocapitalize="words">
+
+                          <input placeholder="{{ 'customer.addresses.last_name' | t }}" type="text" id="AddressLastNameNew" class="form-control" name="address[last_name]" value="{{form.last_name}}" autocapitalize="words">
+                        </div>
+
+                        <div class="form-group input-group">
+                          <input placeholder="{{ 'customer.addresses.phone' | t }}" type="tel" id="AddressPhoneNew" class="form-control" name="address[phone]" value="{{form.phone}}" pattern="[0-9\-]*">
+
+                          <input placeholder="{{ 'customer.addresses.company' | t }}" type="text" id="AddressCompanyNew" class="form-control" name="address[company]" value="{{form.company}}" autocapitalize="words">
+                        </div>
+
+                        <div class="form-group input-group">
+                          <input placeholder="{{ 'customer.addresses.address1' | t }}" type="text" id="AddressAddress1New" class="form-control" name="address[address1]" value="{{form.address1}}" autocapitalize="words">
+
+                          <input placeholder="{{ 'customer.addresses.address2' | t }}" type="text" id="AddressAddress2New" class="form-control" name="address[address2]" value="{{form.address2}}" autocapitalize="words">
+                        </div>
+
+                        <div class="form-group input-group">
+                          <input placeholder="{{ 'customer.addresses.city' | t }}" type="text" id="AddressCityNew" class="form-control" name="address[city]" value="{{form.city}}" autocapitalize="words">
+
+                          <select placeholder="{{ 'customer.addresses.country' | t }}" id="AddressCountryNew" class="form-control" name="address[country]" data-default="{{form.country}}">
+                            {{ all_country_option_tags }}
+                          </select>
+
+                          <div id="AddressProvinceContainerNew" style="display:none">
+                              <select placeholder="{{ 'customer.addresses.province' | t }}" id="AddressProvinceNew" class="form-control" name="address[province]" data-default="{{form.province}}"></select>
+                          </div>
+
+                          <input placeholder="{{ 'customer.addresses.zip' | t }}" type="text" id="AddressZipNew" class="form-control" name="address[zip]" value="{{form.zip}}" autocapitalize="characters">
+                        </div>
+
+                        {{ form.set_as_default_checkbox }}
+                        <label for="address_default_address_new" class="text-capitalize">{{ 'customer.addresses.set_default' | t }}</label>
+                      </div>
+
+                      <div class="card-footer">
+                          <input type="submit" class="btn btn-primary btn-sm" value="{{ 'customer.addresses.add' | t }}">
+                          <button class="btn btn-outline-primary btn-sm" type="button" data-toggle="collapse" data-target="#collapseAddressNew" aria-expanded="false" aria-controls="collapseExample">
+                            {{ 'customer.addresses.cancel' | t }}
+                          </button>
+                      </div>
+                    {% endform %}
+                  </div>
+                </div>
+
+                {% paginate customer.addresses by 5 %}
+
+                <div class="row">
+                {% for address in customer.addresses %}
+                  <div class="col-sm-6">
+                      <div class="card mb-4">
+                        <div class="card-body">
+                          <div class="card-title">
+                            <h5 class="d-inline-block">{{ address.first_name | capitalize }} {{ address.last_name | capitalize }}</h5>
+                            {% if address == customer.default_address %}<span class="badge badge-pill badge-warning small">{{ 'customer.addresses.default' | t }}</span>{% endif %}
+                          </div>
+                          <div class="card-text">
+                            <p>{{ address | format_address }}</p>
+                          </div>
+                        </div>
+                        <div class="card-footer">
+                          <a class="card-link" href="#" data-toggle="collapse" data-edit-address data-target="#collapseAddressEdit-{{address.id}}">{{ 'customer.addresses.edit' | t }}</a>
+                          <span class="mx-2">|</span>
+                          {{ 'customer.addresses.delete' | t | delete_customer_address_link: address.id }}
+                        </div>
+                      </div>
+                  </div>
+                {% endfor%}
+                </div>
+
+                {% for address in customer.addresses %}
+                  <div id="collapseAddressEdit-{{address.id}}" class="collapse">
+                    <div class="card mb-4">
+                      {% form 'customer_address', address %}
+
+                        <div class="card-header">{{ 'customer.addresses.edit_address' | t }}</div>
+
+                        <div class="card-body">
+                          <div class="form-group input-group">
+                            <input placeholder="{{ 'customer.addresses.first_name' | t }}" type="text" id="AddressFirstName_{{form.id}}" class="form-control" name="address[first_name]" value="{{form.first_name}}" autocapitalize="words">
+
+                            <input placeholder="{{ 'customer.addresses.last_name' | t }}" type="text" id="AddressLastName_{{form.id}}" class="form-control" name="address[last_name]" value="{{form.last_name}}" autocapitalize="words">
+                          </div>
+
+                          <div class="form-group input-group">
+                            <input placeholder="{{ 'customer.addresses.phone' | t }}" type="tel" id="AddressPhone_{{form.id}}" class="form-control" name="address[phone]" value="{{form.phone}}" pattern="[0-9\-]*">
+
+                            <input placeholder="{{ 'customer.addresses.company' | t }}" type="text" id="AddressCompany_{{form.id}}" class="form-control" name="address[company]" value="{{form.company}}" autocapitalize="words">
+                          </div>
+
+                          <div class="form-group input-group">
+                            <input placeholder="{{ 'customer.addresses.address1' | t }}" type="text" id="AddressAddress1_{{form.id}}" class="form-control" name="address[address1]" value="{{form.address1}}" autocapitalize="words">
+
+                            <input placeholder="{{ 'customer.addresses.address2' | t }}" type="text" id="AddressAddress2_{{form.id}}" class="form-control" name="address[address2]" value="{{form.address2}}" autocapitalize="words">
+                          </div>
+
+                          <div class="form-group input-group">
+                            <input placeholder="{{ 'customer.addresses.city' | t }}" type="text" id="AddressCity_{{form.id}}" class="form-control" name="address[city]" value="{{form.city}}" autocapitalize="words">
+
+                            <select placeholder="{{ 'customer.addresses.country' | t }}" id="AddressCountry_{{form.id}}" name="address[country]" class="form-control" data-default="{{form.country}}">{{ all_country_option_tags }}</select>
+
+                            <div id="AddressProvinceContainer_{{form.id}}" style="display:none">
+                              <select placeholder="{{ 'customer.addresses.province' | t }}" id="AddressProvince_{{form.id}}" class="form-control" name="address[province]" data-default="{{form.province}}"></select>
+                            </div>
+
+                            <input placeholder="{{ 'customer.addresses.zip' | t }}" type="text" id="AddressZip_{{form.id}}" class="form-control" name="address[zip]" value="{{form.zip}}" autocapitalize="characters">
+                          </div>
+
+                          {{ form.set_as_default_checkbox }}
+                          <label for="address_default_address_{{ form.id }}" class="text-capitalize">
+                            {{ 'customer.addresses.set_default' | t }}
+                          </label>
+                        </div>
+
+                        <div class="card-body">
+                          <input type="submit" class="btn btn-primary btn-sm" value="{{ 'customer.addresses.update' | t }}">
+                          <button class="btn btn-outline-primary btn-sm" type="button" data-toggle="collapse" data-target="#collapseAddressEdit-{{form.id}}" aria-expanded="false" aria-controls="collapseExample">
+                            {{ 'customer.addresses.cancel' | t }}
+                          </button>
+                        </div>
+
+                      {% endform %}
+                    </div>
+                  </div>
+                {% endfor %}
+
+
+                {% if paginate.pages > 1 %}
+                <div class="text-center">
+                  {% include 'pagination' %}
+                </div>
+                {% endif %}
+
+                {% endpaginate %}
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script type="application/json" data-account-json>
+{
+  "addressesIds": [{% for address in customer.addresses %}"{{ address.id }}"{% unless forloop.last %},{% endunless %}{% endfor %}]
+}
+</script>

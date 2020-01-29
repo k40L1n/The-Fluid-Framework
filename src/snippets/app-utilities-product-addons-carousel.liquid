@@ -1,0 +1,71 @@
+<div class="product-addons">
+  <div class="wrapper">
+    <template v-if="storeUtilities.productAddons.settings.enabled && storeUtilities.productAddons.currentProductEnabled">
+      <h6 class="mt-5 mb-2">{{ 'products.product.add_ons' | t }}</h6>
+      <div class="row no-gutters">
+        <div class="col-12 mb-4">
+          <div class="carousel" role="tree"
+            data-flickity-product-addons='{
+              "adaptiveHeight": true,
+              "contain": true,
+              "wrapAround": false,
+              "freeScroll": false,
+              "groupCells": "100%",
+              "accessibility": false,
+              "setGallerySize": true,
+              "dragThreshold": 20,
+              "lazyLoad": false,
+              "prevNextButtons": true,
+              "pageDots": true,
+              "arrowShape": {"x0": 10, "x1": 60, "y1": 50, "x2": 60, "y2": 45, "x3": 15}
+             }'>
+
+             <div v-for="product in storeUtilities.productAddons.products" class="carousel-cell d-flex equal-height col-6 col-sm-4 col-md-12 col-xl-6" role="treeitem">
+
+              <div class="card card-product mx-2">
+               <span class="badges">
+                 <span v-if="product.variants[0].compare_at_price > product.variants[0].price" class="badge bg-warning">{{ 'products.product.on_sale' | t | escape }}</span>
+               </span>
+               <div class="card-img text-center" :class="{'bg-gray-300': !product.image}">
+                 <a v-if="product.image" :href="_getvariantUrl(product.handle, product.id)">
+                   <img
+                       :data-flickity-lazyload-src="_getSizedImageUrl(product.image.src, 'pico')"
+                       :data-flickity-lazyload-srcset="_getSizedImageUrl(product.image.src, '600x')"
+                       :alt="product.title" class="img-fluid"/>
+                 </a>
+                 <span v-else>
+                   {{ 'product-1' | placeholder_svg_tag: 'img-fluid' }}
+                 </span>
+               </div>
+               <div class="card-body">
+                 <div class="row">
+                   <div class="col-12" v-match-heights="{el: ['.card-title']}">
+                     <div class="card-title m-0">
+                       <h6><a :href="_getvariantUrl(product.handle, product.id)" v-text="product.title"></a></h6>
+                       <div class="price-wrapper">
+                         <s v-if="product.variants[0].compare_at_price > product.variants[0].price" v-html="_formatMoney(product.variants[0].compare_at_price)" class="price small m-0 p-0"></s>
+                         <span v-html="_formatMoney(product.variants[0].price)" class="price m-0 p-0"></span>
+                       </div>
+                     </div>
+                   </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col-12">
+                    <a v-if="!product.selected" href="#" @click.prevent="_addProductAddon(product.variants[0].id, $event)" class="btn btn-outline-primary btn-sm btn-block" title="{{ 'products.product.add_product' | t | escape }}" rel="nofollow" aria-label="{{ 'products.product.add_product' | t | escape }}">
+                     <i class="icon ion-md-add"></i> {{ 'products.product.add_product' | t | escape }}
+                    </a>
+                    <a v-else href="#" @click.prevent="_removeProductAddon(product.variants[0].id, $event)" class="btn btn-primary btn-sm btn-block" title="{{ 'products.product.remove_product' | t | escape }}" rel="nofollow" aria-label="{{ 'products.product.remove_product' | t | escape }}">
+                     <i class="icon ion-md-remove"></i> {{ 'products.product.remove_product' | t | escape }}
+                    </a>
+                  </div>
+                </div>
+               </div>
+             </div>
+           </div>
+          </div>
+
+        </div>
+      </div>
+    </template>
+  </div>
+</div>

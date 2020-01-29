@@ -1,0 +1,6 @@
+<template v-if="storeUtilities.relatedProducts.settings.displayStyle === 'carousel'">
+  {% include 'app-utilities-related-products-carousel' %}
+</template>
+<template v-else>
+  {% include 'app-utilities-related-products-grid' %}
+</template>

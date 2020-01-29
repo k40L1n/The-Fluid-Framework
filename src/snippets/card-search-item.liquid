@@ -1,0 +1,59 @@
+<div class="card text-left">
+
+  <div class="card-img card-search-item {% if item.featured_image.size == 0 %}bg-gray-300{% endif %}">
+      {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+
+      <a href="{{ item.url | within: collection }}" title="{{ item.title | escape }}">
+        {% if item.object_type == 'product' %}
+          {% if item.featured_image.size > 0 %}
+            <img class="img-fluid lazyload"
+                src="{{ item.featured_image | img_url: 'pico'}}"
+                data-src="{{ item.featured_image | img_url: 'large' }}"
+                alt="{{ item.featured_image.alt | escape }}"/>
+          {% else %}
+            {{ 'product-' | append: current | placeholder_svg_tag: 'img-fluid' }}
+          {% endif %}
+        {% else %}
+          {% if item.image.size > 0 %}
+            <img class="img-fluid lazyload"
+                src="{{ item.image | img_url: 'pico'}}"
+                data-src="{{ item.image | img_url: 'large' }}"
+                alt="{{ item.image.alt | escape }}"/>
+          {% else %}
+            {% comment %}Extract 1st image from the item contents{% endcomment %}
+            {% if item.content contains "<img" %}
+              {% assign src = item.content | split: 'src="' %}
+              {% assign src = src[1] | split: '"' | first %}
+              <img class="img-fluid lazyload" src="{{ src }}">
+            {% else %}
+              {{ 'collection-' | append: current | placeholder_svg_tag: 'img-fluid' }}
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      </a>
+  </div>
+
+  <div class="card-body row no-gutters">
+      {% if item.object_type == 'product' %}
+        <div class="col-sm-8">
+          <div class="text-uppercase small text-muted">{{ item.object_type }}</div>
+          <h6 class="card-title m-0">{{ item.title | link_to: item.url }}</h6>
+        </div>
+      	<div class="col-sm-4">
+      		{% if item.compare_at_price > item.price  %}
+      			<s class="text-gray-700 m-0 p-0">{{ item.compare_at_price | money }}</s>
+      		{% endif %}
+          <span class="m-0 p-0">{{ item.price | money }}</span>
+      	</div>
+      {% else %}
+        <div class="col-12">
+          <div class="text-uppercase small text-muted">{{ item.object_type }}</div>
+          <h6 class="card-title m-0">{{ item.title | link_to: item.url }}</h6>
+        </div>
+      {% endif %}
+
+      <div class="col-12">
+        <p class="mt-3">{{ item.content | strip_html | truncatewords: 15 }}</p>
+      </div>
+  </div>
+</div>
